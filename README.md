@@ -5,6 +5,8 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15.3.3-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC)](https://tailwindcss.com)
+[![Shadcn/ui](https://img.shields.io/badge/Shadcn/ui-Latest-000000)](https://ui.shadcn.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717)](https://github.com/Eyebottle/eyebottle-ai-ophthalmology)
 
 ## ✨ 주요 기능
 
@@ -27,11 +29,24 @@
 
 ## 🚀 기술 스택
 
-- **Frontend**: Next.js 15 (App Router)
-- **Language**: TypeScript 5
-- **Styling**: Tailwind CSS 4
-- **Icons**: Heroicons React
-- **Deployment**: Ready for Vercel
+### **Frontend Framework**
+- **Next.js 15**: App Router, 최신 React 19 지원
+- **TypeScript 5**: 타입 안전성과 개발 생산성
+
+### **UI/Design System**
+- **Tailwind CSS 4**: 유틸리티 퍼스트 CSS 프레임워크
+- **Shadcn/ui**: 모던 컴포넌트 라이브러리 (접근성 최적화)
+- **Heroicons**: React 아이콘 라이브러리
+- **글래스모피즘**: 최신 디자인 트렌드 적용
+
+### **Development Tools**
+- **ESLint**: 코드 품질 관리
+- **Turbopack**: 빠른 개발 서버 (Next.js 15)
+- **Git**: 버전 관리 및 협업
+
+### **Deployment**
+- **Vercel Ready**: 원클릭 배포 지원
+- **GitHub Integration**: 자동 CI/CD
 
 ## 💻 로컬 개발 환경 설정
 
@@ -69,14 +84,22 @@ npm run dev
 eyebottle/
 ├── src/
 │   ├── app/
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   └── page.tsx        # 메인 랜딩 페이지
-│   └── ...
+│   │   ├── globals.css     # 글로벌 스타일 + Tailwind CSS
+│   │   ├── layout.tsx      # 루트 레이아웃
+│   │   ├── page.tsx        # 메인 랜딩 페이지 (홈)
+│   │   └── test/
+│   │       └── page.tsx    # Shadcn/ui 테스트 페이지
+├── components/
+│   └── ui/                 # Shadcn/ui 컴포넌트들
+│       ├── button.tsx      # 커스텀 Button (아이보틀 변형 포함)
+│       └── card.tsx        # 커스텀 Card (글래스모피즘 포함)
+├── lib/
+│   └── utils.ts           # Tailwind + clsx 유틸리티
 ├── public/
-│   └── eyebottle-logo.png  # 커스텀 로고
-├── package.json
-├── tailwind.config.js
+│   └── eyebottle-logo.png # 커스텀 로고
+├── components.json        # Shadcn/ui 설정
+├── package.json          # 의존성 (Shadcn/ui 포함)
+├── tailwind.config.js    # Tailwind CSS 설정
 └── README.md
 ```
 
@@ -86,13 +109,24 @@ eyebottle/
 - **병원 관리자**: 효율적인 워크플로우 관리
 - **의료 스타트업**: AI 기반 헬스케어 솔루션
 
-## 📈 로드맵
+## 📈 개발 현황 & 로드맵
 
+### **✅ 완료된 기능**
+- [x] **홈페이지 리뉴얼**: 글래스모피즘 디자인 적용
+- [x] **Shadcn/ui 통합**: 모던 컴포넌트 라이브러리 도입
+- [x] **반응형 디자인**: 모바일부터 데스크톱까지 최적화
+- [x] **테스트 페이지**: 새로운 컴포넌트 시연 (/test)
+- [x] **GitHub 연동**: 소스코드 관리 및 버전 관리
+
+### **🚧 진행 중**
 - [ ] 사용자 인증 시스템 구현
 - [ ] 챗봇 Eye Bottle 기능 완성
+
+### **📋 향후 계획**
 - [ ] 마이오가드 그래프 데이터 시각화
 - [ ] 실시간 진료 녹음 & STT 기능
 - [ ] 보험청구 자동화 시스템
+- [ ] 추가 Shadcn/ui 컴포넌트 도입 (Form, Dialog, Table)
 
 ## 🤝 기여하기
 
