@@ -5,7 +5,6 @@ import {
   ChartBarIcon,
   SparklesIcon,
   EnvelopeIcon,
-  EyeIcon,
   BookOpenIcon,
   MicrophoneIcon,
   DocumentTextIcon,
