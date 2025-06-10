@@ -209,7 +209,6 @@ export default function Home() {
                   </p>
                 </div>
 
-<<<<<<< HEAD
                 {/* 소셜 로그인 (추후 기능) */}
                 <div className="pt-4">
                   <button 
@@ -248,7 +247,6 @@ export default function Home() {
               <div className="bg-gradient-to-br from-pink-500/10 to-rose-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <FilmIcon className="w-8 h-8 lg:w-10 lg:h-10 text-pink-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">안과 만화</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">3컷 만화 업로드-PDF 다운로드</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
@@ -271,21 +269,10 @@ export default function Home() {
             </div>
 
             {/* 마이오가드 그래프 */}
-=======
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">의학지식 전문 상담</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• AI 기능 전문 상담</p>
-                <p>• <span className="text-amber-600 font-semibold">(개발예정)</span></p>
-              </div>
-            </div>
-
-            {/* 마이오가드프로그레시브트래커 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
               <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <ChartBarIcon className="w-8 h-8 lg:w-10 lg:h-10 text-emerald-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">마이오가드 그래프</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">근시 진행도 차트</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
@@ -295,52 +282,26 @@ export default function Home() {
             </div>
 
             {/* 검진결과 작성 */}
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">마이오가드프로그레시브트래커</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">근시진행 가시화</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 수치변화 가시화</p>
-                <p>• <span className="text-amber-600 font-semibold">(개발예정)</span></p>
-              </div>
-            </div>
-
-            {/* 진단서자동생성 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
               <div className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <DocumentTextIcon className="w-8 h-8 lg:w-10 lg:h-10 text-purple-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">검진결과 작성</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">DM,HTN,눈종검 회신서류</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
                 <p>• 질환별 하위 폴더</p>
                 <p>• 자동 서류 생성</p>
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">진단서자동생성</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">DM,HTN,교정시력 템플릿</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 가변 템플릿 추가</p>
-                <p>• 표준 서식 지원</p>
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
               </div>
             </div>
           </div>
 
-<<<<<<< HEAD
           {/* 추가 기능 4개 */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-10">
             {/* 진료녹음 메모 */}
-=======
-          {/* 하위 기능 4개 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-10">
-            {/* 가상환자 대화 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
               <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <MicrophoneIcon className="w-8 h-8 lg:w-10 lg:h-10 text-red-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">진료녹음 메모</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">간편 사용 녹화 제공</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
@@ -350,22 +311,10 @@ export default function Home() {
             </div>
 
             {/* 환자 안내자료 */}
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">가상환자 대화</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">음성 인식 실시간 답변</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 실시간 통역 & STT 지원</p>
-                <p>• 임상의 맞춤형 답변생성</p>
-              </div>
-            </div>
-
-            {/* 의학 연구저널 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
               <div className="bg-gradient-to-br from-teal-500/10 to-cyan-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <BookOpenIcon className="w-8 h-8 lg:w-10 lg:h-10 text-teal-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">환자 안내자료</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">수술 전후 안내자료</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
@@ -375,22 +324,10 @@ export default function Home() {
             </div>
 
             {/* 문진 도우미 */}
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">의학 연구저널</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">의학 논문 쉬운요약</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 안과 출판 논문검색</p>
-                <p>• PDF 번역요약 답변</p>
-              </div>
-            </div>
-
-            {/* 문서업무 자동화 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
               <div className="bg-gradient-to-br from-indigo-500/10 to-blue-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <ClipboardDocumentListIcon className="w-8 h-8 lg:w-10 lg:h-10 text-indigo-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">문진 도우미</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">증상별 검사 안내</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
@@ -400,64 +337,32 @@ export default function Home() {
             </div>
 
             {/* 진료 도우미 */}
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">문서업무 자동화</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">엑셀변환 및 차트</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 수치변환/챗봇 조합</p>
-                <p>• 차트 & 통계 생성도구</p>
-              </div>
-            </div>
-
-            {/* 환자 자동화 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
               <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <HeartIcon className="w-8 h-8 lg:w-10 lg:h-10 text-orange-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">진료 도우미</h3>
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">보험 절차 안내</p>
               <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
                 <p>• 산정특례 & 보험코드</p>
                 <p>• 주사 트래커 & DB</p>
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">환자 자동화</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">변화추이 예측 지원</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 시계열분석 & 변화추이</p>
-                <p>• 핵심 인사이트 & DB</p>
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
               </div>
             </div>
           </div>
         </section>
       </main>
 
-<<<<<<< HEAD
       {/* 하단 메뉴 섹션 */}
       <footer id="footer-nav" className="bg-white/95 backdrop-blur-lg border-t border-slate-200/60 py-16">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             {/* 업데이트 노트 */}
-=======
-      {/* 하단 메인 링크 */}
-      <footer id="footer-nav" className="bg-white/95 backdrop-blur-lg border-t border-slate-200/60 py-16">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            {/* 업데이트 내역 */}
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
               <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <SparklesIcon className="w-8 h-8 lg:w-10 lg:h-10 text-amber-600" />
               </div>
-<<<<<<< HEAD
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">업데이트 노트</h3>
               <p className="text-base lg:text-lg text-slate-600">새 기능·버그 수정 기록</p>
-=======
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">업데이트 내역</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-2">최신 기능들과 새로운 기능소개</p>
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             </div>
 
             {/* 소개 */}
@@ -466,35 +371,23 @@ export default function Home() {
                 <UserCircleIcon className="w-8 h-8 lg:w-10 lg:h-10 text-slate-600" />
               </div>
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">About Me</h3>
-<<<<<<< HEAD
               <p className="text-base lg:text-lg text-slate-600">의사 경력·철학 소개</p>
-=======
-              <p className="text-base lg:text-lg text-slate-600 mb-2">개발자와 안과전문의 소개</p>
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             </div>
 
-            {/* 문의하기 */}
+            {/* 문의 */}
             <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
               <div className="bg-gradient-to-br from-sky-500/10 to-blue-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <EnvelopeIcon className="w-8 h-8 lg:w-10 lg:h-10 text-sky-600" />
               </div>
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">Contact</h3>
-<<<<<<< HEAD
               <p className="text-base lg:text-lg text-slate-600">이메일·SNS 문의</p>
-=======
-              <p className="text-base lg:text-lg text-slate-600 mb-2">이메일 또는 SNS 통한 문의하기</p>
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             </div>
           </div>
 
           {/* 저작권 정보 */}
           <div className="border-t border-slate-200/60 mt-16 pt-12 text-center">
             <p className="text-base lg:text-lg text-slate-500 font-medium">
-<<<<<<< HEAD
               &copy; 2025 아이보틀(Eyebottle). 안과 진료의 새로운 경험.
-=======
-              &copy; 2025 아이보틀(Eyebottle). 모든 가능성을 탐구합니다.
->>>>>>> 9a824b43525ffe59bb8cee752a4a23f8397d1155
             </p>
           </div>
         </div>
