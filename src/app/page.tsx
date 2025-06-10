@@ -108,7 +108,7 @@ export default function Home() {
             <div className="flex justify-center xl:justify-start">
               <button className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-12 py-5 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:from-blue-700 hover:to-indigo-700 ring-1 ring-blue-600/20">
                 <span className="flex items-center space-x-2">
-                  <span>데모 영상 보기 ></span>
+                  <span>데모 영상 보기 →</span>
                   <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
