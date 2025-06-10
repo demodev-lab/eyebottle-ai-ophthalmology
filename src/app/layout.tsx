@@ -30,6 +30,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  icons: {
+    icon: "/eyebottle-logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -39,9 +42,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <link rel="icon" href="/eyebottle-logo.png" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
