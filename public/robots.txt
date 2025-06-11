@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# 주요 페이지들
+Allow: /
+Allow: /features
+Allow: /about
+Allow: /contact
+
+# 정적 리소스
+Allow: /eyebottle-logo.png
+Allow: /_next/static/
+Allow: /manifest.json
+
+# 제외할 디렉토리
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /private/
+
+# 사이트맵 위치
+Sitemap: https://eyebottle.com/sitemap.xml
+
+# 크롤링 속도 제한 (선택사항)
+Crawl-delay: 1 
