@@ -34,7 +34,6 @@ import { useFormStatus } from 'react-dom';
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
-  const [betaForm, setBetaForm] = useState({ name: '', email: '' });
   const formRef = useRef<HTMLFormElement>(null);
 
   const initialState = { message: null, type: null };
