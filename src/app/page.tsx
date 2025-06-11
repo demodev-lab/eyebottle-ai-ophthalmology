@@ -138,8 +138,8 @@ export default function Home() {
             </div>
             
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 mb-8 leading-[1.1] tracking-tight">
-              반복 진료 작업,<br className="hidden lg:block" /> 
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AI로 3배 빠르게!!</span>
+              반복 진료 작업,<br />
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AI로 3배 빠르게!</span>
             </h1>
             
             <p className="text-lg lg:text-xl text-slate-600 mb-12 leading-relaxed font-light">
@@ -149,10 +149,7 @@ export default function Home() {
             <div className="flex justify-center xl:justify-start">
               <button className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-12 py-5 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:from-blue-700 hover:to-indigo-700 ring-1 ring-blue-600/20">
                 <span className="flex items-center space-x-2">
-                  <span>데모 영상 보기 →</span>
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <span>데모 영상 보기</span>
                 </span>
               </button>
             </div>
@@ -271,13 +268,13 @@ export default function Home() {
         </div>
 
         {/* 주요 기능 섹션 */}
-        <section id="features" className="mb-32">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
-              아이보틀 <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">주요 기능</span>
+        <section id="features" className="py-20 lg:py-28 bg-white/50 border-t border-b border-slate-200/60">
+          <div className="container mx-auto px-6 lg:px-8 text-center mb-20">
+            <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-6 tracking-tight">
+              안과 진료실에서 실제로 필요한 기능들을<br className="lg:hidden" /> AI로 자동화했습니다
             </h2>
-            <p className="text-xl lg:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-light">
-              안과 진료실에서 실제로 필요한 기능들을 AI로 자동화했습니다
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed break-keep whitespace-nowrap">
+              아이보틀은 현직 안과 전문의의 피드백을 바탕으로, 진료 흐름에 꼭 맞는 스마트한 기능들을 탑재했습니다.
             </p>
           </div>
 
