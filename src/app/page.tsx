@@ -270,6 +270,9 @@ export default function Home() {
         {/* 주요 기능 섹션 */}
         <section id="features" className="py-20 lg:py-28 bg-white/50 border-t border-b border-slate-200/60">
           <div className="container mx-auto px-6 lg:px-8 text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+              아이보틀 <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">주요 기능</span>
+            </h2>
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-6 tracking-tight">
               안과 진료실에서 실제로 필요한 기능들을<br className="lg:hidden" /> AI로 자동화했습니다
             </h2>
