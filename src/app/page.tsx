@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef, useEffect, useActionState } from "react";
 import { 
   FilmIcon, 
   ChatBubbleLeftRightIcon, 
@@ -15,11 +15,53 @@ import {
   HeartIcon,
   ClipboardDocumentListIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  UserPlusIcon
 } from "@heroicons/react/24/outline";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { addBetaTesterToNotion } from '@/actions/notion';
+import { useFormStatus } from 'react-dom';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
+  const [betaForm, setBetaForm] = useState({ name: '', email: '' });
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const initialState = { message: null, type: null };
+  const [state, formAction] = useActionState(addBetaTesterToNotion, initialState);
+
+  useEffect(() => {
+    if (state?.type === 'success') {
+      alert(state.message);
+      setIsBetaDialogOpen(false);
+      formRef.current?.reset();
+    } else if (state?.type === 'error') {
+      alert(state.message);
+    }
+  }, [state]);
+
+  function SubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+      <Button 
+        type="submit"
+        disabled={pending}
+        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+      >
+        {pending ? '신청하는 중...' : '신청하기'}
+      </Button>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
@@ -355,7 +397,19 @@ export default function Home() {
       {/* 하단 메뉴 섹션 */}
       <footer id="footer-nav" className="bg-white/95 backdrop-blur-lg border-t border-slate-200/60 py-16">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+            {/* 베타테스터 신청 */}
+            <div 
+              className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105"
+              onClick={() => setIsBetaDialogOpen(true)}
+            >
+              <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <UserPlusIcon className="w-8 h-8 lg:w-10 lg:h-10 text-green-600" />
+              </div>
+              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">베타테스터 신청</h3>
+              <p className="text-base lg:text-lg text-slate-600">성함*이메일을 전달</p>
+            </div>
+
             {/* 업데이트 노트 */}
             <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
               <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
@@ -392,6 +446,66 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* 베타테스터 신청 팝업 */}
+      <Dialog open={isBetaDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          formRef.current?.reset();
+        }
+        setIsBetaDialogOpen(open);
+      }}>
+        <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-200/50">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-slate-800 text-center mb-2">
+              베타테스터 신청
+            </DialogTitle>
+            <DialogDescription className="text-slate-600 text-center">
+              아이보틀 베타 테스트에 참여해주시는 분들을 모집합니다.<br />
+              성함과 이메일 주소를 입력해주세요.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form ref={formRef} action={formAction} className="grid gap-6 py-4">
+            <div className="space-y-2">
+              <label htmlFor="beta-name" className="text-sm font-semibold text-slate-700">
+                성함 *
+              </label>
+              <Input
+                id="beta-name"
+                name="name"
+                placeholder="예: 김의사"
+                required
+                className="rounded-xl border-slate-200 bg-white/80 focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="beta-email" className="text-sm font-semibold text-slate-700">
+                이메일 주소 *
+              </label>
+              <Input
+                id="beta-email"
+                name="email"
+                type="email"
+                placeholder="예: doctor@hospital.com"
+                required
+                className="rounded-xl border-slate-200 bg-white/80 focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+              />
+            </div>
+            
+            <DialogFooter className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                type="button"
+                variant="outline" 
+                onClick={() => setIsBetaDialogOpen(false)}
+                className="rounded-xl border-slate-200 hover:bg-slate-50"
+              >
+                취소
+              </Button>
+              <SubmitButton />
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
