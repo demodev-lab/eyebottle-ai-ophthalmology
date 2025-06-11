@@ -36,7 +36,7 @@ export default function Home() {
   const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const initialState = { message: null, type: null };
+  const initialState = { message: '', type: '' };
   const [state, formAction] = useActionState(addBetaTesterToNotion, initialState);
 
   useEffect(() => {
