@@ -48,19 +48,37 @@
 - **Vercel Ready**: 원클릭 배포 지원
 - **GitHub Integration**: 자동 CI/CD
 
+### **Backend & API**
+- **Notion API**: 베타테스터 신청자 데이터 관리
+- **Next.js Server Actions**: 프론트엔드-백엔드 보안 통신
+
 ## 💻 로컬 개발 환경 설정
 
-```bash
-# 저장소 클론
-git clone https://github.com/Eyebottle/eyebottle-ai-ophthalmology.git
-cd eyebottle-ai-ophthalmology
+1.  **저장소 클론**
+    ```bash
+    git clone https://github.com/Eyebottle/eyebottle-ai-ophthalmology.git
+    cd eyebottle-ai-ophthalmology
+    ```
 
-# 의존성 설치
-npm install
+2.  **의존성 설치**
+    ```bash
+    pnpm install
+    ```
 
-# 개발 서버 실행
-npm run dev
-```
+3.  **환경변수 설정**
+    프로젝트 루트 디렉터리에 `.env` 파일을 생성하고 아래 내용을 추가하세요.
+    ```env
+    # Notion API 키 (https://www.notion.so/my-integrations)
+    NOTION_API_KEY=secret_...
+
+    # 베타테스터 신청 데이터가 저장될 Notion 데이터베이스 ID
+    NOTION_DATABASE_ID=...
+    ```
+
+4.  **개발 서버 실행**
+    ```bash
+    pnpm dev
+    ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
@@ -87,19 +105,20 @@ eyebottle/
 │   │   ├── globals.css     # 글로벌 스타일 + Tailwind CSS
 │   │   ├── layout.tsx      # 루트 레이아웃
 │   │   ├── page.tsx        # 메인 랜딩 페이지 (홈)
-│   │   └── test/
+│   │   └── _test/
 │   │       └── page.tsx    # Shadcn/ui 테스트 페이지
-├── components/
-│   └── ui/                 # Shadcn/ui 컴포넌트들
-│       ├── button.tsx      # 커스텀 Button (아이보틀 변형 포함)
-│       └── card.tsx        # 커스텀 Card (글래스모피즘 포함)
-├── lib/
-│   └── utils.ts           # Tailwind + clsx 유틸리티
+│   ├── actions/
+│   │   └── notion.ts       # Notion API 서버 액션
+│   ├── components/
+│   │   └── ui/             # Shadcn/ui 컴포넌트들
+│   └── lib/
+│       ├── notion.ts       # Notion 클라이언트 초기화
+│       └── utils.ts        # Tailwind + clsx 유틸리티
 ├── public/
-│   └── eyebottle-logo.png # 커스텀 로고
-├── components.json        # Shadcn/ui 설정
-├── package.json          # 의존성 (Shadcn/ui 포함)
-├── tailwind.config.js    # Tailwind CSS 설정
+│   └── eyebottle-logo.png  # 커스텀 로고
+├── .env                    # 환경변수 파일 (Git 무시)
+├── components.json         # Shadcn/ui 설정
+├── package.json            # 의존성 (Shadcn/ui 포함)
 └── README.md
 ```
 
@@ -115,7 +134,8 @@ eyebottle/
 - [x] **홈페이지 리뉴얼**: 글래스모피즘 디자인 적용
 - [x] **Shadcn/ui 통합**: 모던 컴포넌트 라이브러리 도입
 - [x] **반응형 디자인**: 모바일부터 데스크톱까지 최적화
-- [x] **테스트 페이지**: 새로운 컴포넌트 시연 (/test)
+- [x] **베타테스터 신청 폼**: Notion DB 연동 기능 (Server Action)
+- [x] **테스트 페이지**: 새로운 컴포넌트 시연 (/_test)
 - [x] **GitHub 연동**: 소스코드 관리 및 버전 관리
 
 ### **🚧 진행 중**
