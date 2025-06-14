@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { 
-  PhoneIcon,
   CalendarIcon,
   EyeIcon,
   SparklesIcon,
@@ -62,7 +60,7 @@ export default function AboutPage() {
             
             {/* 인용문 */}
             <p className="text-lg lg:text-xl text-blue-50/80 italic">
-              "눈을 넘어 마음까지 치료하는 의사가 되겠습니다"
+              &ldquo;눈을 넘어 마음까지 치료하는 의사가 되겠습니다&rdquo;
             </p>
           </div>
         </div>
