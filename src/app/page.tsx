@@ -122,7 +122,7 @@ export default function Home() {
       <main className="container mx-auto px-6 lg:px-8 py-20 lg:py-28">
         <div className="flex flex-col xl:flex-row items-start justify-between gap-8 xl:gap-12 mb-32">
           {/* 좌측: 메인 콘텐츠 */}
-          <div className="flex-1 text-center xl:text-left max-w-2xl">
+          <div className="flex-1 text-center xl:text-left xl:max-w-2xl mx-auto xl:mx-0">
             {/* 메인 로고 */}
             <div className="flex justify-center xl:justify-start mb-10">
               <div className="relative">
@@ -269,14 +269,14 @@ export default function Home() {
 
         {/* 주요 기능 섹션 */}
         <section id="features" className="py-20 lg:py-28 bg-white/50 border-t border-b border-slate-200/60">
-          <div className="container mx-auto px-6 lg:px-8 text-center mb-20">
+          <div className="container mx-auto px-8 lg:px-8 text-center mb-20">
             <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
               아이보틀 <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">주요 기능</span>
             </h2>
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-6 tracking-tight">
               안과 진료실에서 실제로 필요한 기능들을<br className="lg:hidden" /> AI로 자동화했습니다
             </h2>
-            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed break-keep whitespace-nowrap">
+            <p className="text-lg text-slate-600 max-w-2xl md:max-w-3xl mx-auto leading-relaxed text-center md:whitespace-nowrap">
               아이보틀은 현직 안과 전문의의 피드백을 바탕으로, 진료 흐름에 꼭 맞는 스마트한 기능들을 탑재했습니다.
             </p>
           </div>
@@ -440,7 +440,7 @@ export default function Home() {
           {/* 저작권 정보 */}
           <div className="border-t border-slate-200/60 mt-16 pt-12 text-center">
             <p className="text-base lg:text-lg text-slate-500 font-medium">
-              &copy; 2025 아이보틀(Eyebottle). 안과 진료의 새로운 경험.
+              &copy; 2025 아이보틀(Eyebottle).<br className="sm:hidden" /> 안과 진료의 새로운 경험.
             </p>
           </div>
         </div>
