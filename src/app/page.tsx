@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useRef, useEffect, useActionState } from "react";
 import { 
   FilmIcon, 
@@ -419,13 +420,13 @@ export default function Home() {
             </div>
 
             {/* 소개 */}
-            <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
+            <Link href="/about" className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105 block">
               <div className="bg-gradient-to-br from-slate-500/10 to-gray-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <UserCircleIcon className="w-8 h-8 lg:w-10 lg:h-10 text-slate-600" />
               </div>
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">About Me</h3>
               <p className="text-base lg:text-lg text-slate-600">의사 경력·철학 소개</p>
-            </div>
+            </Link>
 
             {/* 문의 */}
             <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
