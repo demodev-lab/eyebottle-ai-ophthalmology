@@ -62,7 +62,7 @@
 
 2.  **의존성 설치**
     ```bash
-    pnpm install
+    npm install
     ```
 
 3.  **환경변수 설정**
@@ -77,7 +77,7 @@
 
 4.  **개발 서버 실행**
     ```bash
-    pnpm dev
+    npm run dev
     ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.

@@ -3,13 +3,17 @@
 import Image from "next/image";
 import { 
   CalendarIcon,
-  EyeIcon,
-  SparklesIcon,
-  HeartIcon,
-  UserGroupIcon,
   ArrowRightIcon,
   EnvelopeIcon
 } from "@heroicons/react/24/outline";
+import { 
+  Eye,
+  Droplets,
+  Baby,
+  Moon,
+  Microscope,
+  Contact
+} from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -53,7 +57,7 @@ export default function AboutPage() {
                 상담 예약
               </button>
               <button className="px-8 py-4 bg-slate-400 hover:bg-slate-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-                <EyeIcon className="w-5 h-5" />
+                <Eye className="w-5 h-5" />
                 진료 분야
               </button>
             </div>
@@ -69,10 +73,11 @@ export default function AboutPage() {
       {/* 2. "안녕하세요!" 섹션 */}
       <section className="max-w-7xl mx-auto px-8 lg:px-16 py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
+          <div className="w-full lg:w-3/5">
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-700 mb-6">안녕하세요!</h2>
             <p className="text-lg text-slate-500 leading-relaxed mb-8">
-              저는 안과 전문의 이동은입니다. 현재 부산 연산동, 이안과에서 근무하고 있습니다.
+              저는 안과 전문의 이동은입니다. <br className="sm:hidden" />
+              현재 부산 연산동, 이안과에서 근무하고 있습니다.<br className="sm:hidden" />
               백내장, 녹내장, 소아안과 진료를 전문으로 하고 있습니다.
             </p>
             
@@ -94,11 +99,11 @@ export default function AboutPage() {
           </div>
           
           {/* 우측 의료기기 - 최신 의료장비 섹션 */}
-          <div>
+          <div className="w-full lg:w-2/5">
             <h3 className="text-xl font-bold text-slate-700 mb-6 text-center">최신 의료장비</h3>
             
             {/* 슬라이더 컨테이너 */}
-            <div className="relative w-full h-[320px] overflow-hidden rounded-2xl">
+            <div className="relative w-full h-[280px] lg:h-[320px] overflow-hidden rounded-2xl">
               {/* 슬라이더 래퍼 */}
               <div className="flex transition-transform duration-1000 ease-in-out h-full animate-[slide_8s_infinite]">
                 
@@ -186,73 +191,73 @@ export default function AboutPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* 백내장 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-              <EyeIcon className="w-8 h-8 text-blue-400" />
+          <div className="bg-blue-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Eye className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">백내장</h3>
-            <p className="text-slate-500 mb-4">난치성 백내장 포함 최신 수술 기법 적용</p>
-            <button className="text-indigo-400 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <p className="text-slate-600 mb-4">난치성 백내장 포함<br className="sm:hidden" /> 최신 수술 기법 적용</p>
+            <button className="text-indigo-500 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
               자세히 보기 <ArrowRightIcon className="w-4 h-4" />
             </button>
           </div>
 
           {/* 녹내장 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="w-16 h-16 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-              <EyeIcon className="w-8 h-8 text-emerald-400" />
+          <div className="bg-emerald-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Droplets className="w-8 h-8 text-emerald-500" />
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">녹내장</h3>
-            <p className="text-slate-500 mb-4">조기 진단 및 치료 · 정기적인 관리</p>
-            <button className="text-indigo-400 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <p className="text-slate-600 mb-4">조기 진단 및 치료<br className="sm:hidden" /> · 정기적인 관리</p>
+            <button className="text-indigo-500 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
               자세히 보기 <ArrowRightIcon className="w-4 h-4" />
             </button>
           </div>
 
           {/* 소아안과 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="w-16 h-16 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-              <UserGroupIcon className="w-8 h-8 text-purple-400" />
+          <div className="bg-purple-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Baby className="w-8 h-8 text-purple-500" />
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">소아안과</h3>
-            <p className="text-slate-500 mb-4">소아 사시, 약시, 근시 관리</p>
-            <button className="text-indigo-400 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <p className="text-slate-600 mb-4">소아 사시, 약시,<br className="sm:hidden" /> 근시 관리</p>
+            <button className="text-indigo-500 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
               자세히 보기 <ArrowRightIcon className="w-4 h-4" />
             </button>
           </div>
 
           {/* 드림렌즈 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="w-16 h-16 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">
-              <SparklesIcon className="w-8 h-8 text-indigo-400" />
+          <div className="bg-indigo-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Moon className="w-8 h-8 text-indigo-500" />
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">드림렌즈</h3>
-            <p className="text-slate-500 mb-4">근시 진행 억제 · 안전한 관리</p>
-            <button className="text-indigo-400 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <p className="text-slate-600 mb-4">근시 진행 억제<br className="sm:hidden" /> · 안전한 관리</p>
+            <button className="text-indigo-500 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
               자세히 보기 <ArrowRightIcon className="w-4 h-4" />
             </button>
           </div>
 
           {/* 마이오사이트 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="w-16 h-16 bg-cyan-50 rounded-xl flex items-center justify-center mb-4">
-              <HeartIcon className="w-8 h-8 text-cyan-400" />
+          <div className="bg-cyan-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Microscope className="w-8 h-8 text-cyan-500" />
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">마이오사이트</h3>
-            <p className="text-slate-500 mb-4">근시 진행 억제 연구 및 관리</p>
-            <button className="text-indigo-400 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <p className="text-slate-600 mb-4">근시 진행 억제<br className="sm:hidden" /> 연구 및 관리</p>
+            <button className="text-indigo-500 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
               자세히 보기 <ArrowRightIcon className="w-4 h-4" />
             </button>
           </div>
 
           {/* 콘택트렌즈 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="w-16 h-16 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
-              <EyeIcon className="w-8 h-8 text-amber-400" />
+          <div className="bg-amber-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Contact className="w-8 h-8 text-amber-500" />
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">콘택트렌즈</h3>
-            <p className="text-slate-500 mb-4">맞춤형 처방 · 안전한 관리</p>
-            <button className="text-indigo-400 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+            <p className="text-slate-600 mb-4">맞춤형 처방<br className="sm:hidden" /> · 안전한 관리</p>
+            <button className="text-indigo-500 font-semibold flex items-center gap-1 hover:gap-2 transition-all">
               자세히 보기 <ArrowRightIcon className="w-4 h-4" />
             </button>
           </div>
