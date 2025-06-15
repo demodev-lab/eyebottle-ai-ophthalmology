@@ -76,24 +76,33 @@ npm install html2canvas
 #### **1. 설치 전 체크리스트**
 - [ ] 현재 개발 서버가 정상 작동하는가?
 - [ ] package-lock.json이 존재하는가?
-- [ ] Git 상태가 깨끗한가? (`git status` 확인)
-- [ ] 백업 커밋을 만들었는가?
+- [ ] Git 상태를 확인했는가? (`git status`)
+- [ ] 작업 중인 중요한 내용을 stash로 보관했는가?
+- [ ] 깨끗한 상태에서 시작하는가?
 
 #### **2. 안전한 패키지 설치 절차**
 ```bash
-# 1단계: 현재 상태 백업
-git add .
-git commit -m "🔒 패키지 설치 전 백업"
+# 1단계: 현재 상태 확인 및 정리
+git status  # 현재 변경사항 확인
+git stash   # 작업 중인 내용이 있다면 임시 저장
 
-# 2단계: 패키지 하나씩 설치
-npm install [package-name]
+# 2단계: 깨끗한 상태에서 시작
+git checkout .  # 추적된 파일의 변경사항 되돌리기
+git clean -fd   # 추적되지 않은 파일 정리
 
-# 3단계: 개발 서버 테스트
+# 3단계: 개발 서버 정상 작동 확인
 npm run dev
 
-# 4단계: 문제 발생 시 즉시 롤백
+# 4단계: 패키지 하나씩 설치
+npm install [package-name]
+
+# 5단계: 즉시 테스트
+npm run dev
+
+# 6단계: 문제 발생 시 즉시 롤백
 git checkout .
 npm ci
+git stash pop  # 임시 저장한 작업 복원 (필요시)
 ```
 
 #### **3. 위험도별 패키지 분류**
@@ -183,8 +192,9 @@ npm run dev  # ✅ 성공
 ### **작업 시작 전**
 - [ ] 현재 Git 상태 확인 (`git status`)
 - [ ] 개발 서버 정상 작동 확인
-- [ ] 백업 커밋 생성
+- [ ] 작업 중인 내용 안전하게 보관 (`git stash`)
 - [ ] 패키지 매니저 npm 확인
+- [ ] 깨끗한 작업 환경 확보
 
 ### **패키지 설치 시**
 - [ ] 위험도 분류 확인 (🟢🟡🔴)
@@ -204,22 +214,48 @@ npm run dev  # ✅ 성공
 
 ### **새 기능 개발 시**
 ```bash
-# 1. 새 브랜치 생성 (복잡한 기능의 경우)
+# 1. 현재 작업 저장
+git stash  # 작업 중인 내용 임시 저장
+
+# 2. 새 브랜치 생성 (복잡한 기능의 경우)
 git checkout -b feature/new-feature
 
-# 2. UI 먼저 개발 (패키지 설치 없이)
-# 3. 기본 기능 구현
-# 4. 테스트 후 패키지 필요 시 단계별 추가
-# 5. 완성 후 main 브랜치에 병합
+# 3. UI 먼저 개발 (패키지 설치 없이)
+# 4. 기본 기능 구현
+# 5. 테스트 후 패키지 필요 시 단계별 추가
+# 6. 완성 후 main 브랜치에 병합
+git checkout main
+git merge feature/new-feature
+git branch -d feature/new-feature
 ```
 
 ### **안전한 실험 환경**
+
+#### **방법 1: 별도 테스트 디렉토리**
 ```bash
-# 별도 디렉토리에서 패키지 테스트
-mkdir test-packages
-cd test-packages
+# 완전히 분리된 환경에서 테스트
+mkdir ../test-packages
+cd ../test-packages
 npm init -y
-npm install jspdf  # 테스트 후 메인 프로젝트에 적용
+npm install jspdf html2canvas  # 위험한 패키지들 테스트
+# 문제없으면 메인 프로젝트에 적용
+```
+
+#### **방법 2: Git 브랜치 활용**
+```bash
+# 실험용 브랜치 생성
+git checkout -b experiment/pdf-feature
+npm install jspdf
+# 테스트 후 문제 발생 시
+git checkout main
+git branch -D experiment/pdf-feature  # 브랜치 완전 삭제
+```
+
+#### **방법 3: Docker 컨테이너 (고급)**
+```bash
+# 완전히 격리된 환경에서 테스트
+docker run -it --rm -v $(pwd):/app node:18 bash
+cd /app && npm install jspdf
 ```
 
 ---
@@ -248,6 +284,12 @@ npm run dev
 
 ---
 
-**⚡ 핵심 원칙: "안전 제일, 단계별 접근, 즉시 롤백"**
+**⚡ 핵심 원칙: "격리된 환경에서 테스트, 단계별 접근, 즉시 롤백"**
+
+**🛡️ 안전 수칙:**
+- 무분별한 `git add .` 금지
+- 의미 없는 백업 커밋 금지  
+- `git stash` 활용으로 작업 보호
+- 실험은 별도 환경에서
 
 이 가이드를 따라 Claude Code와 안전하게 협업하세요! 🤝 
