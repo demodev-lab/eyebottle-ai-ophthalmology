@@ -93,11 +93,88 @@ export default function AboutPage() {
             </div>
           </div>
           
-          {/* 우측 의료기기 사진 */}
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 h-[400px] flex items-center justify-center">
-            <div className="text-center">
-              <SparklesIcon className="w-24 h-24 text-indigo-300 mx-auto mb-4" />
-              <p className="text-slate-500">최신 의료 장비</p>
+          {/* 우측 의료기기 - 최신 의료장비 섹션 */}
+          <div>
+            <h3 className="text-xl font-bold text-slate-700 mb-6 text-center">최신 의료장비</h3>
+            
+            {/* 슬라이더 컨테이너 */}
+            <div className="relative w-full h-[320px] overflow-hidden rounded-2xl">
+              {/* 슬라이더 래퍼 */}
+              <div className="flex transition-transform duration-1000 ease-in-out h-full animate-[slide_8s_infinite]">
+                
+                {/* 알콘 센츄리온 골드 슬라이드 */}
+                <div className="min-w-full h-full relative group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+                  <div className="relative backdrop-blur-md bg-white/90 border border-white/30 rounded-2xl p-8 h-full flex flex-col items-center justify-center overflow-hidden shadow-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5" />
+                    
+                    {/* 이미지 컨테이너 - 흰 배경과 자연스럽게 블렌딩 */}
+                    <div className="relative z-10 w-full h-[220px] flex items-center justify-center mb-6">
+                      <div className="relative w-[200px] h-[200px] rounded-2xl bg-white/80 flex items-center justify-center backdrop-blur-sm shadow-inner">
+                        <Image
+                          src="/centurion-gold-transparent.png"
+                          alt="알콘 센츄리온 골드"
+                          width={180}
+                          height={180}
+                          className="object-contain drop-shadow-lg transition-all duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="relative z-10 text-center">
+                      <p className="font-bold text-slate-700 text-lg mb-1">Alcon Centurion Gold</p>
+                      <p className="text-sm text-slate-600 mb-2">백내장 수술 시스템</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">최신 초음파 기술로 안전하고 정밀한 백내장 수술을 제공합니다</p>
+                    </div>
+                    
+                    {/* Hover effect overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                </div>
+                
+                {/* Zeiss Artevo 현미경 슬라이드 */}
+                <div className="min-w-full h-full relative group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+                  <div className="relative backdrop-blur-md bg-white/90 border border-white/30 rounded-2xl p-8 h-full flex flex-col items-center justify-center overflow-hidden shadow-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5" />
+                    
+                    <div className="relative z-10 w-full h-[220px] flex items-center justify-center mb-6">
+                      <div className="relative w-[200px] h-[200px] rounded-2xl bg-white/80 flex items-center justify-center backdrop-blur-sm shadow-inner">
+                        <Image
+                          src="/artevo-zeiss.png"
+                          alt="Zeiss Artevo 현미경"
+                          width={180}
+                          height={180}
+                          className="object-contain drop-shadow-lg transition-all duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="relative z-10 text-center">
+                      <p className="font-bold text-slate-700 text-lg mb-1">Zeiss Artevo 800</p>
+                      <p className="text-sm text-slate-600 mb-2">수술용 현미경</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">첨단 광학 기술로 정밀한 수술 시야를 제공하는 프리미엄 현미경</p>
+                    </div>
+                    
+                    {/* Hover effect overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                </div>
+                
+              </div>
+              
+              {/* 슬라이더 인디케이터 */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                <div className="w-2 h-2 bg-white/50 rounded-full animate-[indicator1_8s_infinite]"></div>
+                <div className="w-2 h-2 bg-white/50 rounded-full animate-[indicator2_8s_infinite]"></div>
+              </div>
+            </div>
+            
+            {/* Bottom decoration line */}
+            <div className="mt-6 flex items-center justify-center">
+              <div className="h-[1px] w-16 bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
+              <p className="mx-3 text-xs text-slate-400 italic">Premium Medical Equipment</p>
+              <div className="h-[1px] w-16 bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
             </div>
           </div>
         </div>

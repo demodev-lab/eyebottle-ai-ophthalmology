@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.med.equipment)",
+      "Bash(wget:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": []
+  }
+}
