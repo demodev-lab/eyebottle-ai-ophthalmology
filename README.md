@@ -119,6 +119,8 @@ eyebottle/
 ├── .env                    # 환경변수 파일 (Git 무시)
 ├── components.json         # Shadcn/ui 설정
 ├── package.json            # 의존성 (Shadcn/ui 포함)
+├── CLAUDE_CODE_GUIDE.md    # Claude Code 사용 가이드
+├── DEVELOPMENT_LOG.md      # 개발 이력 및 변경사항
 └── README.md
 ```
 
@@ -173,6 +175,11 @@ eyebottle/
 ## 📄 라이선스
 
 MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+
+## 📚 개발 문서
+
+- **[Claude Code 사용 가이드](CLAUDE_CODE_GUIDE.md)** - AI 협업 시 주의사항 및 안전 수칙
+- **[개발 로그](DEVELOPMENT_LOG.md)** - 주요 변경사항 및 개발 이력
 
 ## 📞 연락처
 
