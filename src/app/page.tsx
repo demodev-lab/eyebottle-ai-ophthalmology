@@ -324,23 +324,25 @@ export default function Home() {
             </div>
 
             {/* 검진결과 작성 */}
-            <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
-              <div className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <DocumentTextIcon className="w-8 h-8 lg:w-10 lg:h-10 text-purple-600" />
+            <Link href="/exam-results" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500">
+              <div className="bg-white/60 backdrop-blur-sm h-full rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-teal-100 to-cyan-200 rounded-2xl shadow-inner-sm">
+                  <DocumentTextIcon className="h-8 w-8 text-teal-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">검진결과 작성</h3>
+                <p className="text-slate-500 leading-relaxed">DM,HTN,눈종검 회신서류</p>
+                <div className="mt-4 text-sm font-medium text-cyan-600">
+                  <p>• 질환별 하위 폴더</p>
+                  <p>• 자동 서류 생성</p>
+                </div>
               </div>
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">검진결과 작성</h3>
-              <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">DM,HTN,눈종검 회신서류</p>
-              <div className="text-sm lg:text-base text-slate-500 space-y-2 font-medium">
-                <p>• 질환별 하위 폴더</p>
-                <p>• 자동 서류 생성</p>
-              </div>
-            </div>
+            </Link>
           </div>
 
           {/* 추가 기능 4개 */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-10">
             {/* 진료녹음 메모 */}
-            <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <MicrophoneIcon className="w-8 h-8 lg:w-10 lg:h-10 text-red-600" />
               </div>
@@ -353,7 +355,7 @@ export default function Home() {
             </div>
 
             {/* 환자 안내자료 */}
-            <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-gradient-to-br from-teal-500/10 to-cyan-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <BookOpenIcon className="w-8 h-8 lg:w-10 lg:h-10 text-teal-600" />
               </div>
@@ -366,7 +368,7 @@ export default function Home() {
             </div>
 
             {/* 문진 도우미 */}
-            <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-gradient-to-br from-indigo-500/10 to-blue-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <ClipboardDocumentListIcon className="w-8 h-8 lg:w-10 lg:h-10 text-indigo-600" />
               </div>
@@ -379,7 +381,7 @@ export default function Home() {
             </div>
 
             {/* 진료 도우미 */}
-            <div className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-lg border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <HeartIcon className="w-8 h-8 lg:w-10 lg:h-10 text-orange-600" />
               </div>

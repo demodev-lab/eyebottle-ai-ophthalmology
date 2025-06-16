@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>눈종합검사 결과 안내서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @media print {
+        @page { size: A4; margin: 20mm; }
+        .page-break { page-break-after: always; }
+        body { -webkit-print-color-adjust: exact; }
+      }
+    </style>
+  </head>
+  <body class="font-sans text-sm leading-relaxed text-gray-900">
+    <!-- ================= PAGE 1 ================= -->
+    <section class="max-w-[18cm] mx-auto border border-gray-300 p-6 rounded-xl shadow-lg">
+      <!-- Header -->
+      <header class="text-center mb-6">
+        <h1 class="text-2xl font-semibold">눈종합검사 결과 안내서</h1>
+        <p class="text-xs text-gray-500">검사일: 2025-06-15</p>
+      </header>
+
+      <!-- Executive Summary -->
+      <section class="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h2 class="text-base font-semibold mb-2">요약</h2>
+        <ul class="list-disc pl-6 space-y-1">
+          <li><span class="font-medium">Low Risk</span> &mdash; 전반적 상태 양호</li>
+          <li>주요 이상: 경미한 건성안 의심</li>
+          <li>12개월 후 간단한 시력·안압·안저 검사 권장</li>
+        </ul>
+      </section>
+
+      <!-- Patient Info -->
+      <section class="grid grid-cols-2 gap-x-6 gap-y-2 mb-6">
+        <div><span class="font-medium">환자</span><span class="ml-2">홍길동</span></div>
+        <div><span class="font-medium">생년월일</span><span class="ml-2">1958-10-17</span></div>
+        <div><span class="font-medium">검사기관</span><span class="ml-2">이안과의원</span></div>
+        <div><span class="font-medium">판독의</span><span class="ml-2">이동은</span></div>
+      </section>
+
+      <!-- Vision & IOP -->
+      <section class="mb-6">
+        <h2 class="text-base font-semibold mb-2">1. 시력 &amp; 안압</h2>
+        <div class="grid grid-cols-2 gap-6">
+          <table class="w-full border text-center">
+            <caption class="caption-top font-medium mb-1 text-left">시력</caption>
+            <thead class="bg-gray-100"><tr><th class="border p-1"> </th><th class="border p-1">나안</th><th class="border p-1">교정</th></tr></thead>
+            <tbody>
+              <tr><td class="border p-1 font-medium">우안</td><td class="border p-1">0.8</td><td class="border p-1">1.0</td></tr>
+              <tr><td class="border p-1 font-medium">좌안</td><td class="border p-1">0.7</td><td class="border p-1">0.9</td></tr>
+            </tbody>
+          </table>
+          <table class="w-full border text-center">
+            <caption class="caption-top font-medium mb-1 text-left">안압 (mmHg)</caption>
+            <thead class="bg-gray-100"><tr><th class="border p-1"> </th><th class="border p-1">결과</th></tr></thead>
+            <tbody>
+              <tr><td class="border p-1 font-medium">우안</td><td class="border p-1">16</td></tr>
+              <tr><td class="border p-1 font-medium">좌안</td><td class="border p-1">17</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Basic Exam -->
+      <section class="mb-6">
+        <h2 class="text-base font-semibold mb-2">2. 기본 검사</h2>
+        <table class="w-full border text-left">
+          <tbody>
+            <tr class="bg-gray-50"><th class="border p-1 w-40">굴절</th><td class="border p-1">경도 근시 / 규칙 난시</td></tr>
+            <tr><th class="border p-1">외안부</th><td class="border p-1">결막 약간 충혈</td></tr>
+            <tr class="bg-gray-50"><th class="border p-1">수정체</th><td class="border p-1">수정체 투명</td></tr>
+            <tr><th class="border p-1">안저</th><td class="border p-1">정상</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Recommendations -->
+      <section class="mb-8">
+        <h2 class="text-base font-semibold mb-2">3. 권고 사항</h2>
+        <ol class="list-decimal pl-6 space-y-1">
+          <li>인공눈물 하루 4회 &nbsp;—&nbsp; 건성안 증상 지속 시 유지</li>
+          <li>12개월 후 간단한 시력·안압·안저 검사 권장</li>
+        </ol>
+      </section>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ================= PAGE 2 ================= -->
+    <section class="max-w-[18cm] mx-auto border border-gray-300 p-6 rounded-xl shadow-lg">
+      <header class="text-center mb-6">
+        <h2 class="text-xl font-semibold">정밀 검사 세부 소견</h2>
+      </header>
+
+      <!-- Topography -->
+      <section class="mb-6">
+        <h3 class="text-base font-semibold mb-2">1. 각막·전안부 (토포그래피)</h3>
+        <p class="pl-4 flex items-center space-x-2 text-sm">
+          <span class="px-2 py-0.5 rounded bg-green-100 text-green-800 text-xs">정상</span>
+          <span>각막 곡률·두께 모두 정상 범위이며 원추각막 소견 없음.</span>
+        </p>
+      </section>
+
+      <!-- OCT -->
+      <section class="mb-6">
+        <h3 class="text-base font-semibold mb-2">2. 망막·시신경 (OCT)</h3>
+        <p class="pl-4 flex items-center space-x-2 text-sm">
+          <span class="px-2 py-0.5 rounded bg-green-100 text-green-800 text-xs">정상</span>
+          <span>황반 두께 및 망막신경섬유층 두께 모두 정상 범위, 황반부 부종·신생혈관 없음.</span>
+        </p>
+      </section>
+
+      <!-- VF -->
+      <section class="mb-6">
+        <h3 class="text-base font-semibold mb-2">3. 시야 검사 (VF)</h3>
+        <p class="pl-4 flex items-center space-x-2 text-sm">
+          <span class="px-2 py-0.5 rounded bg-green-100 text-green-800 text-xs">정상</span>
+          <span>시야 지표(MD, PSD, VFI) 정상 범위, 특이 결손 소견 없음.</span>
+        </p>
+      </section>
+
+      <!-- Biometry & Others -->
+      <section class="mb-6">
+        <h3 class="text-base font-semibold mb-2">4. 생체계측 &amp; 특수 검사</h3>
+        <p class="pl-4 flex items-center space-x-2 text-sm">
+          <span class="px-2 py-0.5 rounded bg-green-100 text-green-800 text-xs">정상</span>
+          <span>전방 깊이·각막직경 모두 정상 범위, 안구초음파 이상 없음.</span>
+        </p>
+      </section>
+
+      <!-- Integrated Plan -->
+      <section class="mb-8">
+        <h3 class="text-base font-semibold mb-2">5. 통합 해석 &amp; 향후 계획</h3>
+        <ol class="list-decimal pl-6 space-y-1 text-sm">
+          <li>현재 검사 결과는 모두 정상 범위이며, 정기적인 검진이 요합니다.</li>
+        </ol>
+      </section>
+
+      <!-- Footer (clinic info) -->
+      <footer class="flex justify-between items-start mt-6 pt-4 border-t border-gray-200 text-xs leading-snug">
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+          <div>
+            <div class="font-medium">이안과의원</div>
+            <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
+            <div>Tel. 051-866-7592~4</div>
+          </div>
+        </div>
+        <div class="text-right text-gray-500">발행일: 2025-06-15</div>
+      </footer>
+    </section>
+  </body>
+</html>
