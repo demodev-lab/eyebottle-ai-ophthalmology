@@ -333,6 +333,58 @@ export default function Home() {
                 </div>
               </div>
             </Link>
+
+            {/* 진료녹음 메모 */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl shadow-inner-sm">
+                <MicrophoneIcon className="h-8 w-8 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">진료녹음 메모</h3>
+              <p className="text-slate-500 leading-relaxed">간편 사용 녹화 제공</p>
+              <div className="mt-4 text-sm font-medium text-orange-600">
+                <p>• 자동 녹음 & STT 전사</p>
+                <p>• 클라우드 저장&정리</p>
+              </div>
+            </div>
+
+            {/* 환자 안내자료 */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl shadow-inner-sm">
+                <BookOpenIcon className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">환자 안내자료</h3>
+              <p className="text-slate-500 leading-relaxed">수술 전후 안내자료</p>
+              <div className="mt-4 text-sm font-medium text-emerald-600">
+                <p>• 안과 관련 안내자료</p>
+                <p>• PDF 다운로드 제공</p>
+              </div>
+            </div>
+
+            {/* 문진 도우미 */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-indigo-100 to-blue-200 rounded-2xl shadow-inner-sm">
+                <ClipboardDocumentListIcon className="h-8 w-8 text-indigo-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">문진 도우미</h3>
+              <p className="text-slate-500 leading-relaxed">증상별 검사 안내</p>
+              <div className="mt-4 text-sm font-medium text-blue-600">
+                <p>• 플로차트/챗봇 형태</p>
+                <p>• 비용 & 특수 안내사항</p>
+              </div>
+            </div>
+
+            {/* 진료 도우미 */}
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-red-100 to-rose-200 rounded-2xl shadow-inner-sm">
+                <HeartIcon className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">진료 도우미</h3>
+              <p className="text-slate-500 leading-relaxed">보험 절차 안내</p>
+              <div className="mt-4 text-sm font-medium text-rose-600">
+                <p>• 산정특례 & 보험코드</p>
+                <p>• 주사 트래커 & DB</p>
+              </div>
+            </div>
           </div>
         </section>
       </main>
