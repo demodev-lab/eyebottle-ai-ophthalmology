@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, FileText, Printer, Eye, Heart, Activity } from 'lucide-react'
 
 // 검진 타입 정의
@@ -1400,7 +1401,7 @@ export default function ExamResultsPage() {
         {/* Footer */}
         <footer className="flex justify-between items-start mt-4 pt-3 border-t border-gray-200 print:mt-3 print:pt-2">
           <div className="flex items-start space-x-2 text-xs leading-snug print:text-[10px] print:space-x-1">
-            <img src="/lee-eyeclinic-logo.png" alt="이안과의원" className="w-8 h-8 rounded-full print:w-6 print:h-6" />
+            <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
             <div>
               <div className="font-medium">이안과의원</div>
               <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
@@ -1562,7 +1563,7 @@ export default function ExamResultsPage() {
         {/* Footer */}
         <footer className="flex justify-between items-start mt-6 pt-4 border-t border-gray-200">
           <div className="flex items-start space-x-3 text-xs leading-snug">
-            <img src="/lee-eyeclinic-logo.png" alt="이안과의원" className="w-10 h-10 rounded-full" />
+            <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
             <div>
               <div className="font-medium">이안과의원</div>
               <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
@@ -1807,7 +1808,7 @@ export default function ExamResultsPage() {
           {/* Footer */}
           <footer className="flex justify-between items-start mt-6 pt-4 border-t border-gray-200">
             <div className="flex items-start space-x-3 text-xs leading-snug">
-              <img src="/lee-eyeclinic-logo.png" alt="이안과의원" className="w-10 h-10 rounded-full" />
+              <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
               <div>
                 <div className="font-medium">이안과의원</div>
                 <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
@@ -1943,7 +1944,7 @@ export default function ExamResultsPage() {
           {/* Footer */}
           <footer className="flex justify-between items-start mt-6 pt-4 border-t border-gray-200">
             <div className="flex items-start space-x-3 text-xs leading-snug">
-              <img src="/lee-eyeclinic-logo.png" alt="이안과의원" className="w-10 h-10 rounded-full" />
+              <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
               <div>
                 <div className="font-medium">이안과의원</div>
                 <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
