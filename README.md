@@ -15,7 +15,7 @@
 1. **🎬 네컷 안과툰** - 만화 업로드 & PDF 다운로드, NotebookLM 팟캐스트 연동
 2. **🤖 아이보틀 챗봇** - 수술확인서·진단서 자동 작성 (업데이트 예정)
 3. **📊 마이오가드 그래프** - 근시 진행도 차트 (업데이트 예정)
-4. **📋 검진결과 작성** - DM,HTN,눈종검 회신서류 자동 생성
+4. **📋 검진결과 작성** - DM,HTN,눈종검 회신서류 실시간 작성 ✅
 5. **🎙️ 진료녹음 메모** - STT 전사 & 클라우드 저장
 6. **📖 환자 안내자료** - 수술 전후 안내자료 PDF 제공
 7. **📝 문진 도우미** - 증상별 검사 플로차트/챗봇
@@ -102,11 +102,15 @@
 eyebottle/
 ├── src/
 │   ├── app/
-│   │   ├── globals.css     # 글로벌 스타일 + Tailwind CSS
-│   │   ├── layout.tsx      # 루트 레이아웃
-│   │   ├── page.tsx        # 메인 랜딩 페이지 (홈)
+│   │   ├── globals.css       # 글로벌 스타일 + Tailwind CSS
+│   │   ├── layout.tsx        # 루트 레이아웃
+│   │   ├── page.tsx          # 메인 랜딩 페이지 (홈)
+│   │   ├── about/
+│   │   │   └── page.tsx      # About Me 페이지
+│   │   ├── exam-results/
+│   │   │   └── page.tsx      # 검진결과 작성 시스템 ✅
 │   │   └── _test/
-│   │       └── page.tsx    # Shadcn/ui 테스트 페이지
+│   │       └── page.tsx      # Shadcn/ui 테스트 페이지
 │   ├── actions/
 │   │   └── notion.ts       # Notion API 서버 액션
 │   ├── components/
@@ -115,7 +119,11 @@ eyebottle/
 │       ├── notion.ts       # Notion 클라이언트 초기화
 │       └── utils.ts        # Tailwind + clsx 유틸리티
 ├── public/
-│   └── eyebottle-logo.png  # 커스텀 로고
+│   ├── eyebottle-logo.png          # 커스텀 로고
+│   ├── lee-eyeclinic-logo.png      # 병원 로고
+│   ├── diabeticretinopathy_exam_report.html  # 당뇨망막병증 템플릿
+│   ├── htn_retinopathy_report.html           # 고혈압망막병증 템플릿
+│   └── comprehensive_exam_report.html        # 눈종합검진 템플릿
 ├── .env                    # 환경변수 파일 (Git 무시)
 ├── components.json         # Shadcn/ui 설정
 ├── package.json            # 의존성 (Shadcn/ui 포함)
@@ -137,8 +145,19 @@ eyebottle/
 - [x] **Shadcn/ui 통합**: 모던 컴포넌트 라이브러리 도입
 - [x] **반응형 디자인**: 모바일부터 데스크톱까지 최적화
 - [x] **베타테스터 신청 폼**: Notion DB 연동 기능 (Server Action)
+- [x] **About Me 페이지**: 전문의 소개 페이지 완성
+- [x] **검진결과 작성 시스템**: 3가지 검진(DM/HTN/종합) 실시간 작성 ✅
+  - [x] 좌우 분할 UI (입력 폼 40% + 실시간 미리보기 60%)
+  - [x] 당뇨망막병증 자동 멘트 시스템 (5단계 기반)
+  - [x] 브라우저 네이티브 인쇄 기능
+  - [x] A4 최적화 레이아웃
+  - [x] **검진결과 인쇄 최적화**: 웹 UI가 함께 인쇄되는 문제 해결
 
 ### **🚧 진행 중**
+- [ ] **고혈압망막병증 자동 멘트**: 1~4기 단계별 시스템
+- [ ] **눈종합검진 위험도별 멘트**: Low/Moderate/High Risk 자동화
+
+### **📋 예정 기능**
 - [ ] 사용자 인증 시스템 구현
 - [ ] 챗봇 Eye Bottle 기능 완성
 
@@ -146,7 +165,7 @@ eyebottle/
 
 1.  **핵심 기능 3-4개 MVP 완성:**
     -   [ ] **🤖 아이보틀 챗봇:** 수술확인서·진단서 자동 작성 기능 구현
-    -   [ ] **📋 검진결과 작성:** DM, HTN, 눈종검 회신 서류 자동 생성 기능 구현
+    -   [x] **📋 검진결과 작성:** DM, HTN, 눈종검 회신 서류 자동 생성 기능 구현 ✅
     -   [ ] **📖 환자 안내자료:** 주요 수술/질환 안내자료 PDF 제공 기능 강화
     -   [ ] **✨ 기능 우선순위:** 가장 반복적인 업무부터 자동화하여 즉각적인 효율성 증대
 
