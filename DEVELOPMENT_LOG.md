@@ -4,6 +4,36 @@
 
 ---
 
+### **2025년 6월 23일**
+
+- **베타테스터 신청 기능 완전 제거** 🔧
+  - **제거된 기능**: 
+    - 메인 페이지의 베타테스터 신청 Dialog 팝업 및 폼
+    - 하단 메뉴의 베타테스터 신청 카드 (4개 → 3개로 축소)
+    - Notion API 연동 코드 (`actions/notion.ts`, `lib/notion.ts`)
+    - 관련 React hooks 및 컴포넌트 import
+  
+- **UI 균형성 개선** 🎨
+  - **카드 높이 균일화**:
+    - 모든 기능 카드에 `h-full flex flex-col` 클래스 추가
+    - 그리드 컨테이너에 `items-stretch` 클래스 적용
+    - 검진결과 작성 카드에 '실시간 미리보기' 항목 추가로 콘텐츠 균형 맞춤
+  - **하단 메뉴 개선**:
+    - 3개 카드(업데이트 노트, About Me, Contact)로 재구성
+    - 동일한 높이 균일화 클래스 적용
+
+- **프로젝트 정리** 📁
+  - `.gitignore` 업데이트:
+    - VS Code 확장 관련 파일 추가 (`ccusage-vscode-extension/`)
+    - 로컬 설정 파일 추가 (`.claude/settings.local.json`)
+    - 임시 다운로드 파일 추가 (`packages.microsoft.gpg`, `vscode.tar.gz`)
+
+- **기타 개선사항** ✨
+  - 불필요한 import 정리 (useRef, useEffect, useActionState 등)
+  - 코드 가독성 향상을 위한 구조 단순화
+
+---
+
 ### **2025년 6월 17일**
 
 - **오류 해결 및 환경 안정화** 🔧
