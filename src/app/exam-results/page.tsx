@@ -20,7 +20,6 @@ interface PatientInfo {
 interface DiabeticData extends PatientInfo {
   summary: {
     stage: string
-    additionalFindings: string
     followUp: string
   }
   vision: {
@@ -152,7 +151,6 @@ export default function ExamResultsPage() {
     doctorName: '이동은',
     summary: {
       stage: '경증 비증식 당뇨망막병증',
-      additionalFindings: '황반부종·신생혈관 없음',
       followUp: '6개월'
     },
     vision: {
@@ -1379,7 +1377,6 @@ export default function ExamResultsPage() {
               </tr>
             </tbody>
           </table>
-          <p className="pl-3 text-sm print:text-xs print:pl-2"><span className="font-medium">소견:</span> {diabeticData.summary.additionalFindings}</p>
         </section>
 
         {/* Recommendations */}

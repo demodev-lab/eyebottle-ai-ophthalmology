@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useRef, useEffect, useActionState } from "react";
+import { useState } from "react";
 import { 
   FilmIcon, 
   ChatBubbleLeftRightIcon, 
@@ -16,52 +16,11 @@ import {
   HeartIcon,
   ClipboardDocumentListIcon,
   Bars3Icon,
-  XMarkIcon,
-  UserPlusIcon
+  XMarkIcon
 } from "@heroicons/react/24/outline";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { addBetaTesterToNotion } from '@/actions/notion';
-import { useFormStatus } from 'react-dom';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const initialState = { message: '', type: '' };
-  const [state, formAction] = useActionState(addBetaTesterToNotion, initialState);
-
-  useEffect(() => {
-    if (state?.type === 'success') {
-      alert(state.message);
-      setIsBetaDialogOpen(false);
-      formRef.current?.reset();
-    } else if (state?.type === 'error') {
-      alert(state.message);
-    }
-  }, [state]);
-
-  function SubmitButton() {
-    const { pending } = useFormStatus();
-    return (
-      <Button 
-        type="submit"
-        disabled={pending}
-        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
-      >
-        {pending ? '신청하는 중...' : '신청하기'}
-      </Button>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
@@ -277,9 +236,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 items-stretch">
             {/* 안과 만화 */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-violet-100 to-purple-200 rounded-2xl shadow-inner-sm">
                 <FilmIcon className="h-8 w-8 text-violet-600" />
               </div>
@@ -292,7 +251,7 @@ export default function Home() {
             </div>
 
             {/* 챗봇 Eye Bottle */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-rose-100 to-pink-200 rounded-2xl shadow-inner-sm">
                 <ChatBubbleLeftRightIcon className="h-8 w-8 text-rose-600" />
               </div>
@@ -305,7 +264,7 @@ export default function Home() {
             </div>
 
             {/* 마이오가드 그래프 */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-blue-100 to-sky-200 rounded-2xl shadow-inner-sm">
                 <ChartBarIcon className="h-8 w-8 text-blue-600" />
               </div>
@@ -318,8 +277,8 @@ export default function Home() {
             </div>
 
             {/* 검진결과 작성 */}
-            <Link href="/exam-results" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500">
-              <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <Link href="/exam-results" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 h-full">
+              <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-teal-100 to-cyan-200 rounded-2xl shadow-inner-sm">
                   <DocumentTextIcon className="h-8 w-8 text-teal-600" />
                 </div>
@@ -330,12 +289,13 @@ export default function Home() {
                 <p className="text-slate-500 leading-relaxed">당뇨&고혈압망막 병증, 눈종합검진</p>
                 <div className="mt-4 text-sm font-medium text-cyan-600">
                   <p>• 작성 및 인쇄</p>
+                  <p>• 실시간 미리보기</p>
                 </div>
               </div>
             </Link>
 
             {/* 진료녹음 메모 */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl shadow-inner-sm">
                 <MicrophoneIcon className="h-8 w-8 text-amber-600" />
               </div>
@@ -348,7 +308,7 @@ export default function Home() {
             </div>
 
             {/* 환자 안내자료 */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl shadow-inner-sm">
                 <BookOpenIcon className="h-8 w-8 text-green-600" />
               </div>
@@ -361,7 +321,7 @@ export default function Home() {
             </div>
 
             {/* 문진 도우미 */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-indigo-100 to-blue-200 rounded-2xl shadow-inner-sm">
                 <ClipboardDocumentListIcon className="h-8 w-8 text-indigo-600" />
               </div>
@@ -374,7 +334,7 @@ export default function Home() {
             </div>
 
             {/* 진료 도우미 */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-red-100 to-rose-200 rounded-2xl shadow-inner-sm">
                 <HeartIcon className="h-8 w-8 text-red-600" />
               </div>
@@ -392,21 +352,10 @@ export default function Home() {
       {/* 하단 메뉴 섹션 */}
       <footer id="footer-nav" className="bg-white/95 backdrop-blur-lg border-t border-slate-200/60 py-16">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-            {/* 베타테스터 신청 */}
-            <div 
-              className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105"
-              onClick={() => setIsBetaDialogOpen(true)}
-            >
-              <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <UserPlusIcon className="w-8 h-8 lg:w-10 lg:h-10 text-green-600" />
-              </div>
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">베타테스터 신청</h3>
-              <p className="text-base lg:text-lg text-slate-600">성함*이메일을 전달</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 text-center items-stretch">
 
             {/* 업데이트 노트 */}
-            <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
+            <div className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
               <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <SparklesIcon className="w-8 h-8 lg:w-10 lg:h-10 text-amber-600" />
               </div>
@@ -415,7 +364,7 @@ export default function Home() {
             </div>
 
             {/* 소개 */}
-            <Link href="/about" className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105 block">
+            <Link href="/about" className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105 block">
               <div className="bg-gradient-to-br from-slate-500/10 to-gray-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <UserCircleIcon className="w-8 h-8 lg:w-10 lg:h-10 text-slate-600" />
               </div>
@@ -424,7 +373,7 @@ export default function Home() {
             </Link>
 
             {/* 문의 */}
-            <div className="group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
+            <div className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
               <div className="bg-gradient-to-br from-sky-500/10 to-blue-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <EnvelopeIcon className="w-8 h-8 lg:w-10 lg:h-10 text-sky-600" />
               </div>
@@ -442,65 +391,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* 베타테스터 신청 팝업 */}
-      <Dialog open={isBetaDialogOpen} onOpenChange={(open) => {
-        if (!open) {
-          formRef.current?.reset();
-        }
-        setIsBetaDialogOpen(open);
-      }}>
-        <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-200/50">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-slate-800 text-center mb-2">
-              베타테스터 신청
-            </DialogTitle>
-            <DialogDescription className="text-slate-600 text-center">
-              아이보틀 베타 테스트에 참여해주시는 분들을 모집합니다.<br />
-              성함과 이메일 주소를 입력해주세요.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form ref={formRef} action={formAction} className="grid gap-6 py-4">
-            <div className="space-y-2">
-              <label htmlFor="beta-name" className="text-sm font-semibold text-slate-700">
-                성함 *
-              </label>
-              <Input
-                id="beta-name"
-                name="name"
-                placeholder="예: 김의사"
-                required
-                className="rounded-xl border-slate-200 bg-white/80 focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="beta-email" className="text-sm font-semibold text-slate-700">
-                이메일 주소 *
-              </label>
-              <Input
-                id="beta-email"
-                name="email"
-                type="email"
-                placeholder="예: doctor@hospital.com"
-                required
-                className="rounded-xl border-slate-200 bg-white/80 focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-              />
-            </div>
-            
-            <DialogFooter className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                type="button"
-                variant="outline" 
-                onClick={() => setIsBetaDialogOpen(false)}
-                className="rounded-xl border-slate-200 hover:bg-slate-50"
-              >
-                취소
-              </Button>
-              <SubmitButton />
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
