@@ -49,7 +49,6 @@
 - **GitHub Integration**: 자동 CI/CD
 
 ### **Backend & API**
-- **Notion API**: 베타테스터 신청자 데이터 관리
 - **Next.js Server Actions**: 프론트엔드-백엔드 보안 통신
 
 ## 💻 로컬 개발 환경 설정
@@ -66,14 +65,7 @@
     ```
 
 3.  **환경변수 설정**
-    프로젝트 루트 디렉터리에 `.env` 파일을 생성하고 아래 내용을 추가하세요.
-    ```env
-    # Notion API 키 (https://www.notion.so/my-integrations)
-    NOTION_API_KEY=secret_...
-
-    # 베타테스터 신청 데이터가 저장될 Notion 데이터베이스 ID
-    NOTION_DATABASE_ID=...
-    ```
+    현재 환경변수가 필요한 기능이 없습니다. 추후 필요 시 `.env` 파일을 생성하여 사용하세요.
 
 4.  **개발 서버 실행**
     ```bash
@@ -111,12 +103,9 @@ eyebottle/
 │   │   │   └── page.tsx      # 검진결과 작성 시스템 ✅
 │   │   └── _test/
 │   │       └── page.tsx      # Shadcn/ui 테스트 페이지
-│   ├── actions/
-│   │   └── notion.ts       # Notion API 서버 액션
 │   ├── components/
 │   │   └── ui/             # Shadcn/ui 컴포넌트들
 │   └── lib/
-│       ├── notion.ts       # Notion 클라이언트 초기화
 │       └── utils.ts        # Tailwind + clsx 유틸리티
 ├── public/
 │   ├── eyebottle-logo.png          # 커스텀 로고
@@ -127,8 +116,11 @@ eyebottle/
 ├── .env                    # 환경변수 파일 (Git 무시)
 ├── components.json         # Shadcn/ui 설정
 ├── package.json            # 의존성 (Shadcn/ui 포함)
+├── docs/
+│   └── prd/                # 제품 요구사항 문서
 ├── CLAUDE_CODE_GUIDE.md    # Claude Code 사용 가이드
 ├── DEVELOPMENT_LOG.md      # 개발 이력 및 변경사항
+├── PROJECT_HISTORY.md      # 프로젝트 전체 히스토리
 └── README.md
 ```
 
@@ -142,7 +134,6 @@ eyebottle/
 
 ### **✅ 완료된 기능**
 - [x] **홈페이지 리뉴얼**: 글래스모피즘 디자인 적용
-- [x] **Shadcn/ui 통합**: 모던 컴포넌트 라이브러리 도입
 - [x] **반응형 디자인**: 모바일부터 데스크톱까지 최적화
 - [x] **About Me 페이지**: 전문의 소개 페이지 완성
 - [x] **검진결과 작성 시스템**: 3가지 검진(DM/HTN/종합) 실시간 작성 ✅
@@ -157,8 +148,8 @@ eyebottle/
 - [x] **카드 UI 디자인 개선**:
   - 기능 카드들의 깨진 레이아웃 복구 및 디자인 통일성 확보
   - '검진결과 작성' 카드에 `NEW!` 배지를 추가하여 시각적 강조
-- [x] **베타테스터 신청 기능 제거** (2025.06.23):
-  - Notion API 연동 코드 완전 삭제
+- [x] **UI 개선 및 코드 정리** (2025.06.23):
+  - 베타테스터 신청 기능 완전 제거
   - 하단 메뉴 구성 단순화 (4개 → 3개)
   - UI 균형성을 위한 카드 높이 균일화
 
@@ -167,7 +158,11 @@ eyebottle/
 - [ ] **눈종합검진 위험도별 멘트**: Low/Moderate/High Risk 자동화
 
 ### **📋 예정 기능**
-- [ ] 사용자 인증 시스템 구현
+- [ ] **근시케어 차트 (MyoCare Chart)**: 종합 환자 관리 시스템 (4-5주 예정)
+  - [ ] 대시보드 및 환자 관리
+  - [ ] 검사 데이터 입력 및 차트 시각화
+  - [ ] EMR 복사 및 보고서 출력
+- [ ] 사용자 인증 시스템 구현 (Supabase Auth)
 - [ ] 챗봇 Eye Bottle 기능 완성
 
 ### **🎯 6개월 목표 ( ~ 2025년 12월)**
@@ -208,6 +203,8 @@ MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 - **[Claude Code 사용 가이드](CLAUDE_CODE_GUIDE.md)** - AI 협업 시 주의사항 및 안전 수칙
 - **[개발 로그](DEVELOPMENT_LOG.md)** - 주요 변경사항 및 개발 이력
+- **[프로젝트 히스토리](PROJECT_HISTORY.md)** - 전체 프로젝트 이벤트 시간순 기록
+- **[PRD 문서](docs/prd/)** - 제품 요구사항 문서
 
 ## 📞 연락처
 
