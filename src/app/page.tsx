@@ -263,13 +263,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 마이오가드 그래프 */}
+            {/* 근시케어 차트 */}
             <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-blue-100 to-sky-200 rounded-2xl shadow-inner-sm">
                 <ChartBarIcon className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-3">마이오가드 그래프</h3>
-              <p className="text-slate-500 leading-relaxed">근시 진행도 차트</p>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">근시케어 차트</h3>
+              <p className="text-slate-500 leading-relaxed">MyoCare Chart</p>
               <div className="mt-4 text-sm font-medium text-sky-600">
                 <p>• 환자별 진행도 시각화</p>
                 <p>• (업데이트 예정)</p>
