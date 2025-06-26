@@ -117,7 +117,8 @@ eyebottle/
 ├── components.json         # Shadcn/ui 설정
 ├── package.json            # 의존성 (Shadcn/ui 포함)
 ├── docs/
-│   └── prd/                # 제품 요구사항 문서
+│   ├── prd/                # 제품 요구사항 문서
+│   └── dev-eyebottle-md/   # 개발 관련 문서
 ├── CLAUDE_CODE_GUIDE.md    # Claude Code 사용 가이드
 ├── DEVELOPMENT_LOG.md      # 개발 이력 및 변경사항
 ├── PROJECT_HISTORY.md      # 프로젝트 전체 히스토리
