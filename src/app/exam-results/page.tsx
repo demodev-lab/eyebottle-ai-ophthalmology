@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, FileText, Printer, Eye, Heart, Activity } from 'lucide-react'
+import { ArrowLeft, FileText, Printer, Eye, Heart, Activity, Play } from 'lucide-react'
 
 // 검진 타입 정의
 type ExamType = 'diabetic' | 'hypertension' | 'comprehensive' | null
@@ -1973,15 +1973,31 @@ export default function ExamResultsPage() {
             <span className="font-medium">홈으로</span>
           </Link>
           
-          {selectedType && (
-            <button
-              onClick={() => setSelectedType(null)}
-              className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
+          <div className="flex items-center space-x-3">
+            {/* 데모영상 버튼 */}
+            <a
+              href="https://youtu.be/viqOYiEOBNI?si=DCX41YBhlBs2GKgB"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
             >
-              <ArrowLeft className="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" />
-              <span className="font-medium">다른 검진 선택</span>
-            </button>
-          )}
+              <div className="relative mr-2">
+                <Play className="w-5 h-5 fill-current" />
+                <div className="absolute inset-0 bg-white/20 rounded-full transform scale-0 group-hover:scale-110 transition-transform duration-300"></div>
+              </div>
+              <span className="font-medium">데모영상</span>
+            </a>
+            
+            {selectedType && (
+              <button
+                onClick={() => setSelectedType(null)}
+                className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" />
+                <span className="font-medium">다른 검진 선택</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

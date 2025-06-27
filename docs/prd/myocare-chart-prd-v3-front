@@ -1,0 +1,423 @@
+# 근시케어 차트 (MyoCare Chart) PRD v2.1 (Frontend-First, LocalStorage 기반)
+
+> **문서 버전**: 2.2.0
+> **수정 내용**: 원본 PRD와 일치하도록 페이지 구성 및 기능 수정. 3개 메인 메뉴 구조로 단순화.
+> **작성일**: 2025년 6월 25일
+> **최종 수정**: 2025년 6월 27일
+> **상태**: 작성 중
+> **개발 방식**: Claude Code 바이브 코딩
+> **예상 개발 기간**: 3-4주 (프론트엔드 기능 구현)
+
+## 1. 프로젝트 개요
+
+(기존 내용과 동일)
+
+## 2. 시스템 아키텍처
+
+### 2.1 기술 스택
+
+- **Frontend**: Next.js 14 + React 19 + TypeScript 5
+- **스타일링**: TailwindCSS 3 + Shadcn/ui
+- **차트**: Recharts
+- **상태관리**: React Hooks + Context API
+- **데이터 저장소**: **LocalStorage** (향후 Supabase로 마이그레이션 예정)
+- **배포**: Vercel
+
+### 2.2 시스템 구성도
+
+```mermaid
+graph TD
+    subgraph Browser
+        A[아이보틀 메인] --> B[근시케어 차트 대시보드]
+        B --> C[대시보드]
+        B --> D[환자 관리]
+        B --> E[설정]
+        
+        D --> D1[환자 리스트]
+        D --> D2[신규 환자 등록]
+        D --> D3[검사 결과 입력]
+        D --> D4[진행 그래프 출력]
+
+        F[LocalStorage API]
+        B <--> F
+        D <--> F
+        E <--> F
+    end
+
+    subgraph Future Backend
+        G[Supabase]
+    end
+
+    F -.->|향후 마이그레이션| G
+```
+
+## 3. 데이터 구조 설계 (LocalStorage 기반)
+
+### 3.1 LocalStorage 데이터 구조
+
+LocalStorage는 Key-Value 저장소이므로, 관계형 데이터베이스의 테이블을 모방하여 각 테이블에 해당하는 데이터를 특정 Key 아래에 JSON 배열 형태로 저장합니다. 모든 데이터는 현재 사용자가 선택한 프로필(`currentUser`)에 종속됩니다.
+
+**핵심 전략:**
+
+- 각 "테이블"은 고유한 접두사를 가진 키를 사용합니다 (예: `myocare_patients`, `myocare_visits`).
+- 데이터 간의 관계는 클라이언트에서 생성한 UUID를 통해 유지됩니다. 이는 향후 Supabase의 Foreign Key와 일치합니다.
+- 모든 데이터 조작(CRUD)은 LocalStorage API를 감싸는 유틸리티 함수(`src/lib/storage.ts`)를 통해 수행됩니다.
+
+**예시 데이터 구조:**
+
+```typescript
+// localStorage.getItem('myocare_currentUser');
+// -> "a1b2c3d4-..." (현재 선택된 사용자 프로필의 ID)
+
+// localStorage.getItem('myocare_users');
+/*
+[
+  {
+    "id": "a1b2c3d4-e5f6-...", // UUID
+    "email": "doctor@example.com",
+    "name": "김안과",
+    // ... users 테이블 스키마에 정의된 나머지 필드
+  }
+]
+*/
+
+// localStorage.getItem('myocare_patients');
+/*
+[
+  {
+    "id": "p1a2b3c4-...", // UUID
+    "user_id": "a1b2c3d4-...", // users.id 참조
+    "name": "김유진",
+    "birth_date": "2015-05-10",
+    // ... patients 테이블 스키마에 정의된 나머지 필드
+  }
+]
+*/
+
+// localStorage.getItem('myocare_visits');
+/*
+[
+  {
+    "id": "v1a2b3c4-...", // UUID
+    "patient_id": "p1a2b3c4-...", // patients.id 참조
+    "visit_date": "2024-06-25",
+    "created_by": "a1b2c3d4-...", // users.id 참조
+    // ... myocare_visits 테이블 스키마에 정의된 나머지 필드
+  }
+]
+*/
+```
+
+### 3.2 데이터베이스 스키마 (미래 Supabase용)
+
+> **[개발자 참고]** 아래 SQL 스키마는 **향후 연동될 Supabase 데이터베이스의 최종 구조**입니다. 현재 버전에서는 이 스키마를 바탕으로 `src/types/database.ts` 파일에 TypeScript 인터페이스를 정의하고, 데이터는 LocalStorage에 JSON 객체 형태로 저장됩니다.
+
+#### users (의료진 계정)
+
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    -- ...
+);
+```
+
+- **LocalStorage 구현**: `localStorage.setItem('myocare_users', JSON.stringify(User[]))`
+- **데이터 구조**: `src/types/database.ts`의 `User` 인터페이스를 따르는 객체 배열. `id`는 클라이언트에서 `crypto.randomUUID()`를 사용해 생성.
+
+#### patients (환자 정보)
+
+```sql
+CREATE TABLE patients (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    -- ...
+);
+```
+
+- **LocalStorage 구현**: `localStorage.setItem('myocare_patients', JSON.stringify(Patient[]))`
+- **데이터 구조**: `src/types/database.ts`의 `Patient` 인터페이스를 따르는 객체 배열. `user_id`는 현재 로그인된 사용자의 ID를 저장하여 관계를 표현합니다.
+
+#### myocare_visits (검사 기록)
+
+```sql
+CREATE TABLE myocare_visits (
+    id UUID PRIMARY KEY,
+    patient_id UUID REFERENCES patients(id),
+    created_by UUID REFERENCES users(id),
+    -- ...
+);
+```
+
+- **LocalStorage 구현**: `localStorage.setItem('myocare_visits', JSON.stringify(MyoCareVisit[]))`
+- **데이터 구조**: `src/types/database.ts`의 `MyoCareVisit` 인터페이스를 따르는 객체 배열. `patient_id`와 `created_by`를 통해 다른 데이터와의 관계를 표현합니다.
+
+_(user_settings, audit_logs 테이블도 동일한 방식으로 LocalStorage에 저장하고, 주석으로 명시)_
+
+### 3.3 인덱스 및 보안 (미래 Supabase용)
+
+> **[개발자 참고]** 아래 내용은 LocalStorage 환경에서는 적용되지 않으며, Supabase로 마이그레이션 시 구현할 항목입니다. 현재는 모든 데이터 필터링과 정렬이 클라이언트 측에서 배열 메소드(filter, sort 등)를 통해 이루어집니다.
+
+#### 인덱스 설계
+
+```sql
+-- 환자 검색 성능 향상을 위해 name, birth_date에 인덱스를 생성할 예정
+CREATE INDEX idx_patients_name ON patients(user_id, name);
+-- 방문 기록은 환자별, 날짜순 조회가 많으므로 복합 인덱스를 생성할 예정
+CREATE INDEX idx_visits_patient_date ON myocare_visits(patient_id, visit_date DESC);
+```
+
+#### Row Level Security (RLS)
+
+```sql
+-- 사용자는 자신의 환자 데이터에만 접근 가능하도록 RLS 정책을 설정할 예정
+ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
+CREATE POLICY patients_policy ON patients
+    FOR ALL USING (user_id = auth.uid());
+```
+
+- **LocalStorage 구현**: 현재는 `currentUser`의 `id`를 기준으로 데이터를 필터링하여 RLS를 흉내 냅니다. `storage.ts` 모듈에서 데이터 조회 시 항상 `user_id`를 확인하는 로직이 포함되어야 합니다.
+
+## 4. 기능 요구사항
+
+### 4.1 우선순위 매트릭스
+
+| 우선순위 | 기능                   | 설명                                                                 | 예상 공수 |
+| -------- | ---------------------- | -------------------------------------------------------------------- | --------- |
+| 🔴 P0    | **기본 라우팅/헤더**   | 3개 메인 메뉴 및 공통 헤더 구현                                    | 1일       |
+| 🔴 P0    | 대시보드               | 통계 카드 및 치료방법 분포                                          | 2일       |
+| 🔴 P0    | 환자 CRUD              | 환자 등록/수정/삭제/검색 (LocalStorage)                              | 3일       |
+| 🔴 P0    | 검사 데이터 입력       | 방문 기록 및 검사 결과 입력 (LocalStorage)                           | 3일       |
+| 🔴 P0    | 기본 차트 표시         | 시계열 SE/AL 차트                                                    | 3일       |
+| 🟡 P1    | 위험도 분석            | 진행 속도 계산 및 색상 표시                                          | 2일       |
+| 🟡 P1    | EMR 복사               | 설정 기반 텍스트 생성                                                | 1일       |
+| 🟢 P2    | 인쇄 기능              | A4 최적화 인쇄                                                       | 2일       |
+| 🟪 P2    | Excel 내보내기         | 개별 환자 데이터 다운로드                                            | 1일       |
+| 🟪 P2    | 설정 관리              | 임계값, 색상, EMR 템플릿 (LocalStorage)                              | 2일       |
+| 🔵 P3    | (보류) 데이터 복구     | 삭제 데이터 복원 (향후 구현)                                         | -         |
+| 🔵 P3    | (보류) 변경 이력       | 수정 내역 추적 (향후 구현)                                           | -         |
+
+_(기능 상세 내용은 기존 PRD와 동일하되, 모든 데이터 소스는 LocalStorage를 기준으로 합니다.)_
+
+## 5. 사용자 플로우
+
+### 5.1 전체 시스템 플로우
+
+```mermaid
+graph TD
+    A[앱 방문] --> B[대시보드 로딩]
+    B --> C[대시보드 표시]
+    C --> D[환자 관리]
+    C --> E[설정]
+    D --> F[환자 리스트]
+    D --> G[신규 환자 등록]
+    D --> H[검사 결과 입력]
+    D --> I[진행 그래프 출력]
+```
+
+- **주석**: 현재는 로그인 기능 없이 바로 대시보드로 진입합니다. 향후 Supabase Auth 연동 시 로그인 프로세스가 추가됩니다.
+
+## 6. UI/UX 설계
+
+### 6.1, 6.2 (기존 내용과 동일)
+
+### 6.3 컴포넌트 및 디렉토리 구조
+
+```
+src/
+├── app/                  # Next.js App Router
+│   ├── myocare/
+│   │   ├── dashboard/    # 대시보드 페이지
+│   │   ├── patients/     # 환자 관리 페이지
+│   │   └── settings/     # 설정 페이지
+├── components/
+│   ├── myocare/
+│   │   ├── common/       # 공통 컴포넌트 (헤더, 네비 등)
+│   │   ├── dashboard/    # 대시보드 관련 컴포넌트
+│   │   ├── patients/     # 환자 관리 관련 컴포넌트
+│   │   ├── charts/       # 차트 컴포넌트
+│   │   └── settings/     # 설정 관련 컴포넌트
+│   └── ui/             # Shadcn/ui 컴포넌트
+├── lib/
+│   ├── storage.ts        # LocalStorage CRUD 유틸리티 함수
+│   ├── utils.ts          # 공통 유틸리티 함수 (e.g., 날짜 계산, ID 생성)
+│   └── calculations.ts   # 위험도 등 비즈니스 로직 계산
+├── contexts/             # React Context (e.g., UserContext)
+└── types/                # ✨ 타입 정의 디렉토리
+    ├── database.ts       # DB 스키마 기반 핵심 타입 (User, Patient 등)
+    ├── chart.ts          # 차트 데이터 관련 타입
+    └── api.ts            # (향후) API 요청/응답 타입
+```
+
+### 6.4 데이터 타입 관리 (`types` 디렉토리)
+
+- **`types/database.ts`**:
+  - `3.2 데이터베이스 스키마`를 기반으로 모든 핵심 데이터 모델의 TypeScript 인터페이스를 정의합니다. (예: `User`, `Patient`, `MyoCareVisit`)
+  - 이 타입들은 LocalStorage에 저장되는 데이터의 형태와 일치하며, 향후 Supabase 연동 시에도 재사용됩니다.
+- **역할**: 프로젝트 전반에 걸쳐 데이터의 일관성과 타입 안정성을 보장합니다.
+
+## 7. 개발 계획
+
+### 7.1 개발 단계별 일정
+
+#### Phase 0: 기반 구축 (2일)
+
+- **Day 1**: 프로젝트 기본 구조 설정, 3개 메인 라우팅 구성 (`/myocare/dashboard`, `/myocare/patients`, `/myocare/settings`)
+- **Day 2**: 공통 헤더 컴포넌트 (네비게이션 + 데모영상 버튼), LocalStorage 유틸리티 함수 구현
+
+#### Phase 1: 대시보드 및 환자 관리 (1주)
+
+- **Day 3-4**: 대시보드 페이지 - 통계 카드 (전체/고위험/중위험/활성/최근등록), 치료방법 분포
+- **Day 5-6**: 환자 리스트 - 테이블, 검색(이름/차트번호), 정렬(최근 방문 오래된 순)
+- **Day 7**: 신규 환자 등록 팝업 모달 (LocalStorage 저장)
+
+#### Phase 2: 검사 입력 및 차트 (1주)
+
+- **Day 8-9**: 검사 결과 입력 폼 - S.E. 자동계산, 양안 동시 입력
+- **Day 10-11**: SE/AL 시계열 차트 (Recharts), 위험도 계산 및 색상 표시
+- **Day 12**: EMR 복사 기능, 인쇄 기능 (A4 최적화)
+
+#### Phase 3: 설정 및 마무리 (4일)
+
+- **Day 13-14**: 설정 페이지 - 임계값 설정, 치료방법별 색상, EMR 템플릿
+- **Day 15-16**: UI/UX 개선, 반응형 디자인, 전체 통합 테스트
+
+### 7.3 개발 체크리스트
+
+#### 기반 구축
+- [ ] 3개 메인 페이지 라우팅 설정
+- [ ] 공통 헤더 컴포넌트 (데모영상 버튼 포함)
+- [ ] LocalStorage 유틸리티 함수
+- [ ] TypeScript 타입 정의
+
+#### 대시보드
+- [ ] 통계 카드 5개 (전체/고위험/중위험/활성/최근등록)
+- [ ] 치료방법 분포 차트
+
+#### 환자 관리
+- [ ] 환자 리스트 테이블
+- [ ] 검색 기능 (이름/차트번호)
+- [ ] 정렬 기능 (최근 방문 오래된 순)
+- [ ] 신규 환자 등록 팝업
+- [ ] 검사 결과 입력 폼
+- [ ] SE/AL 차트 구현
+- [ ] EMR 복사 및 인쇄 기능
+
+#### 설정
+- [ ] 임계값 설정 UI
+- [ ] 치료방법별 색상 선택
+- [ ] EMR 템플릿 편집기
+
+## 8. 리스크 관리
+
+| 리스크                                | 영향도 | 대응방안                                                                                                                                                        |
+| ------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **향후 Supabase 마이그레이션 복잡도** | 높음   | **LocalStorage 데이터 구조를 DB 스키마와 최대한 유사하게 설계 (`types/database.ts` 활용). 데이터 접근 로직을 `storage.ts`로 추상화하여 교체 지점을 명확히 함.** |
+| 차트 성능 이슈                        | 중간   | 데이터 포인트 제한 및 가상화                                                                                                                                    |
+| LocalStorage 데이터 유실              | 낮음   | 개발 및 데모용 임시 데이터임을 명확히 인지. 데이터 내보내기/가져오기 기능으로 보완 가능.                                                                        |
+| **개인별 설정 관리**                   | 중간   | **LocalStorage에 사용자별 설정 저장. 향후 로그인 기능 구현 시 사용자별 설정 분리 가능하도록 설계.**                                                                    |
+
+## 9. 성공 기준
+
+### 9.2 비기능적 요구사항
+
+- ✅ 페이지 로딩 시간 < 2초
+- ✅ 차트 렌더링 < 1초
+- ✅ 데이터 보안 (**LocalStorage는 보안에 취약하므로 민감정보를 저장하지 않음**. RLS 적용은 Supabase 연동 후 목표)
+
+_(나머지 항목은 기존과 동일)_
+
+---
+
+## 10. 페이지별 상세 구성
+
+### 10.1 공통 헤더 (모든 페이지)
+- **로고**: Eyebottle
+- **메인 네비게이션**: 대시보드 / 환자관리 / 설정
+- **우측 버튼**: 데모영상보기 (YouTube 링크)
+- **프로필 아이콘**: 사용자 정보
+
+### 10.2 대시보드 (`/myocare/dashboard`)
+
+#### 상단 통계 카드 (3개)
+1. **전체 환자**: 숫자 표시, 파란색 아이콘
+2. **고위험 환자**: 빨간색 숫자, "※ 마지막 방문 안축장(AL) Red"
+3. **중위험 환자**: 노란색 숫자, "※ 마지막 방문 안축장(AL) Yellow"
+
+#### 중단 정보 카드 (2개)
+1. **활성 환자**: 최근 6개월 이내 방문, 전체 대비 백분율
+2. **최근 등록 환자**: 최근 30일 내 신규 등록
+
+#### 하단 치료방법 분포
+- 각 치료방법별 환자 수 표시
+- 8가지 치료방법: 아트로핀 0.042/0.05/0.063/0.125, 드림렌즈, 마이사이트, DIMS안경, 병행치료
+
+### 10.3 환자관리 (`/myocare/patients`)
+
+#### 10.3.1 환자 리스트
+- **검색바**: "환자 이름 또는 차트번호 검색"
+- **신규환자 등록 버튼**: 우측 상단
+- **테이블 컴럼**: 이름, 생년월일/나이, 차트번호, 치료방법, 마지막 방문일, 위험도, 액션
+- **정렬**: 최근 방문이 오래된 순 (기본)
+
+#### 10.3.2 신규환자 등록 (팝업)
+- **필수 입력**: 이름, 생년월일
+- **선택 입력**: 차트번호, 치료방법(드롭다운), 메모
+
+#### 10.3.3 검사결과 입력
+- **환자 정보 표시**: 이름, 생년월일, 차트번호, "환자정보 수정" 버튼
+- **검사 입력 폼**: 좌우 2열 (우안 OD / 좌안 OS)
+  - 치료방법, 검사일, Sph/Cyl, S.E.(자동계산), 안축장, 새 안경 처방
+- **방문 기록**: 최근 날짜가 위로 정렬
+
+#### 10.3.4 진행그래프 & 보고서
+- **상단 버튼**: EMR 복사, 인쇄
+- **그래프**: SE/AL 시계열 차트 (파란 실선-우안, 주황 점선-좌안)
+- **위험도 배지**: 최근 검사 기준
+- **하단 테이블**: 검사일별 측정값 및 연간 진행속도
+
+### 10.4 설정 (`/myocare/settings`)
+
+#### 10.4.1 진행 임계값
+- **SE 임계값**: 노랑 경고선(0.75 D/yr), 빨강 경고선(1.50 D/yr)
+- **AL 임계값**: 노랑 경고선(0.30 mm/yr), 빨강 경고선(0.60 mm/yr)
+
+#### 10.4.2 치료 색상표
+- 8가지 치료방법별 색상 선택
+- 아트로핀: 파란색 계열 (농도별 진하기)
+- 드림렌즈: 연한 보라, DIMS: 연한 초록, 마이사이트: 연한 주황
+
+#### 10.4.3 EMR 복사 문구
+- 포함 항목 체크박스
+- 템플릿 편집기
+- 변수 치환: `[치료방법]`, `[SE_OD]`, `[SE_OS]` 등
+
+## 11. 개인별 설정 관리
+
+### 11.1 LocalStorage 구조
+```typescript
+// 사용자별 설정 저장
+localStorage.setItem('myocare_user_settings_[userId]', JSON.stringify({
+  thresholds: {
+    se: { yellow: 0.75, red: 1.50 },
+    al: { yellow: 0.30, red: 0.60 }
+  },
+  treatmentColors: {
+    'atropine_0.042': '#e3f2fd',
+    'atropine_0.05': '#bbdefb',
+    // ...
+  },
+  emrTemplate: "..."
+}));
+```
+
+### 11.2 향후 로그인 기능 구현 시
+- 현재: LocalStorage에 기본 설정값 저장
+- 향후: 사용자 ID를 키로 하여 개인별 설정 분리
+- Supabase 연동 시 `user_settings` 테이블로 마이그레이션
+
+**다음 단계**:
+
+1. 프로젝트 기본 구조 설정 및 3개 메인 페이지 라우팅 구성
+2. 공통 헤더 컴포넌트 구현 (데모영상 버튼 포함)
+3. LocalStorage 유틸리티 함수 및 TypeScript 타입 정의
+4. 대시보드 페이지부터 순차적 구현

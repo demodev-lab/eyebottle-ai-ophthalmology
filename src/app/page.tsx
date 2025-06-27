@@ -264,17 +264,22 @@ export default function Home() {
             </div>
 
             {/* 근시케어 차트 */}
-            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-blue-100 to-sky-200 rounded-2xl shadow-inner-sm">
-                <ChartBarIcon className="h-8 w-8 text-blue-600" />
+            <Link href="/myocare/dashboard" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 h-full">
+              <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-blue-100 to-sky-200 rounded-2xl shadow-inner-sm">
+                  <ChartBarIcon className="h-8 w-8 text-blue-600" />
+                </div>
+                <div className="flex items-center gap-x-3 mb-3">
+                  <h3 className="text-xl font-bold text-slate-800">근시케어 차트</h3>
+                  <span className="text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 px-2.5 py-1 rounded-full">Beta</span>
+                </div>
+                <p className="text-slate-500 leading-relaxed">MyoCare Chart</p>
+                <div className="mt-4 text-sm font-medium text-sky-600">
+                  <p>• 환자별 진행도 시각화</p>
+                  <p>• 위험도 자동 분석</p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-3">근시케어 차트</h3>
-              <p className="text-slate-500 leading-relaxed">MyoCare Chart</p>
-              <div className="mt-4 text-sm font-medium text-sky-600">
-                <p>• 환자별 진행도 시각화</p>
-                <p>• (업데이트 예정)</p>
-              </div>
-            </div>
+            </Link>
 
             {/* 검진결과 작성 */}
             <Link href="/exam-results" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 h-full">
