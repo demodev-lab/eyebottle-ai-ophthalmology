@@ -129,7 +129,7 @@ export const getLatestVisit = (patientId: string): MyoCareVisit | null => {
   return visits.length > 0 ? visits[0] : null;
 };
 
-export const createVisit = (visitData: Omit<MyoCareVisit, 'id' | 'created_by' | 'created_at' | 'updated_at'>): MyoCareVisit => {
+export const createVisit = (visitData: Omit<MyoCareVisit, 'id' | 'created_by' | 'created_at' | 'updated_at' | 'od_se' | 'os_se'>): MyoCareVisit => {
   const currentUser = getCurrentUser();
   if (!currentUser) throw new Error('No current user');
   

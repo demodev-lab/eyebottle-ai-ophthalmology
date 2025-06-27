@@ -101,12 +101,31 @@ eyebottle/
 │   │   │   └── page.tsx      # About Me 페이지
 │   │   ├── exam-results/
 │   │   │   └── page.tsx      # 검진결과 작성 시스템 ✅
+│   │   ├── myocare/
+│   │   │   ├── dashboard/    # 근시케어 대시보드
+│   │   │   ├── patients/     # 환자 관리
+│   │   │   └── settings/     # 설정
 │   │   └── _test/
 │   │       └── page.tsx      # Shadcn/ui 테스트 페이지
 │   ├── components/
-│   │   └── ui/             # Shadcn/ui 컴포넌트들
-│   └── lib/
-│       └── utils.ts        # Tailwind + clsx 유틸리티
+│   │   ├── common/           # 공통 컴포넌트 ✨
+│   │   │   ├── demo-video-button.tsx   # YouTube 스타일 데모영상 버튼
+│   │   │   └── quick-nav-menu.tsx      # 퀵 네비게이션 메뉴
+│   │   ├── myocare/          # 근시케어 전용 컴포넌트
+│   │   │   ├── charts/       # 차트 컴포넌트들
+│   │   │   ├── common/       # 공통 컴포넌트 (헤더 등)
+│   │   │   ├── dashboard/    # 대시보드 컴포넌트
+│   │   │   ├── patients/     # 환자 관리 컴포넌트
+│   │   │   └── settings/     # 설정 컴포넌트
+│   │   └── ui/               # Shadcn/ui 컴포넌트들
+│   ├── contexts/             # React Context
+│   ├── lib/
+│   │   ├── utils.ts          # Tailwind + clsx 유틸리티
+│   │   ├── calculations.ts   # 계산 로직
+│   │   └── storage.ts        # 로컬스토리지 관리
+│   └── types/
+│       ├── chart.ts          # 차트 관련 타입
+│       └── database.ts       # 데이터베이스 타입
 ├── public/
 │   ├── eyebottle-logo.png          # 커스텀 로고
 │   ├── lee-eyeclinic-logo.png      # 병원 로고
@@ -118,7 +137,8 @@ eyebottle/
 ├── package.json            # 의존성 (Shadcn/ui 포함)
 ├── docs/
 │   ├── prd/                # 제품 요구사항 문서
-│   └── dev-eyebottle-md/   # 개발 관련 문서
+│   ├── dev-eyebottle-md/   # 개발 관련 문서
+│   └── DEMO_VIDEO_BUTTON_GUIDE.md  # 데모영상 버튼 & 퀵 네비게이션 가이드 ✨
 ├── CLAUDE_CODE_GUIDE.md    # Claude Code 사용 가이드
 ├── DEVELOPMENT_LOG.md      # 개발 이력 및 변경사항
 ├── PROJECT_HISTORY.md      # 프로젝트 전체 히스토리
@@ -153,6 +173,21 @@ eyebottle/
   - 베타테스터 신청 기능 완전 제거
   - 하단 메뉴 구성 단순화 (4개 → 3개)
   - UI 균형성을 위한 카드 높이 균일화
+- [x] **데모영상 버튼 통일성 구축** (2025.12.30): ✨
+  - [x] YouTube 스타일 빨간색 버튼으로 모든 페이지 통일
+  - [x] 공통 컴포넌트(`DemoVideoButton`) 생성 및 표준화
+  - [x] 영상 리스트 모달 구현 (검진결과, 근시케어, AI챗봇)
+  - [x] 썸네일 16:9 비율 최적화 (480×270)
+- [x] **퀵 네비게이션 메뉴 시스템** (2025.12.30): 🧭
+  - [x] 모든 페이지에 햄버거 메뉴 통합 적용
+  - [x] 10개 주요 기능으로 원클릭 접근
+  - [x] 현재 페이지 하이라이트 및 Beta 배지 시스템
+  - [x] React Portal 기반 z-index 충돌 해결
+  - [x] ESC 키 지원 및 완벽한 이벤트 차단
+- [x] **Contact 메일 팝업 기능** (2025.12.30):
+  - [x] About 페이지와 동일한 메일 작성 팝업을 랜딩 페이지에 적용
+  - [x] 메일 폼 상태 관리 및 전송 시뮬레이션
+  - [x] 팝업 크기 최적화로 가독성 개선
 
 ### **🚧 진행 중**
 - [ ] **고혈압망막병증 자동 멘트**: 1~4기 단계별 시스템
@@ -206,6 +241,8 @@ MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 - **[개발 로그](DEVELOPMENT_LOG.md)** - 주요 변경사항 및 개발 이력
 - **[프로젝트 히스토리](PROJECT_HISTORY.md)** - 전체 프로젝트 이벤트 시간순 기록
 - **[PRD 문서](docs/prd/)** - 제품 요구사항 문서
+- **[데모영상 버튼 가이드](docs/DEMO_VIDEO_BUTTON_GUIDE.md)** - 데모영상 버튼 & 퀵 네비게이션 가이드 ✨
+- **[UI 컴포넌트 가이드](docs/UI_COMPONENTS_GUIDE.md)** - 전체 UI 컴포넌트 종합 가이드 ✨
 
 ## 📞 연락처
 

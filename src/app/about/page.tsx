@@ -19,6 +19,7 @@ import {
   Microscope,
   Contact
 } from "lucide-react";
+import { QuickNavMenu } from '@/components/common/quick-nav-menu';
 
 export default function AboutPage() {
   // 메일 팝업 상태 관리
@@ -146,7 +147,7 @@ export default function AboutPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/50 via-indigo-400/30 to-purple-500/40" />
         
-        {/* 홈 버튼 - 헤더 내에서만 보임 */}
+        {/* 상단 네비게이션 버튼들 - 헤더 내에서만 보임 */}
         <div className="absolute top-6 left-6 z-20">
           <Link 
             href="/"
@@ -155,6 +156,13 @@ export default function AboutPage() {
             <HomeIcon className="w-5 h-5" />
             <span className="font-semibold">홈으로</span>
           </Link>
+        </div>
+        
+        {/* 주요 기능 네비게이션 메뉴 */}
+        <div className="absolute top-6 right-6 z-20">
+          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-1">
+            <QuickNavMenu />
+          </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-8 lg:px-16 py-20 lg:py-32 relative z-10">

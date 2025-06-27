@@ -257,15 +257,15 @@ export default function SettingsPage() {
                       className="w-20 h-12 p-1 cursor-pointer border-2 border-slate-300 rounded-lg"
                     />
                   </div>
-                  <Input
-                    type="text"
-                    value={settings.treatmentColors[key as TreatmentMethod]}
-                    onChange={(e) =>
-                      updateTreatmentColor(key as TreatmentMethod, e.target.value)
-                    }
-                    className="flex-1 h-12 text-base font-mono border-slate-200 uppercase"
-                    placeholder="#000000"
-                  />
+                  <div 
+                    className="flex-1 h-12 rounded-lg border-2 border-slate-200 flex items-center justify-center font-medium text-base"
+                    style={{ 
+                      backgroundColor: settings.treatmentColors[key as TreatmentMethod] + '20', 
+                      color: settings.treatmentColors[key as TreatmentMethod] 
+                    }}
+                  >
+                    {label}
+                  </div>
                 </div>
               </div>
             ))}
@@ -291,8 +291,8 @@ export default function SettingsPage() {
             <p className="text-base text-amber-800 font-semibold mb-3 flex items-center">
               <span className="text-xl mr-2">💡</span> 사용 가능한 변수
             </p>
-            <p className="text-sm text-amber-700 mb-3">아래 변수들은 자동으로 실제 값으로 치환됩니다:</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <p className="text-sm text-amber-700 mb-3">아래 변수들을 선택하여 EMR 복사 시 포함할 항목을 지정하세요:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
                 { var: '[환자명]', desc: '환자 이름' },
                 { var: '[치료방법]', desc: '현재 치료방법' },
@@ -303,14 +303,32 @@ export default function SettingsPage() {
                 { var: '[AL_OS]', desc: '좌안 안축장' },
                 { var: '[SE_PROGRESS_OD]', desc: '우안 SE 진행속도' },
                 { var: '[SE_PROGRESS_OS]', desc: '좌안 SE 진행속도' },
-              ].map(({ var: variable, desc }) => (
-                <div key={variable} className="flex flex-col">
-                  <code className="text-sm bg-white text-amber-900 px-3 py-2 rounded-lg border border-amber-200 font-mono">
-                    {variable}
-                  </code>
-                  <span className="text-xs text-amber-700 mt-1">{desc}</span>
-                </div>
-              ))}
+              ].map(({ var: variable, desc }) => {
+                const isChecked = settings.emrTemplateVariables?.includes(variable) ?? true;
+                return (
+                  <div key={variable} className="flex items-center space-x-3 bg-white p-3 rounded-lg border border-amber-200">
+                    <input
+                      type="checkbox"
+                      id={`var-${variable}`}
+                      checked={isChecked}
+                      onChange={() => {
+                        const currentVariables = settings.emrTemplateVariables || DEFAULT_SETTINGS.emrTemplateVariables || [];
+                        const updatedVariables = isChecked
+                          ? currentVariables.filter(v => v !== variable)
+                          : [...currentVariables, variable];
+                        setSettings({ ...settings, emrTemplateVariables: updatedVariables });
+                      }}
+                      className="h-5 w-5 text-blue-600 rounded border-amber-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                    <label htmlFor={`var-${variable}`} className="flex-1 cursor-pointer">
+                      <code className="text-sm text-amber-900 font-mono block">
+                        {variable}
+                      </code>
+                      <span className="text-xs text-amber-600">{desc}</span>
+                    </label>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="space-y-3">

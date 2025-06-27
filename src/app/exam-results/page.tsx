@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, FileText, Printer, Eye, Heart, Activity, Play } from 'lucide-react'
+import { ArrowLeft, FileText, Printer, Eye, Heart, Activity, Play, Download } from 'lucide-react'
+import { QuickNavMenu } from '@/components/common/quick-nav-menu'
+import { pdf } from '@react-pdf/renderer'
+import { DiabeticReportPDF, HypertensionReportPDF, ComprehensiveReportPDF } from '@/components/pdf/exam-pdf'
 
 // 검진 타입 정의
 type ExamType = 'diabetic' | 'hypertension' | 'comprehensive' | null
@@ -142,6 +145,83 @@ export default function ExamResultsPage() {
     
     return planInfo[maxStage as keyof typeof planInfo] || planInfo['정상']
   }
+
+  // 고혈압망막병증 단계별 요약 정보 & 추적 간격
+  const getHypertensionRetinopathyInfo = (odStage: string, osStage: string) => {
+    const stages = ['정상', '1기 고혈압망막병증', '2기 고혈압망막병증', '3기 고혈압망막병증', '4기 고혈압망막병증']
+    const odIndex = stages.indexOf(odStage)
+    const osIndex = stages.indexOf(osStage)
+    const maxIndex = Math.max(odIndex, osIndex) // 더 심한 단계 선택
+    const maxStage = stages[maxIndex]
+    
+    const stageInfo = {
+      '정상': {
+        message: '정상 소견 — 고혈압성 망막 변화가 관찰되지 않습니다.',
+        followUp: '12개월',
+        bloodPressureTarget: '130/80'
+      },
+      '1기 고혈압망막병증': {
+        message: '경미한 동맥 협착 — 시력에 영향 없는 초기 변화입니다.',
+        followUp: '6개월',
+        bloodPressureTarget: '130/80'
+      },
+      '2기 고혈압망막병증': {
+        message: '동맥 경화 진행 — 혈압 조절로 진행을 늦출 수 있습니다.',
+        followUp: '3개월',
+        bloodPressureTarget: '125/75'
+      },
+      '3기 고혈압망막병증': {
+        message: '출혈·면화반 관찰 — 적극적인 혈압 관리가 필요합니다.',
+        followUp: '1~2개월',
+        bloodPressureTarget: '120/70'
+      },
+      '4기 고혈압망막병증': {
+        message: '시신경 부종 동반 — 즉시 혈압 조절과 치료가 필요합니다.',
+        followUp: '담당의사 권고에 따라',
+        bloodPressureTarget: '120/70'
+      }
+    }
+    
+    return stageInfo[maxStage as keyof typeof stageInfo] || stageInfo['정상']
+  }
+
+  // 고혈압망막병증 단계별 안저 소견
+  const getHypertensionFundusFindings = (odStage: string, osStage: string) => {
+    const stages = ['정상', '1기 고혈압망막병증', '2기 고혈압망막병증', '3기 고혈압망막병증', '4기 고혈압망막병증']
+    const odIndex = stages.indexOf(odStage)
+    const osIndex = stages.indexOf(osStage)
+    const maxIndex = Math.max(odIndex, osIndex)
+    const maxStage = stages[maxIndex]
+    
+    const findingsInfo = {
+      '정상': '망막 혈관과 시신경에 특이 소견이 없습니다.',
+      '1기 고혈압망막병증': '경미한 동맥 협착이 관찰되나 출혈이나 부종은 없습니다.',
+      '2기 고혈압망막병증': '동맥 경화와 정맥 압박이 관찰되나 출혈은 없습니다.',
+      '3기 고혈압망막병증': '출혈, 면화반이 관찰되어 적극적인 관리가 필요합니다.',
+      '4기 고혈압망막병증': '시신경 부종이 동반되어 즉시 치료가 필요한 상태입니다.'
+    }
+    
+    return findingsInfo[maxStage as keyof typeof findingsInfo] || findingsInfo['정상']
+  }
+
+  // 고혈압망막병증 단계별 통합 해석 & 향후 계획  
+  const getHypertensionRetinopathyPlan = (odStage: string, osStage: string) => {
+    const stages = ['정상', '1기 고혈압망막병증', '2기 고혈압망막병증', '3기 고혈압망막병증', '4기 고혈압망막병증']
+    const odIndex = stages.indexOf(odStage)
+    const osIndex = stages.indexOf(osStage)
+    const maxIndex = Math.max(odIndex, osIndex)
+    const maxStage = stages[maxIndex]
+    
+    const planInfo = {
+      '정상': '현재 고혈압성 망막 변화가 없어 양호한 상태입니다. **정기적인 혈압 관리와 연 1회 안저 검사**로 조기 발견에 힘쓰시기 바랍니다.',
+      '1기 고혈압망막병증': '현재 검사 결과는 초기 단계이며 시력과 일상생활에는 영향이 없습니다. **꾸준한 혈압 관리와 정기 검진**을 이어가시면 됩니다.',
+      '2기 고혈압망막병증': '동맥 경화가 진행되고 있어 **엄격한 혈압 조절**이 필요합니다. 정기적인 안과 검진을 통해 진행 속도를 늦추겠습니다.',
+      '3기 고혈압망막병증': '망막 출혈과 허혈 소견이 있어 **적극적인 혈압 조절과 약물 치료**가 필요합니다. 시력 저하 방지를 위해 면밀한 추적 관찰하겠습니다.',
+      '4기 고혈압망막병증': '시신경 부종으로 인한 심각한 시력 손상 위험이 있어 **즉시 입원 치료나 응급 혈압 조절**이 필요합니다. 신속한 치료를 진행하겠습니다.'
+    }
+    
+    return planInfo[maxStage as keyof typeof planInfo] || planInfo['정상']
+  }
   
   // 각 검진별 초기 데이터
   const [diabeticData, setDiabeticData] = useState<DiabeticData>({
@@ -223,6 +303,68 @@ export default function ExamResultsPage() {
     }
   })
 
+  // 고혈압망막병증 양안 단계 변경 시 자동 요약 업데이트
+  useEffect(() => {
+    const hypertensionInfo = getHypertensionRetinopathyInfo(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)
+    setHypertensionData(prevData => ({
+      ...prevData,
+      summary: {
+        ...prevData.summary,
+        stage: hypertensionInfo.message.split(' — ')[0], // "경미한 동맥 협착" 부분만 추출
+        bloodPressureTarget: hypertensionInfo.bloodPressureTarget,
+        followUp: hypertensionInfo.followUp
+      }
+    }))
+  }, [hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage])
+
+  // PDF 다운로드 함수
+  const handleDownloadPDF = async () => {
+    try {
+      let pdfComponent;
+      let filename;
+      
+      switch (selectedType) {
+        case 'diabetic':
+          pdfComponent = <DiabeticReportPDF data={diabeticData} />;
+          filename = `당뇨망막병증_검진결과_${diabeticData.name}_${diabeticData.examDate}.pdf`;
+          break;
+        case 'hypertension':
+          pdfComponent = <HypertensionReportPDF data={hypertensionData} />;
+          filename = `고혈압망막병증_검진결과_${hypertensionData.name}_${hypertensionData.examDate}.pdf`;
+          break;
+        case 'comprehensive':
+          pdfComponent = <ComprehensiveReportPDF data={comprehensiveData} />;
+          filename = `눈종합검사_결과_${comprehensiveData.name}_${comprehensiveData.examDate}.pdf`;
+          break;
+        default:
+          return;
+      }
+
+      // PDF 생성 및 다운로드
+      const blob = await pdf(pdfComponent).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('PDF 다운로드 중 오류 발생:', error);
+      alert('PDF 다운로드 중 오류가 발생했습니다. 다시 시도해 주세요.');
+    }
+  }
+
+  // 테스트용 전역 함수 노출
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).testPDF = handleDownloadPDF;
+    }
+  }, [handleDownloadPDF]);
+
+  // 기존 브라우저 인쇄 함수 (백업용)
   const handlePrint = () => {
     // 현재 선택된 템플릿에 따라 프린트할 컨텐츠의 ID를 결정
     const previewId = `${selectedType}-preview`;
@@ -1280,6 +1422,15 @@ export default function ExamResultsPage() {
             box-shadow: none !important;
             border-radius: 0 !important;
           }
+          
+          /* 브라우저 기본 헤더/푸터 제거 시도 */
+          @page {
+            margin-top: 0;
+            margin-bottom: 0;
+          }
+          
+          /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
+          .print-header, .print-footer { display: none !important; }
         }
       `}</style>
       
@@ -1418,11 +1569,11 @@ export default function ExamResultsPage() {
         @media print {
           @page { 
             size: A4; 
-            margin: 15mm; 
+            margin: 8mm;
           }
           body { 
             -webkit-print-color-adjust: exact; 
-            font-size: 12px;
+            font-size: 10px;
           }
           
           /* 인쇄 시 숨길 요소들 */
@@ -1439,6 +1590,71 @@ export default function ExamResultsPage() {
             box-shadow: none !important;
             border-radius: 0 !important;
           }
+          
+          /* 고혈압망막병증 전용 최적화 */
+          #hypertension-preview {
+            padding: 0 !important;
+          }
+          
+          #hypertension-preview .max-w-\\[18cm\\] {
+            padding: 12px !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+          
+          #hypertension-preview header {
+            margin-bottom: 12px !important;
+          }
+          
+          #hypertension-preview section {
+            margin-bottom: 8px !important;
+          }
+          
+          #hypertension-preview .mb-8 {
+            margin-bottom: 8px !important;
+          }
+          
+          #hypertension-preview .mb-6 {
+            margin-bottom: 6px !important;
+          }
+          
+          #hypertension-preview .p-4 {
+            padding: 6px !important;
+          }
+          
+          #hypertension-preview table {
+            margin-bottom: 6px !important;
+          }
+          
+          #hypertension-preview .space-y-1 > li {
+            margin-bottom: 1px !important;
+          }
+          
+          #hypertension-preview .text-2xl {
+            font-size: 16px !important;
+          }
+          
+          #hypertension-preview .text-base {
+            font-size: 12px !important;
+          }
+          
+          #hypertension-preview .text-sm {
+            font-size: 9px !important;
+          }
+          
+          #hypertension-preview .text-xs {
+            font-size: 8px !important;
+          }
+          
+          /* 브라우저 기본 헤더/푸터 제거 시도 */
+          @page {
+            margin-top: 0;
+            margin-bottom: 0;
+          }
+          
+          /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
+          .print-header, .print-footer { display: none !important; }
         }
       `}</style>
       
@@ -1453,7 +1669,7 @@ export default function ExamResultsPage() {
         <section className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
           <h2 className="text-base font-semibold mb-2">요약</h2>
           <ul className="list-disc pl-6 space-y-1">
-            <li><span className="font-medium">초기 단계({hypertensionData.summary.stage})</span> — 시력에 영향이 없는 경미한 변화입니다.</li>
+            <li><span className="font-medium">{getHypertensionRetinopathyInfo(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage).message}</span></li>
             <li>혈압을 <strong>{hypertensionData.summary.bloodPressureTarget}&nbsp;mmHg</strong> 미만으로 유지하시면 진행을 늦출 수 있습니다.</li>
             <li><strong>{hypertensionData.summary.followUp} 후</strong> 안저 검사로 변화 여부를 다시 확인하세요.</li>
           </ul>
@@ -1488,7 +1704,7 @@ export default function ExamResultsPage() {
               </tr>
             </tbody>
           </table>
-          <p className="pl-4 text-sm"><span className="font-medium">소견:</span> 가벼운 동맥 협착 외 출혈·부종·시신경 부종은 보이지 않습니다.</p>
+          <p className="pl-4 text-sm"><span className="font-medium">소견:</span> {getHypertensionFundusFindings(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)}</p>
         </section>
 
         {/* Vision & IOP */}
@@ -1554,7 +1770,7 @@ export default function ExamResultsPage() {
         {/* Integrated Plan */}
         <section className="mb-8">
           <h2 className="text-base font-semibold mb-2">4. 통합 해석 &amp; 향후 계획</h2>
-          <p className="pl-4 text-sm">현재 검사 결과는 초기 단계이며 시력과 일상생활에는 영향이 없습니다. <strong>혈압 관리와 정기 검진</strong>만 꾸준히 이어가시면 됩니다.</p>
+          <p className="pl-4 text-sm" dangerouslySetInnerHTML={{__html: getHypertensionRetinopathyPlan(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)}}></p>
         </section>
 
         {/* Footer */}
@@ -1603,6 +1819,15 @@ export default function ExamResultsPage() {
               box-shadow: none !important;
               border-radius: 0 !important;
             }
+            
+            /* 브라우저 기본 헤더/푸터 제거 시도 */
+            @page {
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+            
+            /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
+            .print-header, .print-footer { display: none !important; }
           }
         `}</style>
         
@@ -1849,6 +2074,15 @@ export default function ExamResultsPage() {
               box-shadow: none !important;
               border-radius: 0 !important;
             }
+            
+            /* 브라우저 기본 헤더/푸터 제거 시도 */
+            @page {
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+            
+            /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
+            .print-header, .print-footer { display: none !important; }
           }
         `}</style>
         
@@ -1961,52 +2195,59 @@ export default function ExamResultsPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 상단 네비게이션 */}
-      <div className="max-w-6xl mx-auto mb-8 print-hide">
-        <div className="flex items-center justify-between bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-200/50">
-          <Link 
-            href="/" 
-            className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" />
-            <span className="font-medium">홈으로</span>
-          </Link>
-          
-          <div className="flex items-center space-x-3">
-            {/* 데모영상 버튼 */}
-            <a
-              href="https://youtu.be/viqOYiEOBNI?si=DCX41YBhlBs2GKgB"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+    <div className="min-h-screen bg-gray-50 relative">
+      {/* 고정 헤더 */}
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-gray-200/60 shadow-sm print-hide">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link 
+              href="/" 
+              className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
             >
-              <div className="relative mr-2">
-                <Play className="w-5 h-5 fill-current" />
-                <div className="absolute inset-0 bg-white/20 rounded-full transform scale-0 group-hover:scale-110 transition-transform duration-300"></div>
-              </div>
-              <span className="font-medium">데모영상</span>
-            </a>
+              <ArrowLeft className="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" />
+              <span className="font-medium">홈으로</span>
+            </Link>
             
-            {selectedType && (
-              <button
-                onClick={() => setSelectedType(null)}
-                className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
+            <div className="flex items-center space-x-3">
+              {/* 주요 기능 네비게이션 메뉴 */}
+              <QuickNavMenu />
+              
+              {/* 데모영상 버튼 */}
+              <a
+                href="https://youtu.be/viqOYiEOBNI?si=DCX41YBhlBs2GKgB"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
               >
-                <ArrowLeft className="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" />
-                <span className="font-medium">다른 검진 선택</span>
-              </button>
-            )}
+                <div className="relative mr-2">
+                  <Play className="w-5 h-5 fill-current" />
+                  <div className="absolute inset-0 bg-white/20 rounded-full transform scale-0 group-hover:scale-110 transition-transform duration-300"></div>
+                </div>
+                <span className="font-medium">데모영상</span>
+              </a>
+              
+              {selectedType && (
+                <button
+                  onClick={() => setSelectedType(null)}
+                  className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" />
+                  <span className="font-medium">다른 검진 선택</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* 메인 콘텐츠 */}
-      {!selectedType && renderTemplateSelector()}
-      
-      {selectedType === 'diabetic' && renderDiabeticForm()}
-      {selectedType === 'hypertension' && renderHypertensionForm()}
-      {selectedType === 'comprehensive' && renderComprehensiveForm()}
+      <main className="relative z-10 pt-8">
+        {!selectedType && renderTemplateSelector()}
+        
+        {selectedType === 'diabetic' && renderDiabeticForm()}
+        {selectedType === 'hypertension' && renderHypertensionForm()}
+        {selectedType === 'comprehensive' && renderComprehensiveForm()}
+      </main>
     </div>
   )
 }

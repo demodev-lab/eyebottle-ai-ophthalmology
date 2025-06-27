@@ -18,12 +18,341 @@ import {
   Bars3Icon,
   XMarkIcon
 } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/solid";
+import { QuickNavMenu } from "@/components/common/quick-nav-menu";
+
+// 데모 영상 데이터 타입
+interface DemoVideo {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  thumbnail: string;
+  duration: string;
+  category: string;
+}
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  
+  // 메일 팝업 상태 관리 추가
+  const [isMailPopupOpen, setIsMailPopupOpen] = useState(false);
+  const [mailForm, setMailForm] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  // 데모 영상 리스트
+  const demoVideos: DemoVideo[] = [
+    {
+      id: "exam-results",
+      title: "검진결과 작성 - 사용법 가이드",
+      description: "당뇨망막병증, 고혈압망막병증, 종합검진 결과서를 쉽고 빠르게 작성하는 방법을 알아보세요.",
+      url: "https://youtu.be/viqOYiEOBNI?si=DCX41YBhlBs2GKgB",
+      thumbnail: "https://picsum.photos/480/270?random=1",
+      duration: "5:32",
+      category: "검진결과"
+    },
+    {
+      id: "myocare-chart",
+      title: "근시케어 차트 - 데이터 분석",
+      description: "환자별 근시 진행도 분석과 위험도 예측 기능을 소개합니다.",
+      url: "https://youtu.be/pgTEwTZTKlk?si=vHAW42IClD6Q2Nvx",
+      thumbnail: "https://picsum.photos/480/270?random=2",
+      duration: "3:45",
+      category: "근시케어"
+    },
+    {
+      id: "ai-chatbot",
+      title: "AI 챗봇 Eye Bottle (개발 중)",
+      description: "수술확인서와 진단서를 AI로 자동 작성하는 혁신적인 기능입니다.",
+      url: "#",
+      thumbnail: "https://picsum.photos/480/270?random=3",
+      duration: "개발 중",
+      category: "AI 챗봇"
+    }
+  ];
+
+  // 메일 팝업 열기
+  const openMailPopup = () => {
+    setIsMailPopupOpen(true);
+  };
+
+  // 메일 팝업 닫기
+  const closeMailPopup = () => {
+    setIsMailPopupOpen(false);
+    setMailForm({ name: '', email: '', subject: '', message: '' });
+  };
+
+  // 폼 입력 처리
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setMailForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // 메일 전송 처리
+  const handleSendMail = async () => {
+    const { name, email, subject, message } = mailForm;
+    
+    // 필수 필드 확인
+    if (!name || !email || !subject || !message) {
+      alert('모든 필드를 입력해주세요.');
+      return;
+    }
+
+    // 이메일 형식 확인
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('올바른 이메일 주소를 입력해주세요.');
+      return;
+    }
+
+    try {
+      // 로딩 상태 표시
+      const sendButton = document.querySelector('[data-send-button]') as HTMLButtonElement;
+      if (sendButton) {
+        sendButton.disabled = true;
+        sendButton.textContent = '전송 중...';
+      }
+
+      // 실제로는 여기서 백엔드 API를 호출하겠지만, 
+      // 지금은 시뮬레이션으로 처리
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // 성공 메시지
+      alert('✅ 메일이 성공적으로 전송되었습니다!\n빠른 시일 내에 답변드리겠습니다.');
+      
+      // 폼 초기화 및 팝업 닫기
+      closeMailPopup();
+      
+    } catch (error) {
+      // 에러 처리
+      alert('❌ 메일 전송에 실패했습니다.\n잠시 후 다시 시도해주세요.');
+      console.error('메일 전송 오류:', error);
+      
+      // 버튼 복구
+      const sendButton = document.querySelector('[data-send-button]') as HTMLButtonElement;
+      if (sendButton) {
+        sendButton.disabled = false;
+        sendButton.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> 메일 전송';
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+      {/* 메일 팝업 모달 */}
+      {isMailPopupOpen && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl">
+            {/* 모달 헤더 */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h2 className="text-xl font-bold text-slate-800 flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg flex items-center justify-center">
+                  <EnvelopeIcon className="w-5 h-5 text-rose-600" />
+                </div>
+                <span>이메일 문의</span>
+              </h2>
+              <button
+                onClick={closeMailPopup}
+                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <XMarkIcon className="w-5 h-5 text-slate-600" />
+              </button>
+            </div>
+            
+            {/* 모달 내용 */}
+            <div className="p-6 space-y-4">
+              <p className="text-slate-600 text-sm leading-relaxed">
+                아이보틀 관련 문의사항이나 제안이 있으시면 언제든지 연락해 주세요.
+              </p>
+              
+              {/* 메일 폼 */}
+              <form className="space-y-4">
+                {/* 이름 */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">이름 *</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={mailForm.name}
+                    onChange={handleInputChange}
+                    placeholder="홍길동"
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200 text-slate-800 placeholder-slate-400 text-sm"
+                  />
+                </div>
+
+                {/* 이메일 */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">이메일 *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={mailForm.email}
+                    onChange={handleInputChange}
+                    placeholder="doctor@hospital.com"
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200 text-slate-800 placeholder-slate-400 text-sm"
+                  />
+                </div>
+
+                {/* 제목 */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">제목 *</label>
+                  <input
+                    type="text"
+                    name="subject"
+                    value={mailForm.subject}
+                    onChange={handleInputChange}
+                    placeholder="문의 제목을 입력해 주세요"
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200 text-slate-800 placeholder-slate-400 text-sm"
+                  />
+                </div>
+
+                {/* 메시지 */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">메시지 *</label>
+                  <textarea
+                    name="message"
+                    value={mailForm.message}
+                    onChange={handleInputChange}
+                    rows={4}
+                    placeholder="문의 내용을 자세히 적어주세요..."
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200 text-slate-800 placeholder-slate-400 resize-none text-sm"
+                  />
+                </div>
+              </form>
+            </div>
+            
+            {/* 모달 푸터 */}
+            <div className="p-6 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={closeMailPopup}
+                  className="px-4 py-2 text-slate-600 border border-slate-200 rounded-lg font-medium hover:bg-slate-100 transition-all duration-200 text-sm"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleSendMail}
+                  data-send-button
+                  className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:from-rose-600 hover:to-pink-600 flex items-center justify-center space-x-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  <span>메일 전송</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 데모 영상 모달 */}
+      {isVideoModalOpen && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* 모달 헤더 */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h2 className="text-2xl font-bold text-slate-800 flex items-center space-x-3">
+                <div className="relative">
+                  <PlayIcon className="w-8 h-8 text-red-500" />
+                  <div className="absolute inset-0 bg-red-500/20 rounded-full transform scale-110"></div>
+                </div>
+                <span>데모 영상 리스트</span>
+              </h2>
+              <button
+                onClick={() => setIsVideoModalOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                <XMarkIcon className="w-6 h-6 text-slate-600" />
+              </button>
+            </div>
+            
+            {/* 영상 리스트 */}
+            <div className="p-6 space-y-4">
+              {demoVideos.map((video) => (
+                <div 
+                  key={video.id}
+                  className={`group rounded-xl border-2 p-4 transition-all duration-300 ${
+                    video.url === "#" 
+                      ? "border-slate-200 bg-slate-50 cursor-not-allowed opacity-60" 
+                      : "border-slate-200 hover:border-red-300 hover:bg-red-50/30 cursor-pointer"
+                  }`}
+                  onClick={() => {
+                    if (video.url !== "#") {
+                      window.open(video.url, '_blank');
+                    }
+                  }}
+                >
+                  <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+                    {/* 썸네일 */}
+                    <div className="relative flex-shrink-0">
+                      <div className="w-full md:w-48 h-28 bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl overflow-hidden">
+                        <img 
+                          src={video.thumbnail} 
+                          alt={video.title}
+                          className="w-full h-full object-cover"
+                        />
+                        {video.url !== "#" && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="bg-red-500 hover:bg-red-600 transition-colors rounded-full p-3 group-hover:scale-110 transform duration-300">
+                              <PlayIcon className="w-6 h-6 text-white" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {/* 재생 시간 */}
+                      <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+                        {video.duration}
+                      </div>
+                    </div>
+                    
+                    {/* 영상 정보 */}
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className={`text-lg font-bold ${video.url === "#" ? "text-slate-500" : "text-slate-800 group-hover:text-red-600"}`}>
+                          {video.title}
+                        </h3>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                          video.category === "검진결과" ? "bg-red-100 text-red-700" :
+                          video.category === "근시케어" ? "bg-blue-100 text-blue-700" :
+                          "bg-slate-100 text-slate-600"
+                        }`}>
+                          {video.category}
+                        </span>
+                      </div>
+                      <p className="text-slate-600 text-sm leading-relaxed mb-3">
+                        {video.description}
+                      </p>
+                      {video.url === "#" ? (
+                        <span className="text-sm font-medium text-amber-600 bg-amber-100 px-3 py-1 rounded-full">
+                          곧 공개됩니다! 📅
+                        </span>
+                      ) : (
+                        <span className="text-sm font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full group-hover:bg-red-100 group-hover:text-red-600 transition-colors">
+                          지금 시청하기 ▶️
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* 모달 푸터 */}
+            <div className="p-6 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
+              <p className="text-sm text-slate-600 text-center">
+                💡 더 많은 기능의 데모 영상이 곧 추가됩니다! 기대해 주세요.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 헤더 네비게이션 */}
       <header className="bg-white/95 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6 lg:px-8 py-5">
@@ -47,9 +376,16 @@ export default function Home() {
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">업데이트</a>
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">소개</a>
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">문의</a>
+              
+              {/* 주요 기능 네비게이션 메뉴 */}
+              <QuickNavMenu />
             </nav>
-            {/* Mobile menu button */}
-            <div className="lg:hidden">
+            {/* Mobile menu buttons */}
+            <div className="lg:hidden flex items-center space-x-3">
+              {/* 주요 기능 네비게이션 메뉴 */}
+              <QuickNavMenu />
+              
+              {/* 기존 모바일 메뉴 버튼 */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-slate-600 hover:text-blue-600"
@@ -107,8 +443,15 @@ export default function Home() {
             </p>
 
             <div className="flex justify-center xl:justify-start">
-              <button className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-12 py-5 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:from-blue-700 hover:to-indigo-700 ring-1 ring-blue-600/20">
-                <span className="flex items-center space-x-2">
+              <button 
+                onClick={() => setIsVideoModalOpen(true)}
+                className="group bg-gradient-to-r from-red-500 to-red-600 text-white px-12 py-5 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:from-red-600 hover:to-red-700 ring-1 ring-red-600/20"
+              >
+                <span className="flex items-center space-x-3">
+                  <div className="relative">
+                    <PlayIcon className="w-6 h-6" />
+                    <div className="absolute inset-0 bg-white/20 rounded-full transform scale-0 group-hover:scale-110 transition-transform duration-300"></div>
+                  </div>
                   <span>데모 영상 보기</span>
                 </span>
               </button>
@@ -350,6 +693,8 @@ export default function Home() {
                 <p>• 주사 트래커 & DB</p>
               </div>
             </div>
+
+
           </div>
         </section>
       </main>
@@ -378,13 +723,18 @@ export default function Home() {
             </Link>
 
             {/* 문의 */}
-            <div className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
+            <div 
+              onClick={openMailPopup}
+              className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="bg-gradient-to-br from-sky-500/10 to-blue-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <EnvelopeIcon className="w-8 h-8 lg:w-10 lg:h-10 text-sky-600" />
               </div>
               <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-4">Contact</h3>
-              <p className="text-base lg:text-lg text-slate-600">이메일·SNS 문의</p>
+              <p className="text-base lg:text-lg text-slate-600">이메일 문의</p>
             </div>
+
+
           </div>
 
           {/* 저작권 정보 */}

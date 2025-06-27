@@ -34,8 +34,9 @@ import {
   TREATMENT_METHOD_LABELS,
   RiskLevel
 } from '@/types/database';
-import { Search, UserPlus, Eye, Edit, Trash2, Users } from 'lucide-react';
+import { Search, UserPlus, Eye, Edit, Trash2, Users, FileText, LineChart, Edit2 } from 'lucide-react';
 import { NewPatientModal } from '@/components/myocare/patients/new-patient-modal';
+import { EditPatientModal } from '@/components/myocare/patients/edit-patient-modal';
 
 export default function PatientsPage() {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function PatientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [showNewPatientModal, setShowNewPatientModal] = useState(false);
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
 
   useEffect(() => {
     loadPatients();
@@ -81,7 +83,7 @@ export default function PatientsPage() {
     const filtered = patients.filter(
       patient =>
         patient.name.toLowerCase().includes(term) ||
-        patient.chart_number?.toLowerCase().includes(term)
+        (patient.chart_number && patient.chart_number.toLowerCase().includes(term))
     );
     setFilteredPatients(filtered);
   };
@@ -170,17 +172,19 @@ export default function PatientsPage() {
           <Table className="w-full">
             <TableHeader>
               <TableRow className="bg-slate-50 border-b border-slate-200">
-                <TableHead className="font-semibold text-base text-slate-700 py-4">환자 정보</TableHead>
-                <TableHead className="font-semibold text-base text-slate-700 py-4">치료 상태</TableHead>
-                <TableHead className="font-semibold text-base text-slate-700 py-4">마지막 방문</TableHead>
+                <TableHead className="font-semibold text-base text-slate-700 py-4">이름</TableHead>
+                <TableHead className="font-semibold text-base text-slate-700 py-4">생년월일</TableHead>
+                <TableHead className="font-semibold text-base text-slate-700 py-4">치료방법</TableHead>
+                <TableHead className="font-semibold text-base text-slate-700 py-4">최근 방문</TableHead>
                 <TableHead className="font-semibold text-base text-slate-700 py-4">위험도</TableHead>
-                <TableHead className="text-right font-semibold text-base text-slate-700 py-4">관리</TableHead>
+                <TableHead className="font-semibold text-base text-slate-700 py-4 text-center">검사결과입력</TableHead>
+                <TableHead className="font-semibold text-base text-slate-700 py-4 text-center">그래프/데이터관리</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedPatients.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-16">
+                  <TableCell colSpan={7} className="text-center py-16">
                     <div className="flex flex-col items-center">
                       <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
                         <Users className="h-10 w-10 text-slate-400" />
@@ -203,17 +207,25 @@ export default function PatientsPage() {
                   return (
                     <TableRow key={patient.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
                       <TableCell className="py-6">
-                        <div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-600 hover:text-blue-600"
+                            onClick={() => setEditingPatient(patient)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
                           <p className="font-semibold text-lg text-slate-800">{patient.name}</p>
-                          <div className="flex items-center space-x-3 mt-1">
-                            <span className="text-sm text-slate-600">{patient.birth_date} ({age}세)</span>
-                            {patient.chart_number && (
-                              <>
-                                <span className="text-slate-300">|</span>
-                                <span className="text-sm text-slate-600">차트: {patient.chart_number}</span>
-                              </>
-                            )}
-                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-6">
+                        <div>
+                          <p className="text-base font-medium text-slate-700">{patient.birth_date}</p>
+                          <p className="text-sm text-slate-500">({age}세)</p>
+                          {patient.chart_number && (
+                            <p className="text-xs text-slate-400 mt-0.5">#{patient.chart_number}</p>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell className="py-6">
@@ -230,13 +242,13 @@ export default function PatientsPage() {
                           <div>
                             <div className="text-base font-medium text-slate-700">{lastVisit.visit_date}</div>
                             <div className="text-sm text-slate-500 mt-0.5">
-                              {daysSince < 7 ? (
+                              {daysSince !== null && daysSince < 7 ? (
                                 <span className="text-green-600 font-medium">{daysSince}일 전</span>
-                              ) : daysSince < 30 ? (
+                              ) : daysSince !== null && daysSince < 30 ? (
                                 <span className="text-yellow-600 font-medium">{daysSince}일 전</span>
-                              ) : (
+                              ) : daysSince !== null ? (
                                 <span className="text-red-600 font-medium">{daysSince}일 전</span>
-                              )}
+                              ) : null}
                             </div>
                           </div>
                         ) : (
@@ -256,25 +268,25 @@ export default function PatientsPage() {
                           {getRiskText(riskLevel)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right py-6">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 px-4 font-medium"
-                            onClick={() => router.push(`/myocare/patients/${patient.id}`)}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            상세보기
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-slate-600 hover:text-blue-600 hover:bg-blue-50 h-10 w-10"
-                            onClick={() => router.push(`/myocare/patients/${patient.id}/edit`)}
-                          >
-                            <Edit className="h-5 w-5" />
-                          </Button>
-                        </div>
+                      <TableCell className="text-center py-6">
+                        <Button
+                          variant="outline"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 px-4 font-medium"
+                          onClick={() => router.push(`/myocare/patients/${patient.id}/visits/new`)}
+                        >
+                          <FileText className="h-4 w-4 mr-2" />
+                          검사결과
+                        </Button>
+                      </TableCell>
+                      <TableCell className="text-center py-6">
+                        <Button
+                          variant="outline"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 px-4 font-medium"
+                          onClick={() => router.push(`/myocare/patients/${patient.id}/chart`)}
+                        >
+                          <LineChart className="h-4 w-4 mr-2" />
+                          진행 그래프
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
@@ -294,6 +306,23 @@ export default function PatientsPage() {
           onSuccess={() => {
             loadPatients();
             setShowNewPatientModal(false);
+          }}
+        />
+      )}
+      
+      {/* 환자 정보 수정 모달 */}
+      {editingPatient && (
+        <EditPatientModal
+          patient={editingPatient}
+          open={!!editingPatient}
+          onClose={() => setEditingPatient(null)}
+          onSuccess={() => {
+            loadPatients();
+            setEditingPatient(null);
+          }}
+          onDelete={() => {
+            loadPatients();
+            setEditingPatient(null);
           }}
         />
       )}

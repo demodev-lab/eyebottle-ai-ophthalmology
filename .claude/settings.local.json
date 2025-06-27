@@ -14,7 +14,9 @@
       "Bash(git commit:*)",
       "Bash(npm run dev:*)",
       "Bash(mkdir:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(grep:*)",
+      "Bash(npx shadcn-ui:*)"
     ],
     "deny": []
   },

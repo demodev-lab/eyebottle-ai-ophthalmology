@@ -34,14 +34,15 @@ export interface MyoCareVisit {
   od_cylinder?: number;
   od_se?: number; // Spherical Equivalent (자동 계산)
   od_axial_length?: number;
-  od_new_prescription?: boolean;
   
   // 좌안 (OS) 데이터
   os_sphere?: number;
   os_cylinder?: number;
   os_se?: number; // Spherical Equivalent (자동 계산)
   os_axial_length?: number;
-  os_new_prescription?: boolean;
+  
+  // 안경 처방 여부 (양안 공통)
+  new_prescription?: boolean;
   
   treatment_method?: TreatmentMethod;
   notes?: string;
@@ -74,6 +75,7 @@ export interface UserSettings {
   
   // EMR 템플릿
   emrTemplate: string;
+  emrTemplateVariables?: string[]; // 선택된 EMR 템플릿 변수 목록
   
   created_at: string;
   updated_at: string;
@@ -182,4 +184,15 @@ export const DEFAULT_SETTINGS: Omit<UserSettings, 'id' | 'user_id' | 'created_at
 연간 진행속도:
 우안 S.E.: [SE_PROGRESS_OD] D/yr
 좌안 S.E.: [SE_PROGRESS_OS] D/yr`,
+  emrTemplateVariables: [
+    '[환자명]',
+    '[치료방법]',
+    '[검사일]',
+    '[SE_OD]',
+    '[SE_OS]',
+    '[AL_OD]',
+    '[AL_OS]',
+    '[SE_PROGRESS_OD]',
+    '[SE_PROGRESS_OS]',
+  ],
 };

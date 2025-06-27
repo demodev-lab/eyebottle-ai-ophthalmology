@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { DemoVideoButton } from '@/components/common/demo-video-button';
+import { QuickNavMenu } from '@/components/common/quick-nav-menu';
 import { PlayCircle, User, Home, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -35,8 +38,14 @@ export function MyoCareHeader() {
               
               {/* 로고 */}
               <Link href="/myocare" className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-xl">E</span>
+                <div className="w-12 h-12 relative">
+                  <Image
+                    src="/eyebottle-logo.png"
+                    alt="Eyebottle Logo"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold text-slate-800 tracking-tight">근시케어 차트</span>
@@ -70,14 +79,8 @@ export function MyoCareHeader() {
 
           {/* 우측 버튼 */}
           <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 h-11 px-5 text-base"
-              onClick={() => window.open('https://youtu.be/demo', '_blank')}
-            >
-              <PlayCircle className="mr-2 h-5 w-5" />
-              데모영상
-            </Button>
+            <QuickNavMenu />
+            <DemoVideoButton url="https://youtu.be/pgTEwTZTKlk?si=vHAW42IClD6Q2Nvx" />
             
             <Button variant="ghost" size="icon" className="text-slate-600 hover:bg-slate-100 h-11 w-11">
               <User className="h-6 w-6" />

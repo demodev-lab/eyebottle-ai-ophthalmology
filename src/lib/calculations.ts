@@ -93,8 +93,9 @@ export const calculateProgressionRate = (
 };
 
 // 나이 계산
-export const calculateAge = (birthDate: string): number => {
-  return differenceInYears(new Date(), parseISO(birthDate));
+export const calculateAge = (birthDate: string, targetDate?: string): number => {
+  const target = targetDate ? parseISO(targetDate) : new Date();
+  return differenceInYears(target, parseISO(birthDate));
 };
 
 // 최근 방문으로부터 경과 일수
