@@ -179,7 +179,7 @@ export default function PatientChartPage() {
   // 치료 구간 계산
   const getTreatmentAreas = () => {
     const areas: any[] = [];
-    if (visits.length < 2) return areas;
+    if (visits.length < 2 || !patient) return areas;
 
     for (let i = 0; i < visits.length - 1; i++) {
       const currentVisit = visits[i];
