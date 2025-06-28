@@ -22,7 +22,7 @@ import {
   getRiskColor,
   getRiskText 
 } from '@/lib/calculations';
-import { ArrowLeft, Edit2, Trash2, Save, X } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Save, X, Printer } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -143,6 +143,22 @@ export default function PatientChartPage() {
         alert('삭제 중 오류가 발생했습니다.');
       }
     }
+  };
+
+  const handlePrint = () => {
+    // 인쇄용 날짜 설정
+    const printDate = new Date().toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    const mainElement = document.querySelector('.max-w-7xl');
+    if (mainElement) {
+      mainElement.setAttribute('data-print-date', printDate);
+    }
+    window.print();
   };
 
   // 두 검사 간의 진행 속도 계산
@@ -278,12 +294,22 @@ export default function PatientChartPage() {
             <p className="text-lg text-slate-600 mt-1">{patient.name} 환자의 근시 진행 상태</p>
           </div>
         </div>
-        <Button
-          onClick={() => router.push(`/myocare/patients/${patientId}/visits/new`)}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          새 검사결과 입력
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button
+            onClick={handlePrint}
+            variant="outline"
+            className="flex items-center space-x-2 print:hidden"
+          >
+            <Printer className="h-4 w-4" />
+            <span>인쇄</span>
+          </Button>
+          <Button
+            onClick={() => router.push(`/myocare/patients/${patientId}/visits/new`)}
+            className="bg-blue-600 hover:bg-blue-700 text-white print:hidden"
+          >
+            새 검사결과 입력
+          </Button>
+        </div>
       </div>
 
       {/* 환자 정보 카드 */}
@@ -360,17 +386,26 @@ export default function PatientChartPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
+        <Card className={`shadow-md ${
+          progression?.riskLevel === RiskLevel.RED ? 'border-red-500 bg-red-50/30' :
+          progression?.riskLevel === RiskLevel.YELLOW ? 'border-yellow-500 bg-yellow-50/30' :
+          'border-0'
+        }`}>
           <CardHeader className="pb-3">
+            <div className={`h-1.5 -mt-4 -mx-4 mb-3 ${
+              progression?.riskLevel === RiskLevel.RED ? 'bg-red-500' :
+              progression?.riskLevel === RiskLevel.YELLOW ? 'bg-yellow-500' :
+              'bg-green-500'
+            }`} />
             <CardTitle className="text-lg">진행 상태</CardTitle>
           </CardHeader>
           <CardContent>
             {progression ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-slate-600">위험도 평가</p>
+                  <p className="text-sm text-slate-600 mb-2">위험도 평가</p>
                   <Badge
-                    className="font-semibold px-4 py-1.5 text-sm mt-1"
+                    className="font-bold px-6 py-2 text-lg"
                     style={{
                       backgroundColor: getRiskColor(progression.riskLevel) + '20',
                       color: getRiskColor(progression.riskLevel),
@@ -378,58 +413,71 @@ export default function PatientChartPage() {
                     }}
                     variant="outline"
                   >
+                    {progression.riskLevel === RiskLevel.RED ? '⚠️ ' : 
+                     progression.riskLevel === RiskLevel.YELLOW ? '🟡 ' : '🟢 '}
                     {getRiskText(progression.riskLevel)}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">연간 진행속도</p>
-                  <div className="space-y-2 mt-2">
+                  <p className="text-sm text-slate-600 mb-3">연간 진행속도</p>
+                  <div className="grid grid-cols-2 gap-4">
                     {/* SE 진행률 */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600">S.E. 진행속도</span>
-                      <div className="flex items-center space-x-4">
-                        <span className="text-sm">
-                          우안: <span className={`font-bold ${
-                            Math.abs(progression.se_od || 0) >= settings.thresholds.se.red ? 'text-red-600' :
-                            Math.abs(progression.se_od || 0) >= settings.thresholds.se.yellow ? 'text-yellow-600' : 
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-slate-700">S.E. 진행속도</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-baseline justify-between">
+                          <span className="text-sm text-slate-600">우안:</span>
+                          <span className={`${
+                            Math.abs(progression.se_od || 0) >= settings.thresholds.se.red ? 'bg-red-50 text-red-600 px-2 py-1 rounded' :
+                            Math.abs(progression.se_od || 0) >= settings.thresholds.se.yellow ? 'bg-yellow-50 text-yellow-600 px-2 py-1 rounded' : 
                             'text-green-600'
                           }`}>
-                            {progression.se_od !== undefined ? `${progression.se_od.toFixed(2)}D/yr` : '-'}
+                            <span className="font-bold text-xl">{progression.se_od !== undefined ? progression.se_od.toFixed(2) : '-'}</span>
+                            <span className="text-sm ml-1">D/yr</span>
                           </span>
-                        </span>
-                        <span className="text-sm">
-                          좌안: <span className={`font-bold ${
-                            Math.abs(progression.se_os || 0) >= settings.thresholds.se.red ? 'text-red-600' :
-                            Math.abs(progression.se_os || 0) >= settings.thresholds.se.yellow ? 'text-yellow-600' : 
+                        </div>
+                        <div className="flex items-baseline justify-between">
+                          <span className="text-sm text-slate-600">좌안:</span>
+                          <span className={`${
+                            Math.abs(progression.se_os || 0) >= settings.thresholds.se.red ? 'bg-red-50 text-red-600 px-2 py-1 rounded' :
+                            Math.abs(progression.se_os || 0) >= settings.thresholds.se.yellow ? 'bg-yellow-50 text-yellow-600 px-2 py-1 rounded' : 
                             'text-green-600'
                           }`}>
-                            {progression.se_os !== undefined ? `${progression.se_os.toFixed(2)}D/yr` : '-'}
+                            <span className="font-bold text-xl">{progression.se_os !== undefined ? progression.se_os.toFixed(2) : '-'}</span>
+                            <span className="text-sm ml-1">D/yr</span>
                           </span>
-                        </span>
+                        </div>
                       </div>
                     </div>
-                    {/* AL 진행률 */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600">A.L. 진행속도</span>
-                      <div className="flex items-center space-x-4">
-                        <span className="text-sm">
-                          우안: <span className={`font-bold ${
-                            (progression.al_od || 0) >= settings.thresholds.al.red ? 'text-red-600' :
-                            (progression.al_od || 0) >= settings.thresholds.al.yellow ? 'text-yellow-600' : 
-                            'text-green-600'
-                          }`}>
-                            {progression.al_od !== undefined ? `${progression.al_od.toFixed(2)}mm/yr` : '-'}
-                          </span>
-                        </span>
-                        <span className="text-sm">
-                          좌안: <span className={`font-bold ${
-                            (progression.al_os || 0) >= settings.thresholds.al.red ? 'text-red-600' :
-                            (progression.al_os || 0) >= settings.thresholds.al.yellow ? 'text-yellow-600' : 
-                            'text-green-600'
-                          }`}>
-                            {progression.al_os !== undefined ? `${progression.al_os.toFixed(2)}mm/yr` : '-'}
-                          </span>
-                        </span>
+                    
+                    <div className="border-l pl-4">
+                      {/* AL 진행률 */}
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium text-slate-700">A.L. 진행속도</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-baseline justify-between">
+                            <span className="text-sm text-slate-600">우안:</span>
+                            <span className={`${
+                              (progression.al_od || 0) >= settings.thresholds.al.red ? 'bg-red-50 text-red-600 px-2 py-1 rounded' :
+                              (progression.al_od || 0) >= settings.thresholds.al.yellow ? 'bg-yellow-50 text-yellow-600 px-2 py-1 rounded' : 
+                              'text-green-600'
+                            }`}>
+                              <span className="font-bold text-xl">{progression.al_od !== undefined ? progression.al_od.toFixed(2) : '-'}</span>
+                              <span className="text-sm ml-1">mm/yr</span>
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between">
+                            <span className="text-sm text-slate-600">좌안:</span>
+                            <span className={`${
+                              (progression.al_os || 0) >= settings.thresholds.al.red ? 'bg-red-50 text-red-600 px-2 py-1 rounded' :
+                              (progression.al_os || 0) >= settings.thresholds.al.yellow ? 'bg-yellow-50 text-yellow-600 px-2 py-1 rounded' : 
+                              'text-green-600'
+                            }`}>
+                              <span className="font-bold text-xl">{progression.al_os !== undefined ? progression.al_os.toFixed(2) : '-'}</span>
+                              <span className="text-sm ml-1">mm/yr</span>
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -959,7 +1007,7 @@ export default function PatientChartPage() {
                       </td>
                       <td className="p-4 text-center">
                         {isEditing ? (
-                          <div className="flex justify-center gap-1">
+                          <div className="flex justify-center gap-1 print:hidden">
                             <Button
                               size="icon"
                               variant="ghost"
@@ -978,7 +1026,7 @@ export default function PatientChartPage() {
                             </Button>
                           </div>
                         ) : (
-                          <div className="flex justify-center gap-1">
+                          <div className="flex justify-center gap-1 print:hidden">
                             <Button
                               size="icon"
                               variant="ghost"

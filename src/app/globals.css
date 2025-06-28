@@ -63,3 +63,61 @@ body {
     transform: scale(1);
   }
 }
+
+/* 인쇄 스타일 */
+@media print {
+  body {
+    font-size: 12pt;
+    color: black;
+    background: white;
+  }
+  
+  /* 불필요한 요소 숨김 */
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  /* 페이지 설정 */
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+  
+  /* 카드 스타일 조정 */
+  .shadow-md, .shadow-lg {
+    box-shadow: none !important;
+    border: 1px solid #ddd;
+  }
+  
+  /* 페이지 나눔 방지 */
+  .grid > div, table {
+    page-break-inside: avoid;
+  }
+  
+  /* 차트 크기 조정 */
+  .recharts-wrapper {
+    max-height: 300px !important;
+  }
+  
+  /* 헤더에 날짜 추가 */
+  .max-w-7xl::before {
+    content: "출력일: " attr(data-print-date);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 10pt;
+    color: #666;
+  }
+  
+  /* 하단 안내 문구 */
+  .max-w-7xl::after {
+    content: "이 자료는 근시 진행 상태를 보호자님께 설명하기 위한 참고 자료입니다.";
+    display: block;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    font-size: 10pt;
+    color: #666;
+    text-align: center;
+  }
+}

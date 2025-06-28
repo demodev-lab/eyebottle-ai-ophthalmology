@@ -155,7 +155,7 @@ export default function DashboardPage() {
             <div className="text-4xl font-bold text-red-600">{stats.highRiskPatients}</div>
             <p className="text-base text-slate-600 mt-2">즉시 관리 필요</p>
             <div className="mt-4 pt-4 border-t border-red-100">
-              <p className="text-sm text-red-700 font-medium">※ 연간 진행속도 &gt; 1.5D/yr</p>
+              <p className="text-sm text-red-700 font-medium">※ AL 진행속도 &gt; 0.6mm/yr</p>
             </div>
           </CardContent>
         </Card>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
             <div className="text-4xl font-bold text-yellow-600">{stats.mediumRiskPatients}</div>
             <p className="text-base text-slate-600 mt-2">주의 관찰 필요</p>
             <div className="mt-4 pt-4 border-t border-yellow-100">
-              <p className="text-sm text-yellow-700 font-medium">※ 연간 진행속도 &gt; 0.75D/yr</p>
+              <p className="text-sm text-yellow-700 font-medium">※ AL 진행속도 &gt; 0.3mm/yr</p>
             </div>
           </CardContent>
         </Card>
