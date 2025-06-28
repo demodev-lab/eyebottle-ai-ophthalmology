@@ -49,7 +49,8 @@
 - **GitHub Integration**: 자동 CI/CD
 
 ### **Backend & API**
-- **Next.js Server Actions**: 프론트엔드-백엔드 보안 통신
+- **Next.js API Routes**: RESTful API 엔드포인트
+- **Resend**: 이메일 전송 서비스 📧
 
 ## 💻 로컬 개발 환경 설정
 
@@ -65,7 +66,13 @@
     ```
 
 3.  **환경변수 설정**
-    현재 환경변수가 필요한 기능이 없습니다. 추후 필요 시 `.env` 파일을 생성하여 사용하세요.
+    ```bash
+    cp .env.local.example .env.local
+    ```
+    `.env.local` 파일을 열어 필요한 API 키를 설정하세요:
+    - `RESEND_API_KEY`: 이메일 기능을 위한 Resend API 키
+    
+    자세한 설정 방법은 `docs/RESEND_EMAIL_SETUP_GUIDE.md`를 참조하세요.
 
 4.  **개발 서버 실행**
     ```bash
@@ -98,7 +105,10 @@ eyebottle/
 │   │   ├── layout.tsx        # 루트 레이아웃
 │   │   ├── page.tsx          # 메인 랜딩 페이지 (홈)
 │   │   ├── about/
-│   │   │   └── page.tsx      # About Me 페이지
+│   │   │   └── page.tsx      # About Me 페이지 (이메일 문의 기능 포함) 📧
+│   │   ├── api/
+│   │   │   └── send-email/
+│   │   │       └── route.ts  # 이메일 전송 API Route 📧
 │   │   ├── exam-results/
 │   │   │   └── page.tsx      # 검진결과 작성 시스템 ✅
 │   │   ├── myocare/
@@ -132,13 +142,15 @@ eyebottle/
 │   ├── diabeticretinopathy_exam_report.html  # 당뇨망막병증 템플릿
 │   ├── htn_retinopathy_report.html           # 고혈압망막병증 템플릿
 │   └── comprehensive_exam_report.html        # 눈종합검진 템플릿
-├── .env                    # 환경변수 파일 (Git 무시)
+├── .env.local              # 환경변수 파일 (Git 무시)
+├── .env.local.example      # 환경변수 예제 파일 📧
 ├── components.json         # Shadcn/ui 설정
 ├── package.json            # 의존성 (Shadcn/ui 포함)
 ├── docs/
 │   ├── prd/                # 제품 요구사항 문서
 │   ├── dev-eyebottle-md/   # 개발 관련 문서
-│   └── DEMO_VIDEO_BUTTON_GUIDE.md  # 데모영상 버튼 & 퀵 네비게이션 가이드 ✨
+│   ├── DEMO_VIDEO_BUTTON_GUIDE.md  # 데모영상 버튼 & 퀵 네비게이션 가이드 ✨
+│   └── RESEND_EMAIL_SETUP_GUIDE.md # 이메일 기능 설정 가이드 📧
 ├── CLAUDE_CODE_GUIDE.md    # Claude Code 사용 가이드
 ├── DEVELOPMENT_LOG.md      # 개발 이력 및 변경사항
 ├── PROJECT_HISTORY.md      # 프로젝트 전체 히스토리

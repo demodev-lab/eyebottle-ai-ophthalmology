@@ -95,9 +95,22 @@ export default function AboutPage() {
         sendButton.textContent = '전송 중...';
       }
 
-      // 실제로는 여기서 백엔드 API를 호출하겠지만, 
-      // 지금은 시뮬레이션으로 처리
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // API 호출하여 이메일 전송
+      const apiUrl = '/api/send-email';
+        
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mailForm),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || '메일 전송 실패');
+      }
 
       // 성공 메시지
       alert('✅ 메일이 성공적으로 전송되었습니다!\n빠른 시일 내에 답변드리겠습니다.');

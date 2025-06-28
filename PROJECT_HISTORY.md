@@ -4,6 +4,41 @@
 
 ---
 
+## 📅 2025년 6월 28일
+
+### 📧 이메일 문의 기능 실제 구현
+- **Resend 이메일 서비스 통합**:
+  - Resend API를 활용한 실제 이메일 전송 기능
+  - Next.js API Routes 활용 (`/api/send-email`)
+  - 환경변수 기반 API 키 관리 시스템
+
+- **구현된 기능**:
+  - 랜딩 페이지 Contact 섹션 이메일 문의
+  - About 페이지 이메일 문의
+  - 폼 유효성 검사 (이름, 이메일, 제목, 메시지)
+  - 이메일 형식 검증
+  - 전송 중 로딩 상태 표시
+  - 성공/실패 알림 메시지
+
+- **기술적 구현**:
+  - `resend` npm 패키지 설치
+  - TypeScript 기반 API Route
+  - HTML 이메일 템플릿
+  - Reply-to 헤더 설정으로 직접 답장 가능
+
+- **문서화 및 가이드**:
+  - `.env.local.example` 파일 생성
+  - `docs/RESEND_EMAIL_SETUP_GUIDE.md` 상세 가이드
+  - Vercel 환경변수 설정 안내
+  - 초보자도 이해하기 쉬운 단계별 설명
+
+### 🐛 Vercel 배포 에러 수정
+- TypeScript 및 ESLint 에러 전체 해결
+- 사용하지 않는 imports 정리
+- 빌드 최적화
+
+---
+
 ## 📅 2025년 6월 26일
 
 ### 🚀 근시케어 시스템 전면 구현
