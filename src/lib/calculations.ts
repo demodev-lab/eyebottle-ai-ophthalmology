@@ -33,16 +33,16 @@ export const calculateProgressionRate = (
 
   // SE 진행 속도 계산 (D/yr)
   // 근시는 음수값이므로, 진행 시 더 음수가 됨 (예: -1 → -2)
-  // 따라서 진행률을 양수로 표시하기 위해 음수를 곱함
+  // 진행률은 음수로 표시 (예: -1D/yr), 위험도 판정시에만 절대값 사용
   let se_od: number | undefined;
   let se_os: number | undefined;
   
   if (firstVisit.od_se !== undefined && lastVisit.od_se !== undefined) {
-    se_od = -(lastVisit.od_se - firstVisit.od_se) / yearsDiffExact;
+    se_od = (lastVisit.od_se - firstVisit.od_se) / yearsDiffExact;
   }
   
   if (firstVisit.os_se !== undefined && lastVisit.os_se !== undefined) {
-    se_os = -(lastVisit.os_se - firstVisit.os_se) / yearsDiffExact;
+    se_os = (lastVisit.os_se - firstVisit.os_se) / yearsDiffExact;
   }
 
   // AL 진행 속도 계산 (mm/yr)
@@ -57,22 +57,10 @@ export const calculateProgressionRate = (
     al_os = (lastVisit.os_axial_length - firstVisit.os_axial_length) / yearsDiffExact;
   }
 
-  // 위험도 계산
+  // 위험도 계산 - AL을 주요 기준으로 사용
   let riskLevel = RiskLevel.NORMAL;
   
-  // SE 기준 위험도
-  const maxSEProgression = Math.max(
-    Math.abs(se_od || 0),
-    Math.abs(se_os || 0)
-  );
-  
-  if (maxSEProgression >= settings.thresholds.se.red) {
-    riskLevel = RiskLevel.RED;
-  } else if (maxSEProgression >= settings.thresholds.se.yellow) {
-    riskLevel = RiskLevel.YELLOW;
-  }
-
-  // AL 기준 위험도 (더 높은 위험도로 업데이트)
+  // AL 기준 위험도 (우선 평가)
   const maxALProgression = Math.max(
     al_od || 0,
     al_os || 0
@@ -80,8 +68,22 @@ export const calculateProgressionRate = (
   
   if (maxALProgression >= settings.thresholds.al.red) {
     riskLevel = RiskLevel.RED;
-  } else if (maxALProgression >= settings.thresholds.al.yellow && riskLevel === RiskLevel.NORMAL) {
+  } else if (maxALProgression >= settings.thresholds.al.yellow) {
     riskLevel = RiskLevel.YELLOW;
+  }
+
+  // SE 기준 위험도 (AL 데이터가 없는 경우만 사용)
+  if (al_od === undefined && al_os === undefined) {
+    const maxSEProgression = Math.max(
+      Math.abs(se_od || 0),
+      Math.abs(se_os || 0)
+    );
+    
+    if (maxSEProgression >= settings.thresholds.se.red) {
+      riskLevel = RiskLevel.RED;
+    } else if (maxSEProgression >= settings.thresholds.se.yellow) {
+      riskLevel = RiskLevel.YELLOW;
+    }
   }
 
   return {

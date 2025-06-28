@@ -35,6 +35,18 @@ import {
   ReferenceLine,
 } from 'recharts';
 
+// 치료 방법별 색상 정의
+const TREATMENT_COLORS: Record<string, string> = {
+  atropine_0_042: '#e3f2fd',
+  atropine_0_05: '#bbdefb',
+  atropine_0_063: '#90caf9',
+  atropine_0_125: '#64b5f6',
+  dream_lens: '#fce4ec',
+  myosight: '#f8bbd0',
+  dims_glasses: '#e8f5e9',
+  combined: '#fff3e0',
+};
+
 
 // 커스텀 Dot 컴포넌트
 const CustomDot = (props: any) => {
@@ -320,6 +332,20 @@ export default function PatientChartPage() {
                   </p>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-slate-600">우안 안축장</p>
+                  <p className="font-semibold text-blue-600">
+                    {latestVisit?.od_axial_length !== undefined ? `${latestVisit.od_axial_length.toFixed(2)}mm` : '-'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600">좌안 안축장</p>
+                  <p className="font-semibold text-orange-600">
+                    {latestVisit?.os_axial_length !== undefined ? `${latestVisit.os_axial_length.toFixed(2)}mm` : '-'}
+                  </p>
+                </div>
+              </div>
               <div>
                 <p className="text-sm text-slate-600">치료방법</p>
                 <p className="font-semibold">
@@ -355,34 +381,89 @@ export default function PatientChartPage() {
                 </div>
                 <div>
                   <p className="text-sm text-slate-600">연간 진행속도</p>
-                  <div className="space-y-1">
-                    {progression.se_od !== undefined && (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs text-slate-500">OD:</span>
-                        <span className="font-semibold text-blue-600">
-                          {progression.se_od.toFixed(2)}D/yr
-                        </span>
-                        {progression.se_od > 0 ? (
-                          <TrendingUp className="h-4 w-4 text-red-500" />
-                        ) : (
-                          <TrendingDown className="h-4 w-4 text-green-500" />
+                  <div className="space-y-2">
+                    {/* SE 진행률 */}
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">S.E. (D/yr)</p>
+                      <div className="space-y-1">
+                        {progression.se_od !== undefined && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs text-slate-500">OD:</span>
+                            <span className={`font-semibold ${
+                              Math.abs(progression.se_od) >= 1.0 ? 'text-red-600' :
+                              Math.abs(progression.se_od) >= 0.5 ? 'text-yellow-600' : 
+                              'text-green-600'
+                            }`}>
+                              {progression.se_od.toFixed(2)}D/yr
+                            </span>
+                            {progression.se_od < 0 ? (
+                              <TrendingDown className="h-4 w-4 text-red-500" />
+                            ) : (
+                              <TrendingUp className="h-4 w-4 text-green-500" />
+                            )}
+                          </div>
+                        )}
+                        {progression.se_os !== undefined && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs text-slate-500">OS:</span>
+                            <span className={`font-semibold ${
+                              Math.abs(progression.se_os) >= 1.0 ? 'text-red-600' :
+                              Math.abs(progression.se_os) >= 0.5 ? 'text-yellow-600' : 
+                              'text-green-600'
+                            }`}>
+                              {progression.se_os.toFixed(2)}D/yr
+                            </span>
+                            {progression.se_os < 0 ? (
+                              <TrendingDown className="h-4 w-4 text-red-500" />
+                            ) : (
+                              <TrendingUp className="h-4 w-4 text-green-500" />
+                            )}
+                          </div>
                         )}
                       </div>
-                    )}
-                    {progression.se_os !== undefined && (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs text-slate-500">OS:</span>
-                        <span className="font-semibold text-orange-600">
-                          {progression.se_os.toFixed(2)}D/yr
-                        </span>
-                        {progression.se_os > 0 ? (
-                          <TrendingUp className="h-4 w-4 text-red-500" />
-                        ) : (
-                          <TrendingDown className="h-4 w-4 text-green-500" />
+                    </div>
+                    {/* AL 진행률 */}
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">A.L. (mm/yr)</p>
+                      <div className="space-y-1">
+                        {progression.al_od !== undefined && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs text-slate-500">OD:</span>
+                            <span className={`font-semibold ${
+                              progression.al_od >= 0.5 ? 'text-red-600' :
+                              progression.al_od >= 0.33 ? 'text-yellow-600' : 
+                              'text-green-600'
+                            }`}>
+                              {progression.al_od.toFixed(2)}mm/yr
+                            </span>
+                            {progression.al_od > 0 ? (
+                              <TrendingUp className="h-4 w-4 text-red-500" />
+                            ) : (
+                              <TrendingDown className="h-4 w-4 text-green-500" />
+                            )}
+                          </div>
+                        )}
+                        {progression.al_os !== undefined && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs text-slate-500">OS:</span>
+                            <span className={`font-semibold ${
+                              progression.al_os >= 0.5 ? 'text-red-600' :
+                              progression.al_os >= 0.33 ? 'text-yellow-600' : 
+                              'text-green-600'
+                            }`}>
+                              {progression.al_os.toFixed(2)}mm/yr
+                            </span>
+                            {progression.al_os > 0 ? (
+                              <TrendingUp className="h-4 w-4 text-red-500" />
+                            ) : (
+                              <TrendingDown className="h-4 w-4 text-green-500" />
+                            )}
+                          </div>
                         )}
                       </div>
-                    )}
-                    {progression.se_od === undefined && progression.se_os === undefined && (
+                    </div>
+                    {progression.se_od === undefined && progression.se_os === undefined && 
+                     progression.al_od === undefined && progression.al_os === undefined && (
                       <span className="text-sm text-slate-500">데이터 없음</span>
                     )}
                   </div>
@@ -451,6 +532,29 @@ export default function PatientChartPage() {
                       return `${value}D`;
                     }}
                     labelFormatter={(label) => `${Number(label).toFixed(1)}세`}
+                    content={(props: any) => {
+                      const { active, payload, label } = props;
+                      if (!active || !payload || !payload.length) return null;
+                      
+                      const data = payload[0]?.payload;
+                      const treatment = data?.treatment;
+                      
+                      return (
+                        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+                          <p className="font-semibold">{`${Number(label).toFixed(1)}세`}</p>
+                          {payload.map((entry: any, index: number) => (
+                            <p key={index} style={{ color: entry.color }}>
+                              {entry.name}: {entry.value}D
+                            </p>
+                          ))}
+                          {treatment && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              치료: {TREATMENT_METHOD_LABELS[treatment]}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }}
                   />
                   <Legend 
                     verticalAlign="top" 
@@ -489,14 +593,20 @@ export default function PatientChartPage() {
             </div>
             
             {/* 범례 설명 */}
-            <div className="mt-4 flex items-center justify-center space-x-6 text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-0.5 bg-red-500"></div>
-                <span className="text-slate-600">고도근시 기준 (-6D)</span>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-center space-x-6 text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-red-500"></div>
+                  <span className="text-slate-600">고도근시 기준 (-6D)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-orange-500"></div>
+                  <span className="text-slate-600">중등도근시 기준 (-3D)</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-0.5 bg-orange-500"></div>
-                <span className="text-slate-600">중등도근시 기준 (-3D)</span>
+              {/* 치료 방법 색상 범례 */}
+              <div className="text-center text-xs text-slate-500">
+                그래프 포인트에 마우스를 올리면 해당 시점의 치료 방법을 확인할 수 있습니다.
               </div>
             </div>
           </CardContent>
@@ -537,12 +647,39 @@ export default function PatientChartPage() {
                       return `${value}mm`;
                     }}
                     labelFormatter={(label) => `${Number(label).toFixed(1)}세`}
+                    content={(props: any) => {
+                      const { active, payload, label } = props;
+                      if (!active || !payload || !payload.length) return null;
+                      
+                      const data = payload[0]?.payload;
+                      const treatment = data?.treatment;
+                      
+                      return (
+                        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+                          <p className="font-semibold">{`${Number(label).toFixed(1)}세`}</p>
+                          {payload.map((entry: any, index: number) => (
+                            <p key={index} style={{ color: entry.color }}>
+                              {entry.name}: {entry.value}mm
+                            </p>
+                          ))}
+                          {treatment && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              치료: {TREATMENT_METHOD_LABELS[treatment]}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }}
                   />
                   <Legend 
                     verticalAlign="top" 
                     height={36}
                     iconType="line"
                   />
+                  
+                  {/* 위험 구간 표시 */}
+                  <ReferenceLine y={26} stroke="#ff0000" strokeDasharray="5 5" />
+                  <ReferenceLine y={24.5} stroke="#ffa500" strokeDasharray="5 5" />
                   
                   {(selectedEye === 'both' || selectedEye === 'od') && (
                     <Line
@@ -568,6 +705,18 @@ export default function PatientChartPage() {
                   )}
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+            
+            {/* 범례 설명 */}
+            <div className="mt-4 flex items-center justify-center space-x-6 text-sm">
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-0.5 bg-red-500"></div>
+                <span className="text-slate-600">고도근시 기준 (26mm)</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-0.5 bg-orange-500"></div>
+                <span className="text-slate-600">중등도근시 기준 (24.5mm)</span>
+              </div>
             </div>
           </CardContent>
         </Card>
