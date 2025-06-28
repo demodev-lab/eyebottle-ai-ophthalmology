@@ -147,10 +147,10 @@ export default function PatientsPage() {
         </div>
         <Button 
           onClick={() => setShowNewPatientModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white shadow-md h-12 px-6 text-base font-medium"
+          className="flex items-center gap-2 h-11 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
         >
-          <UserPlus className="mr-2 h-5 w-5" />
-          신규환자 등록
+          <UserPlus className="h-5 w-5" />
+          <span>신규환자 등록</span>
         </Button>
       </div>
 
@@ -221,23 +221,33 @@ export default function PatientsPage() {
                     <TableRow key={patient.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
                       <TableCell className="py-6">
                         <div className="flex items-center space-x-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-slate-600 hover:text-blue-600"
-                            onClick={() => setEditingPatient(patient)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-slate-600 hover:text-red-600"
-                            onClick={() => handleDeletePatient(patient.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                          <p className="font-semibold text-lg text-slate-800">{patient.name}</p>
+                          <div className="relative group">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
+                              onClick={() => setEditingPatient(patient)}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                              환자 정보 수정
+                            </div>
+                          </div>
+                          <div className="relative group">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+                              onClick={() => handleDeletePatient(patient.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                              환자 삭제
+                            </div>
+                          </div>
+                          <p className="font-semibold text-lg text-slate-800 ml-2">{patient.name}</p>
                         </div>
                       </TableCell>
                       <TableCell className="py-6">
@@ -292,7 +302,7 @@ export default function PatientsPage() {
                       <TableCell className="text-center py-6">
                         <Button
                           variant="outline"
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 px-4 font-medium"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 h-9 px-4 font-medium transition-all duration-200 shadow-sm hover:shadow"
                           onClick={() => router.push(`/myocare/patients/${patient.id}/visits/new`)}
                         >
                           <FileText className="h-4 w-4 mr-2" />
@@ -302,7 +312,7 @@ export default function PatientsPage() {
                       <TableCell className="text-center py-6">
                         <Button
                           variant="outline"
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 px-4 font-medium"
+                          className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 h-9 px-4 font-medium transition-all duration-200 shadow-sm hover:shadow"
                           onClick={() => router.push(`/myocare/patients/${patient.id}/chart`)}
                         >
                           <LineChart className="h-4 w-4 mr-2" />

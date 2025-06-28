@@ -152,11 +152,11 @@ body {
     gap: 0.2rem !important;
   }
   
-  /* 그래프 2개를 한 줄에 배치 */
+  /* 그래프 2개를 세로로 배치 (인쇄시) */
   .grid.lg\:grid-cols-2 {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.2rem !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.3rem !important;
   }
   
   /* 차트 크기 대폭 축소 및 높이 고정 */
@@ -172,6 +172,98 @@ body {
   /* 차트 마진 축소 */
   .recharts-surface {
     margin: 0 !important;
+  }
+  
+  /* SVG 요소 인쇄 최적화 */
+  svg {
+    overflow: visible !important;
+  }
+  
+  /* Recharts 라인과 도트 인쇄 시 표시 */
+  .recharts-line-curve {
+    stroke-width: 2px !important;
+    stroke-opacity: 1 !important;
+    fill: none !important;
+  }
+  
+  .recharts-dot {
+    r: 4 !important;
+    stroke-width: 2px !important;
+    stroke-opacity: 1 !important;
+    fill-opacity: 1 !important;
+  }
+  
+  /* 축과 그리드 인쇄 시 표시 */
+  .recharts-cartesian-axis-line,
+  .recharts-cartesian-axis-tick-line {
+    stroke: #333 !important;
+    stroke-width: 1px !important;
+  }
+  
+  .recharts-cartesian-grid-horizontal line,
+  .recharts-cartesian-grid-vertical line {
+    stroke: #e0e0e0 !important;
+    stroke-width: 0.5px !important;
+  }
+  
+  /* 참조선 인쇄 시 표시 */
+  .recharts-reference-line-line {
+    stroke-width: 1.5px !important;
+    stroke-opacity: 1 !important;
+  }
+  
+  /* 배경색 영역 인쇄 시 표시 */
+  .recharts-reference-area rect {
+    fill-opacity: 1 !important;
+    stroke-opacity: 1 !important;
+  }
+  
+  /* 텍스트 위치 고정 */
+  .recharts-text {
+    font-size: 8pt !important;
+    fill: #333 !important;
+  }
+  
+  .recharts-label {
+    font-size: 7pt !important;
+    fill: #333 !important;
+  }
+  
+  /* 범례 인쇄 시 고정 */
+  .recharts-legend-wrapper {
+    position: relative !important;
+    margin: 0 !important;
+  }
+  
+  /* 툴팁 숨김 */
+  .recharts-tooltip-wrapper {
+    display: none !important;
+  }
+  
+  /* 차트 컨테이너 고정 */
+  .recharts-responsive-container {
+    position: relative !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  /* 인쇄 중 클래스가 있을 때 추가 스타일 */
+  .printing * {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  .printing svg * {
+    stroke-opacity: 1 !important;
+    fill-opacity: 1 !important;
+  }
+  
+  /* 배경색 영역 강제 표시 */
+  .printing .recharts-reference-area-rect {
+    fill-opacity: 0.5 !important;
+    stroke-opacity: 1 !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
   }
   
   /* 제목 크기 축소 */

@@ -76,6 +76,7 @@ export interface UserSettings {
   // EMR 템플릿
   emrTemplate: string;
   emrTemplateVariables?: string[]; // 선택된 EMR 템플릿 변수 목록
+  customComment?: string; // 사용자 경과 문구
   
   created_at: string;
   updated_at: string;
@@ -185,14 +186,13 @@ export const DEFAULT_SETTINGS: Omit<UserSettings, 'id' | 'user_id' | 'created_at
 우안 S.E.: [SE_PROGRESS_OD] D/yr
 좌안 S.E.: [SE_PROGRESS_OS] D/yr`,
   emrTemplateVariables: [
-    '[환자명]',
     '[치료방법]',
-    '[검사일]',
-    '[SE_OD]',
-    '[SE_OS]',
-    '[AL_OD]',
-    '[AL_OS]',
-    '[SE_PROGRESS_OD]',
-    '[SE_PROGRESS_OS]',
+    '[구면상당치]',
+    '[안축장]',
+    '[SE 진행속도]',
+    '[AL 진행속도]',
+    '[안경처방]',
+    '[사용자 경과 문구]',
   ],
+  customComment: '4개월 뒤 경과관찰, AL, 안경시력, 교정 후 진료',
 };

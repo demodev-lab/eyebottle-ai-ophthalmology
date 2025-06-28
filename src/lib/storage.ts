@@ -111,15 +111,48 @@ export const getVisits = (patientId?: string): MyoCareVisit[] => {
   const data = localStorage.getItem(STORAGE_KEYS.VISITS);
   const visits: MyoCareVisit[] = data ? JSON.parse(data) : [];
   
+  // SE 값이 없는 기존 데이터에 대한 재계산
+  const calculateSE = (sphere?: number, cylinder?: number): number | undefined => {
+    if (sphere === undefined) return undefined;
+    return sphere + (cylinder || 0) / 2;
+  };
+  
+  // 데이터 무결성 검증 및 SE 값 재계산
+  const validatedVisits = visits.map(visit => {
+    const needsUpdate = visit.od_se === undefined && visit.od_sphere !== undefined ||
+                       visit.os_se === undefined && visit.os_sphere !== undefined;
+    
+    if (needsUpdate) {
+      console.log('[MyoCare] SE 값 재계산 필요:', visit.id, {
+        od_sphere: visit.od_sphere,
+        od_cylinder: visit.od_cylinder,
+        os_sphere: visit.os_sphere,
+        os_cylinder: visit.os_cylinder
+      });
+      
+      return {
+        ...visit,
+        od_se: visit.od_se ?? calculateSE(visit.od_sphere, visit.od_cylinder),
+        os_se: visit.os_se ?? calculateSE(visit.os_sphere, visit.os_cylinder)
+      };
+    }
+    return visit;
+  });
+  
+  // 재계산된 데이터가 있으면 저장
+  if (validatedVisits.some((v, i) => v !== visits[i])) {
+    localStorage.setItem(STORAGE_KEYS.VISITS, JSON.stringify(validatedVisits));
+  }
+  
   if (patientId) {
-    return visits
+    return validatedVisits
       .filter(v => v.patient_id === patientId)
       .sort((a, b) => new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime());
   }
   
   // 현재 사용자의 모든 환자의 방문 기록
   const patientIds = getPatients().map(p => p.id);
-  return visits
+  return validatedVisits
     .filter(v => patientIds.includes(v.patient_id))
     .sort((a, b) => new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime());
 };

@@ -71,6 +71,60 @@ export default function SettingsPage() {
     }
   };
 
+  // 선택된 변수들을 기반으로 템플릿 생성
+  const generateTemplate = (customSettings?: UserSettings) => {
+    const currentSettings = customSettings || settings;
+    if (!currentSettings) return '';
+    
+    const variables = currentSettings.emrTemplateVariables || [];
+    let template = '';
+    
+    // 치료방법
+    if (variables.includes('[치료방법]')) {
+      template += '치료방법: [치료방법]\n\n';
+    }
+    
+    // SE 정보
+    if (variables.includes('[구면상당치]')) {
+      template += '우안 S.E.: [SE_OD] D / 좌안 S.E.: [SE_OS] D\n';
+    }
+    
+    // AL 정보
+    if (variables.includes('[안축장]')) {
+      template += '우안 안축장: [AL_OD] mm / 좌안 안축장: [AL_OS] mm\n';
+    }
+    
+    // 진행속도
+    const hasSEProgress = variables.includes('[SE 진행속도]');
+    const hasALProgress = variables.includes('[AL 진행속도]');
+    
+    if (hasSEProgress || hasALProgress) {
+      template += '\n연간 진행속도:\n';
+      
+      // SE 진행속도
+      if (hasSEProgress) {
+        template += '우안 S.E.: [SE_PROGRESS_OD] D/yr / 좌안 S.E.: [SE_PROGRESS_OS] D/yr\n';
+      }
+      
+      // AL 진행속도
+      if (hasALProgress) {
+        template += '우안 A.L.: [AL_PROGRESS_OD] mm/yr / 좌안 A.L.: [AL_PROGRESS_OS] mm/yr\n';
+      }
+    }
+    
+    // 안경처방
+    if (variables.includes('[안경처방]')) {
+      template += '\n당일 안경처방함';
+    }
+    
+    // 사용자 경과 문구
+    if (variables.includes('[사용자 경과 문구]')) {
+      template += '\n[사용자 경과 문구]';
+    }
+    
+    return template.trim();
+  };
+
   const updateThreshold = (
     type: 'se' | 'al',
     level: 'yellow' | 'red',
@@ -110,12 +164,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex justify-between items-center mb-2">
-        <div>
-          <h1 className="text-4xl font-bold text-slate-800">설정</h1>
-          <p className="text-lg text-slate-600 mt-1">근시케어 차트의 각종 설정을 관리하세요</p>
-        </div>
+    <div className="flex justify-center">
+      <div className="space-y-6 max-w-4xl w-full">
+        <div className="flex justify-between items-center mb-2">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-800">설정</h1>
+            <p className="text-lg text-slate-600 mt-1">근시케어 차트의 각종 설정을 관리하세요</p>
+          </div>
         <div className="flex gap-3">
           <Button 
             variant="outline" 
@@ -294,15 +349,13 @@ export default function SettingsPage() {
             <p className="text-sm text-amber-700 mb-3">아래 변수들을 선택하여 EMR 복사 시 포함할 항목을 지정하세요:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
-                { var: '[환자명]', desc: '환자 이름' },
                 { var: '[치료방법]', desc: '현재 치료방법' },
-                { var: '[검사일]', desc: '검사 날짜' },
-                { var: '[SE_OD]', desc: '우안 구면상당치' },
-                { var: '[SE_OS]', desc: '좌안 구면상당치' },
-                { var: '[AL_OD]', desc: '우안 안축장' },
-                { var: '[AL_OS]', desc: '좌안 안축장' },
-                { var: '[SE_PROGRESS_OD]', desc: '우안 SE 진행속도' },
-                { var: '[SE_PROGRESS_OS]', desc: '좌안 SE 진행속도' },
+                { var: '[구면상당치]', desc: '우안/좌안 S.E. (구면상당치)' },
+                { var: '[안축장]', desc: '우안/좌안 안축장' },
+                { var: '[SE 진행속도]', desc: '우안/좌안 S.E. 진행속도' },
+                { var: '[AL 진행속도]', desc: '우안/좌안 A.L. 진행속도' },
+                { var: '[안경처방]', desc: '당일 안경처방 여부' },
+                { var: '[사용자 경과 문구]', desc: '사용자 정의 문구' },
               ].map(({ var: variable, desc }) => {
                 const isChecked = settings.emrTemplateVariables?.includes(variable) ?? true;
                 return (
@@ -316,7 +369,12 @@ export default function SettingsPage() {
                         const updatedVariables = isChecked
                           ? currentVariables.filter(v => v !== variable)
                           : [...currentVariables, variable];
-                        setSettings({ ...settings, emrTemplateVariables: updatedVariables });
+                        const updatedSettings = { ...settings, emrTemplateVariables: updatedVariables };
+                        setSettings(updatedSettings);
+                        
+                        // 템플릿 자동 업데이트
+                        const newTemplate = generateTemplate(updatedSettings);
+                        setSettings({ ...updatedSettings, emrTemplate: newTemplate });
                       }}
                       className="h-5 w-5 text-blue-600 rounded border-amber-300 focus:ring-2 focus:ring-blue-500"
                     />
@@ -330,21 +388,36 @@ export default function SettingsPage() {
                 );
               })}
             </div>
+            
+            {/* 사용자 경과 문구 입력 필드 */}
+            {settings.emrTemplateVariables?.includes('[사용자 경과 문구]') && (
+              <div className="mt-4 p-4 bg-white rounded-lg border border-amber-200">
+                <Label className="text-sm font-medium text-amber-900 mb-2 block">
+                  사용자 경과 문구 입력
+                </Label>
+                <Input
+                  type="text"
+                  value={settings.customComment || ''}
+                  onChange={(e) => setSettings({ ...settings, customComment: e.target.value })}
+                  placeholder="예: 4개월 뒤 경과관찰, AL, 안경시력, 교정 후 진료"
+                  className="w-full border-amber-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+            )}
           </div>
           <div className="space-y-3">
             <Label className="text-base font-medium text-slate-700">템플릿 내용</Label>
             <Textarea
               value={settings.emrTemplate}
-              onChange={(e) =>
-                setSettings({ ...settings, emrTemplate: e.target.value })
-              }
+              readOnly
               rows={12}
-              className="font-mono text-base border-slate-200 focus:border-blue-500 focus:ring-blue-500 p-4"
-              placeholder="EMR 템플릿을 입력하세요..."
+              className="font-mono text-base border-slate-200 bg-slate-50 p-4"
+              placeholder="체크박스를 선택하여 템플릿을 구성하세요..."
             />
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

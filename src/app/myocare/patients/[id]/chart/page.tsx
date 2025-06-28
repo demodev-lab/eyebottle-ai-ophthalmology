@@ -22,7 +22,7 @@ import {
   getRiskColor,
   getRiskText 
 } from '@/lib/calculations';
-import { ArrowLeft, Edit2, Trash2, Save, X, Printer } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Save, X, Printer, Copy, FileText, Plus } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -36,16 +36,28 @@ import {
   ReferenceArea,
 } from 'recharts';
 
-// 치료 방법별 색상 정의 (향후 사용 예정)
-const _TREATMENT_COLORS: Record<string, string> = {
-  atropine_0_042: '#e3f2fd',
-  atropine_0_05: '#bbdefb',
-  atropine_0_063: '#90caf9',
-  atropine_0_125: '#64b5f6',
-  dream_lens: '#fce4ec',
-  myosight: '#f8bbd0',
-  dims_glasses: '#e8f5e9',
-  combined: '#fff3e0',
+// 치료 방법별 색상 정의 (투명도 포함)
+const TREATMENT_COLORS: Record<string, string> = {
+  atropine_0_042: 'rgba(33, 150, 243, 0.45)',    // #2196f3 with 45% opacity
+  atropine_0_05: 'rgba(25, 118, 210, 0.45)',     // #1976d2 with 45% opacity
+  atropine_0_063: 'rgba(21, 101, 192, 0.45)',    // #1565c0 with 45% opacity
+  atropine_0_125: 'rgba(13, 71, 161, 0.45)',     // #0d47a1 with 45% opacity
+  dream_lens: 'rgba(233, 30, 99, 0.45)',         // #e91e63 with 45% opacity
+  myosight: 'rgba(194, 24, 91, 0.45)',           // #c2185b with 45% opacity
+  dims_glasses: 'rgba(76, 175, 80, 0.45)',       // #4caf50 with 45% opacity
+  combined: 'rgba(255, 152, 0, 0.45)',           // #ff9800 with 45% opacity
+};
+
+// 치료 방법별 진한 색상 (범례용)
+const TREATMENT_COLORS_SOLID: Record<string, string> = {
+  atropine_0_042: '#2196f3',
+  atropine_0_05: '#1976d2',
+  atropine_0_063: '#1565c0',
+  atropine_0_125: '#0d47a1',
+  dream_lens: '#e91e63',
+  myosight: '#c2185b',
+  dims_glasses: '#4caf50',
+  combined: '#ff9800',
 };
 
 
@@ -92,6 +104,7 @@ export default function PatientChartPage() {
   const [selectedEye, setSelectedEye] = useState<'both' | 'od' | 'os'>('both');
   const [editingVisitId, setEditingVisitId] = useState<string | null>(null);
   const [editingData, setEditingData] = useState<Partial<MyoCareVisit>>({});
+  const [copyButtonText, setCopyButtonText] = useState('EMR 복사');
 
   useEffect(() => {
     loadPatientData();
@@ -99,6 +112,8 @@ export default function PatientChartPage() {
 
   const loadPatientData = async () => {
     try {
+      console.log('[MyoCare Chart] 환자 데이터 로딩 시작:', patientId);
+      
       const patientData = getPatientById(patientId);
       if (!patientData) {
         alert('환자를 찾을 수 없습니다.');
@@ -108,9 +123,22 @@ export default function PatientChartPage() {
       setPatient(patientData);
       
       const visitsData = getVisits(patientId);
+      console.log('[MyoCare Chart] 방문 기록 로드:', {
+        count: visitsData.length,
+        visits: visitsData.map(v => ({
+          date: v.visit_date,
+          od_se: v.od_se,
+          os_se: v.os_se,
+          od_sphere: v.od_sphere,
+          od_cylinder: v.od_cylinder,
+          od_al: v.od_axial_length,
+          os_al: v.os_axial_length
+        }))
+      });
+      
       setVisits(visitsData.reverse()); // 오래된 것부터 최신순으로
     } catch (error) {
-      console.error('환자 데이터 로드 실패:', error);
+      console.error('[MyoCare Chart] 환자 데이터 로드 실패:', error);
     } finally {
       setLoading(false);
     }
@@ -172,14 +200,134 @@ export default function PatientChartPage() {
     const mainElement = document.querySelector('.max-w-7xl');
     if (mainElement) {
       mainElement.setAttribute('data-print-date', printDate);
+      // 인쇄 전용 클래스 추가
+      mainElement.classList.add('printing');
     }
-    window.print();
+    
+    // SVG 렌더링이 완료될 때까지 대기
+    setTimeout(() => {
+      console.log('[MyoCare Chart] 인쇄 시작');
+      window.print();
+      
+      // 인쇄 후 클래스 제거
+      setTimeout(() => {
+        if (mainElement) {
+          mainElement.classList.remove('printing');
+        }
+      }, 1000);
+    }, 500); // 500ms 대기
+  };
+
+  // EMR 텍스트 생성 함수
+  const generateEMRText = () => {
+    if (!patient || visits.length === 0) {
+      return '검사 데이터가 없습니다.';
+    }
+
+    const settings = getUserSettings();
+    const variables = settings.emrTemplateVariables || [];
+    const latestVisit = visits[visits.length - 1];
+    const recentVisits = visits.slice(-10);
+    const progression = recentVisits.length >= 2 ? calculateProgressionRate(recentVisits, settings) : null;
+    
+    let template = '';
+    
+    // 치료방법
+    if (variables.includes('[치료방법]')) {
+      const treatmentMethod = latestVisit.treatment_method || patient.treatment_method;
+      const treatmentLabel = treatmentMethod ? TREATMENT_METHOD_LABELS[treatmentMethod] : '미지정';
+      template += `치료방법: ${treatmentLabel}\n\n`;
+    }
+    
+    // SE 정보
+    if (variables.includes('[구면상당치]')) {
+      const odSE = calculateSE(latestVisit.od_sphere, latestVisit.od_cylinder);
+      const osSE = calculateSE(latestVisit.os_sphere, latestVisit.os_cylinder);
+      template += `우안 S.E.: ${odSE !== undefined ? odSE.toFixed(2) : 'N/A'} D / `;
+      template += `좌안 S.E.: ${osSE !== undefined ? osSE.toFixed(2) : 'N/A'} D\n`;
+    }
+    
+    // AL 정보
+    if (variables.includes('[안축장]')) {
+      template += `우안 안축장: ${latestVisit.od_axial_length !== undefined ? latestVisit.od_axial_length.toFixed(2) : 'N/A'} mm / `;
+      template += `좌안 안축장: ${latestVisit.os_axial_length !== undefined ? latestVisit.os_axial_length.toFixed(2) : 'N/A'} mm\n`;
+    }
+    
+    // 진행속도
+    const hasSEProgress = variables.includes('[SE 진행속도]');
+    const hasALProgress = variables.includes('[AL 진행속도]');
+    
+    if ((hasSEProgress || hasALProgress) && progression) {
+      template += '\n연간 진행속도:\n';
+      
+      // SE 진행속도
+      if (hasSEProgress) {
+        template += `우안 S.E.: ${progression.se_od !== undefined ? progression.se_od.toFixed(2) : 'N/A'} D/yr / `;
+        template += `좌안 S.E.: ${progression.se_os !== undefined ? progression.se_os.toFixed(2) : 'N/A'} D/yr\n`;
+      }
+      
+      // AL 진행속도
+      if (hasALProgress) {
+        template += `우안 A.L.: ${progression.al_od !== undefined ? progression.al_od.toFixed(2) : 'N/A'} mm/yr / `;
+        template += `좌안 A.L.: ${progression.al_os !== undefined ? progression.al_os.toFixed(2) : 'N/A'} mm/yr\n`;
+      }
+    }
+    
+    // 안경처방 - 최신 검사에서 처방이 있었을 때만 표시
+    if (variables.includes('[안경처방]') && latestVisit.new_prescription) {
+      template += '\n당일 안경처방함';
+    }
+    
+    // 사용자 경과 문구
+    if (variables.includes('[사용자 경과 문구]') && settings.customComment) {
+      template += `\n${settings.customComment}`;
+    }
+    
+    return template.trim();
+  };
+
+  // EMR 복사 함수
+  const handleCopyEMR = async () => {
+    try {
+      const emrText = generateEMRText();
+      
+      // 클립보드 API 지원 확인
+      if (!navigator.clipboard) {
+        // 구형 브라우저를 위한 대체 방법
+        const textArea = document.createElement('textarea');
+        textArea.value = emrText;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      } else {
+        // 최신 클립보드 API 사용
+        await navigator.clipboard.writeText(emrText);
+      }
+      
+      // 성공 피드백
+      setCopyButtonText('복사됨!');
+      setTimeout(() => {
+        setCopyButtonText('EMR 복사');
+      }, 2000);
+    } catch (error) {
+      console.error('EMR 복사 실패:', error);
+      alert('클립보드 복사에 실패했습니다.');
+    }
   };
 
   // 치료 구간 계산
   const getTreatmentAreas = () => {
     const areas: any[] = [];
     if (visits.length < 2 || !patient) return areas;
+    
+    console.log('[MyoCare Chart] 치료 구간 계산 시작:', {
+      visitsCount: visits.length,
+      patient: patient.name,
+      treatments: visits.map(v => ({ date: v.visit_date, method: v.treatment_method }))
+    });
 
     for (let i = 0; i < visits.length - 1; i++) {
       const currentVisit = visits[i];
@@ -192,15 +340,15 @@ export default function PatientChartPage() {
         areas.push({
           x1: startAge,
           x2: endAge,
-          fill: _TREATMENT_COLORS[currentVisit.treatment_method] || '#f0f0f0',
-          opacity: 0.3,
+          fill: TREATMENT_COLORS[currentVisit.treatment_method] || 'rgba(240, 240, 240, 0.3)',
+          opacity: 1,
           key: `area-${i}`,
           treatment: currentVisit.treatment_method,
         });
       }
     }
 
-    // 마지막 치료 구간 (마지막 검사부터 현재까지)
+    // 마지막 치료 구간 (마지막 검사부터 현재까지) - 현재 치료 중
     const lastVisit = visits[visits.length - 1];
     if (lastVisit.treatment_method) {
       const startAge = calculateAge(patient.birth_date, lastVisit.visit_date);
@@ -209,13 +357,27 @@ export default function PatientChartPage() {
       areas.push({
         x1: startAge,
         x2: currentAge,
-        fill: _TREATMENT_COLORS[lastVisit.treatment_method] || '#f0f0f0',
-        opacity: 0.3,
+        fill: lastVisit.treatment_method ? 
+          TREATMENT_COLORS[lastVisit.treatment_method].replace('0.45)', '0.6)') : // 현재 치료 중이므로 60% 투명도
+          'rgba(240, 240, 240, 0.6)',
+        opacity: 1,
         key: `area-last`,
         treatment: lastVisit.treatment_method,
+        isCurrent: true, // 현재 치료 중 표시
       });
     }
 
+    console.log('[MyoCare Chart] 치료 구간 계산 완료:', {
+      areasCount: areas.length,
+      areas: areas.map(a => ({
+        x1: a.x1,
+        x2: a.x2,
+        treatment: a.treatment,
+        isCurrent: a.isCurrent,
+        fill: a.fill
+      }))
+    });
+    
     return areas;
   };
 
@@ -328,7 +490,18 @@ export default function PatientChartPage() {
   const settings = getUserSettings();
   // 최근 2개 검사만으로 진행률 계산
   const recentVisits = visits.slice(-2);
+  console.log('[MyoCare Chart] 진행률 계산용 최근 방문:', {
+    recentVisitsCount: recentVisits.length,
+    recentVisits: recentVisits.map(v => ({
+      date: v.visit_date,
+      od_se: v.od_se,
+      os_se: v.os_se
+    }))
+  });
+  
   const progression = recentVisits.length >= 2 ? calculateProgressionRate(recentVisits, settings) : null;
+  console.log('[MyoCare Chart] 진행률 계산 결과:', progression);
+  
   const age = calculateAge(patient.birth_date);
 
   // 최근 검사 정보
@@ -349,25 +522,62 @@ export default function PatientChartPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">진행 그래프</h1>
-            <p className="text-lg text-slate-600 mt-1">{patient.name} 환자의 근시 진행 상태</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">MyoCare Chart</h1>
+            <p className="text-sm sm:text-lg text-slate-600 mt-1">{patient.name} 환자의 근시 진행 상태</p>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            onClick={handlePrint}
-            variant="outline"
-            className="flex items-center space-x-2 print:hidden"
-          >
-            <Printer className="h-4 w-4" />
-            <span>인쇄</span>
-          </Button>
-          <Button
-            onClick={() => router.push(`/myocare/patients/${patientId}/visits/new`)}
-            className="bg-blue-600 hover:bg-blue-700 text-white print:hidden"
-          >
-            새 검사결과 입력
-          </Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative group">
+            <Button
+              onClick={handlePrint}
+              variant="outline"
+              className="flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-medium transition-all duration-200 shadow-sm hover:shadow print:hidden"
+            >
+              <Printer className="h-4 sm:h-5 w-4 sm:w-5 text-slate-500" />
+              <span className="hidden sm:inline">인쇄</span>
+            </Button>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              차트 인쇄
+            </div>
+          </div>
+          
+          <div className="relative group">
+            <Button
+              onClick={handleCopyEMR}
+              variant="outline"
+              className={`flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 font-medium transition-all duration-200 shadow-sm hover:shadow print:hidden ${
+                copyButtonText === '복사됨!' 
+                  ? 'border-green-400 bg-green-50 text-green-700 hover:bg-green-100' 
+                  : 'border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:border-emerald-300'
+              }`}
+            >
+              {copyButtonText === '복사됨!' ? (
+                <svg className="h-4 sm:h-5 w-4 sm:w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <FileText className="h-4 sm:h-5 w-4 sm:w-5 text-emerald-600" />
+              )}
+              <span className="hidden sm:inline">{copyButtonText}</span>
+            </Button>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              EMR 시스템에 복사
+            </div>
+          </div>
+          
+          <div className="relative group">
+            <Button
+              onClick={() => router.push(`/myocare/patients/${patientId}/visits/new`)}
+              className="flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] print:hidden"
+            >
+              <Plus className="h-4 sm:h-5 w-4 sm:w-5" />
+              <span className="hidden sm:inline">새 검사결과 입력</span>
+              <span className="sm:hidden">추가</span>
+            </Button>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              새로운 검사 데이터 추가
+            </div>
+          </div>
         </div>
       </div>
 
@@ -574,6 +784,22 @@ export default function PatientChartPage() {
                 </SelectContent>
               </Select>
             </div>
+            {/* 진행 속도 위험도 가이드 */}
+            <div className="mt-3 flex items-center justify-center space-x-4 text-xs">
+              <span className="text-slate-600">진행 속도:</span>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-slate-600">정상</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span className="text-slate-600">주의</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span className="text-slate-600">위험</span>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="h-[350px]">
@@ -582,9 +808,7 @@ export default function PatientChartPage() {
                   data={prepareChartData('se')}
                   margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                  
-                  {/* 치료 방법별 배경색 */}
+                  {/* 치료 방법별 배경색 - CartesianGrid 앞에 렌더링 */}
                   {getTreatmentAreas().map((area) => (
                     <ReferenceArea
                       key={area.key}
@@ -593,9 +817,21 @@ export default function PatientChartPage() {
                       y1={-20}
                       y2={5}
                       fill={area.fill}
-                      fillOpacity={area.opacity}
+                      fillOpacity={1}
+                      stroke={area.isCurrent ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
+                      strokeWidth={area.isCurrent ? 2 : undefined}
+                      strokeDasharray={area.isCurrent ? "5 5" : undefined}
+                      ifOverflow="visible"
+                      style={{
+                        fill: area.fill,
+                        fillOpacity: 1,
+                        WebkitPrintColorAdjust: 'exact',
+                        printColorAdjust: 'exact'
+                      }}
                     />
                   ))}
+                  
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                   <XAxis 
                     dataKey="age" 
                     label={{ value: '나이 (세)', position: 'insideBottom', offset: -5 }}
@@ -661,6 +897,7 @@ export default function PatientChartPage() {
                       strokeWidth={2}
                       dot={<CustomDot />}
                       connectNulls
+                      isAnimationActive={false}
                     />
                   )}
                   {(selectedEye === 'both' || selectedEye === 'os') && (
@@ -672,6 +909,7 @@ export default function PatientChartPage() {
                       strokeWidth={2}
                       dot={<CustomDot />}
                       connectNulls
+                      isAnimationActive={false}
                     />
                   )}
                 </LineChart>
@@ -679,7 +917,7 @@ export default function PatientChartPage() {
             </div>
             
             {/* 범례 설명 */}
-            <div className="mt-4 space-y-2">
+            <div className="mt-4 space-y-3">
               <div className="flex items-center justify-center space-x-6 text-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-0.5 bg-red-500"></div>
@@ -694,10 +932,26 @@ export default function PatientChartPage() {
                   <span className="text-slate-600">안경처방</span>
                 </div>
               </div>
+              
               {/* 치료 방법 색상 범례 */}
-              <div className="text-center text-xs text-slate-500">
-                그래프 포인트에 마우스를 올리면 해당 시점의 치료 방법을 확인할 수 있습니다.
-              </div>
+              {visits.some(v => v.treatment_method) && (
+                <div className="border-t pt-3">
+                  <p className="text-xs text-slate-600 text-center mb-2">치료 방법</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {Array.from(new Set(visits.filter(v => v.treatment_method).map(v => v.treatment_method))).map(method => (
+                      <div key={method} className="flex items-center space-x-1">
+                        <div 
+                          className="w-3 h-3 rounded" 
+                          style={{ backgroundColor: TREATMENT_COLORS_SOLID[method!] }}
+                        />
+                        <span className="text-xs text-slate-600">
+                          {TREATMENT_METHOD_LABELS[method as TreatmentMethod]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -706,6 +960,22 @@ export default function PatientChartPage() {
         <Card className="border-0 shadow-md">
           <CardHeader>
             <CardTitle className="text-xl">안축장 (Axial Length) 진행 그래프</CardTitle>
+            {/* 진행 속도 위험도 가이드 */}
+            <div className="mt-3 flex items-center justify-center space-x-4 text-xs">
+              <span className="text-slate-600">진행 속도:</span>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-slate-600">정상</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span className="text-slate-600">주의</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span className="text-slate-600">위험</span>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="h-[350px]">
@@ -714,9 +984,7 @@ export default function PatientChartPage() {
                   data={prepareChartData('axial')}
                   margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                  
-                  {/* 치료 방법별 배경색 */}
+                  {/* 치료 방법별 배경색 - CartesianGrid 앞에 렌더링 */}
                   {getTreatmentAreas().map((area) => (
                     <ReferenceArea
                       key={area.key}
@@ -725,9 +993,21 @@ export default function PatientChartPage() {
                       y1={20}
                       y2={30}
                       fill={area.fill}
-                      fillOpacity={area.opacity}
+                      fillOpacity={1}
+                      stroke={area.isCurrent ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
+                      strokeWidth={area.isCurrent ? 2 : undefined}
+                      strokeDasharray={area.isCurrent ? "5 5" : undefined}
+                      ifOverflow="visible"
+                      style={{
+                        fill: area.fill,
+                        fillOpacity: 1,
+                        WebkitPrintColorAdjust: 'exact',
+                        printColorAdjust: 'exact'
+                      }}
                     />
                   ))}
+                  
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                   <XAxis 
                     dataKey="age" 
                     label={{ value: '나이 (세)', position: 'insideBottom', offset: -5 }}
@@ -793,6 +1073,7 @@ export default function PatientChartPage() {
                       strokeWidth={2}
                       dot={<CustomDot />}
                       connectNulls
+                      isAnimationActive={false}
                     />
                   )}
                   {(selectedEye === 'both' || selectedEye === 'os') && (
@@ -804,6 +1085,7 @@ export default function PatientChartPage() {
                       strokeWidth={2}
                       dot={<CustomDot />}
                       connectNulls
+                      isAnimationActive={false}
                     />
                   )}
                 </LineChart>
@@ -811,15 +1093,37 @@ export default function PatientChartPage() {
             </div>
             
             {/* 범례 설명 */}
-            <div className="mt-4 flex items-center justify-center space-x-6 text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-0.5 bg-red-500"></div>
-                <span className="text-slate-600">고도근시 기준 (26mm)</span>
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center justify-center space-x-6 text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-red-500"></div>
+                  <span className="text-slate-600">고도근시 기준 (26mm)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-orange-500"></div>
+                  <span className="text-slate-600">중등도근시 기준 (24.5mm)</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-0.5 bg-orange-500"></div>
-                <span className="text-slate-600">중등도근시 기준 (24.5mm)</span>
-              </div>
+              
+              {/* 치료 방법 색상 범례 */}
+              {visits.some(v => v.treatment_method) && (
+                <div className="border-t pt-3">
+                  <p className="text-xs text-slate-600 text-center mb-2">치료 방법</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {Array.from(new Set(visits.filter(v => v.treatment_method).map(v => v.treatment_method))).map(method => (
+                      <div key={method} className="flex items-center space-x-1">
+                        <div 
+                          className="w-3 h-3 rounded" 
+                          style={{ backgroundColor: TREATMENT_COLORS_SOLID[method!] }}
+                        />
+                        <span className="text-xs text-slate-600">
+                          {TREATMENT_METHOD_LABELS[method as TreatmentMethod]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

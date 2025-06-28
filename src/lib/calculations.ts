@@ -8,8 +8,20 @@ export const calculateProgressionRate = (
   visits: MyoCareVisit[],
   settings: UserSettings
 ): ProgressionRate => {
+  console.log('[MyoCare] 진행률 계산 시작:', {
+    visitsCount: visits.length,
+    visits: visits.map(v => ({
+      date: v.visit_date,
+      od_se: v.od_se,
+      os_se: v.os_se,
+      od_al: v.od_axial_length,
+      os_al: v.os_axial_length
+    }))
+  });
+
   // 최소 2개 이상의 방문 기록이 필요
   if (visits.length < 2) {
+    console.log('[MyoCare] 방문 기록 부족으로 계산 불가');
     return { riskLevel: RiskLevel.NORMAL };
   }
 
@@ -21,11 +33,29 @@ export const calculateProgressionRate = (
   const firstVisit = sortedVisits[0];
   const lastVisit = sortedVisits[sortedVisits.length - 1];
 
+  console.log('[MyoCare] 첫 방문과 마지막 방문:', {
+    first: {
+      date: firstVisit.visit_date,
+      od_se: firstVisit.od_se,
+      os_se: firstVisit.os_se,
+      od_sphere: firstVisit.od_sphere,
+      od_cylinder: firstVisit.od_cylinder
+    },
+    last: {
+      date: lastVisit.visit_date,
+      od_se: lastVisit.od_se,
+      os_se: lastVisit.os_se,
+      od_sphere: lastVisit.od_sphere,
+      od_cylinder: lastVisit.od_cylinder
+    }
+  });
+
   // 시간 차이 계산 (년 단위)
   const daysDiff = differenceInDays(parseISO(lastVisit.visit_date), parseISO(firstVisit.visit_date));
   
   // 최소 90일 이상의 간격이 있어야 의미있는 계산
   if (daysDiff < 90) {
+    console.log('[MyoCare] 검사 간격이 너무 짧음:', daysDiff, '일');
     return { riskLevel: RiskLevel.NORMAL };
   }
 
@@ -86,13 +116,24 @@ export const calculateProgressionRate = (
     }
   }
 
-  return {
+  const result = {
     se_od,
     se_os,
     al_od,
     al_os,
     riskLevel,
   };
+
+  console.log('[MyoCare] 진행률 계산 결과:', {
+    se_od: se_od?.toFixed(2),
+    se_os: se_os?.toFixed(2),
+    al_od: al_od?.toFixed(2),
+    al_os: al_os?.toFixed(2),
+    riskLevel: getRiskText(riskLevel),
+    yearsDiff: yearsDiffExact.toFixed(2)
+  });
+
+  return result;
 };
 
 // 나이 계산

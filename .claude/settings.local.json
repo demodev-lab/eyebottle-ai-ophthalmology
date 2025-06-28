@@ -17,7 +17,8 @@
       "Bash(npx shadcn@latest add:*)",
       "Bash(grep:*)",
       "Bash(npx shadcn-ui:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   },

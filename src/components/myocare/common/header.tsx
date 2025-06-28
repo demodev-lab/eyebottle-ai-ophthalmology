@@ -38,7 +38,7 @@ export function MyoCareHeader() {
               
               {/* 로고 */}
               <Link href="/myocare" className="flex items-center space-x-3">
-                <div className="w-12 h-12 relative">
+                <div className="w-12 h-12 relative overflow-hidden rounded-xl">
                   <Image
                     src="/eyebottle-logo.png"
                     alt="Eyebottle Logo"
@@ -49,7 +49,7 @@ export function MyoCareHeader() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold text-slate-800 tracking-tight">근시케어 차트</span>
-                  <span className="text-sm text-slate-500">Myopia Care Chart</span>
+                  <span className="text-sm text-slate-500">MyoCare Chart</span>
                 </div>
                 <span className="text-xs font-semibold text-blue-700 bg-blue-100/80 px-3 py-1.5 rounded-full border border-blue-200 ml-3">Beta</span>
               </Link>
