@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { getPatientById, getVisits, getUserSettings, updateVisit, deleteVisit } from '@/lib/storage';
-import { Patient, MyoCareVisit, TREATMENT_METHOD_LABELS, RiskLevel } from '@/types/database';
+import { Patient, MyoCareVisit, TREATMENT_METHOD_LABELS, RiskLevel, TreatmentMethod } from '@/types/database';
 import { 
   calculateAge, 
   calculateProgressionRate, 
