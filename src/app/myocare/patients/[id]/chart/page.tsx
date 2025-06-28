@@ -22,7 +22,7 @@ import {
   getRiskColor,
   getRiskText 
 } from '@/lib/calculations';
-import { ArrowLeft, TrendingUp, TrendingDown, Edit2, Trash2, Save, X } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Save, X } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -251,7 +251,9 @@ export default function PatientChartPage() {
   }
 
   const settings = getUserSettings();
-  const progression = visits.length >= 2 ? calculateProgressionRate(visits, settings) : null;
+  // 최근 2개 검사만으로 진행률 계산
+  const recentVisits = visits.slice(-2);
+  const progression = recentVisits.length >= 2 ? calculateProgressionRate(recentVisits, settings) : null;
   const age = calculateAge(patient.birth_date);
 
   // 최근 검사 정보
@@ -321,13 +323,13 @@ export default function PatientChartPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-slate-600">우안 S.E.</p>
-                  <p className="font-semibold text-blue-600">
+                  <p className="font-bold text-blue-600">
                     {odSE !== undefined ? `${odSE.toFixed(2)}D` : '-'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-600">좌안 S.E.</p>
-                  <p className="font-semibold text-orange-600">
+                  <p className="font-bold text-blue-600">
                     {osSE !== undefined ? `${osSE.toFixed(2)}D` : '-'}
                   </p>
                 </div>
@@ -335,13 +337,13 @@ export default function PatientChartPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-slate-600">우안 안축장</p>
-                  <p className="font-semibold text-blue-600">
+                  <p className="font-bold text-blue-600">
                     {latestVisit?.od_axial_length !== undefined ? `${latestVisit.od_axial_length.toFixed(2)}mm` : '-'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-600">좌안 안축장</p>
-                  <p className="font-semibold text-orange-600">
+                  <p className="font-bold text-blue-600">
                     {latestVisit?.os_axial_length !== undefined ? `${latestVisit.os_axial_length.toFixed(2)}mm` : '-'}
                   </p>
                 </div>
@@ -381,91 +383,55 @@ export default function PatientChartPage() {
                 </div>
                 <div>
                   <p className="text-sm text-slate-600">연간 진행속도</p>
-                  <div className="space-y-2">
+                  <div className="space-y-2 mt-2">
                     {/* SE 진행률 */}
-                    <div>
-                      <p className="text-xs text-slate-500 mb-1">S.E. (D/yr)</p>
-                      <div className="space-y-1">
-                        {progression.se_od !== undefined && (
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-slate-500">OD:</span>
-                            <span className={`font-semibold ${
-                              Math.abs(progression.se_od) >= 1.0 ? 'text-red-600' :
-                              Math.abs(progression.se_od) >= 0.5 ? 'text-yellow-600' : 
-                              'text-green-600'
-                            }`}>
-                              {progression.se_od.toFixed(2)}D/yr
-                            </span>
-                            {progression.se_od < 0 ? (
-                              <TrendingDown className="h-4 w-4 text-red-500" />
-                            ) : (
-                              <TrendingUp className="h-4 w-4 text-green-500" />
-                            )}
-                          </div>
-                        )}
-                        {progression.se_os !== undefined && (
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-slate-500">OS:</span>
-                            <span className={`font-semibold ${
-                              Math.abs(progression.se_os) >= 1.0 ? 'text-red-600' :
-                              Math.abs(progression.se_os) >= 0.5 ? 'text-yellow-600' : 
-                              'text-green-600'
-                            }`}>
-                              {progression.se_os.toFixed(2)}D/yr
-                            </span>
-                            {progression.se_os < 0 ? (
-                              <TrendingDown className="h-4 w-4 text-red-500" />
-                            ) : (
-                              <TrendingUp className="h-4 w-4 text-green-500" />
-                            )}
-                          </div>
-                        )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">S.E. 진행속도</span>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm">
+                          우안: <span className={`font-bold ${
+                            Math.abs(progression.se_od || 0) >= settings.thresholds.se.red ? 'text-red-600' :
+                            Math.abs(progression.se_od || 0) >= settings.thresholds.se.yellow ? 'text-yellow-600' : 
+                            'text-green-600'
+                          }`}>
+                            {progression.se_od !== undefined ? `${progression.se_od.toFixed(2)}D/yr` : '-'}
+                          </span>
+                        </span>
+                        <span className="text-sm">
+                          좌안: <span className={`font-bold ${
+                            Math.abs(progression.se_os || 0) >= settings.thresholds.se.red ? 'text-red-600' :
+                            Math.abs(progression.se_os || 0) >= settings.thresholds.se.yellow ? 'text-yellow-600' : 
+                            'text-green-600'
+                          }`}>
+                            {progression.se_os !== undefined ? `${progression.se_os.toFixed(2)}D/yr` : '-'}
+                          </span>
+                        </span>
                       </div>
                     </div>
                     {/* AL 진행률 */}
-                    <div>
-                      <p className="text-xs text-slate-500 mb-1">A.L. (mm/yr)</p>
-                      <div className="space-y-1">
-                        {progression.al_od !== undefined && (
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-slate-500">OD:</span>
-                            <span className={`font-semibold ${
-                              progression.al_od >= 0.5 ? 'text-red-600' :
-                              progression.al_od >= 0.33 ? 'text-yellow-600' : 
-                              'text-green-600'
-                            }`}>
-                              {progression.al_od.toFixed(2)}mm/yr
-                            </span>
-                            {progression.al_od > 0 ? (
-                              <TrendingUp className="h-4 w-4 text-red-500" />
-                            ) : (
-                              <TrendingDown className="h-4 w-4 text-green-500" />
-                            )}
-                          </div>
-                        )}
-                        {progression.al_os !== undefined && (
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-slate-500">OS:</span>
-                            <span className={`font-semibold ${
-                              progression.al_os >= 0.5 ? 'text-red-600' :
-                              progression.al_os >= 0.33 ? 'text-yellow-600' : 
-                              'text-green-600'
-                            }`}>
-                              {progression.al_os.toFixed(2)}mm/yr
-                            </span>
-                            {progression.al_os > 0 ? (
-                              <TrendingUp className="h-4 w-4 text-red-500" />
-                            ) : (
-                              <TrendingDown className="h-4 w-4 text-green-500" />
-                            )}
-                          </div>
-                        )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">A.L. 진행속도</span>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm">
+                          우안: <span className={`font-bold ${
+                            (progression.al_od || 0) >= settings.thresholds.al.red ? 'text-red-600' :
+                            (progression.al_od || 0) >= settings.thresholds.al.yellow ? 'text-yellow-600' : 
+                            'text-green-600'
+                          }`}>
+                            {progression.al_od !== undefined ? `${progression.al_od.toFixed(2)}mm/yr` : '-'}
+                          </span>
+                        </span>
+                        <span className="text-sm">
+                          좌안: <span className={`font-bold ${
+                            (progression.al_os || 0) >= settings.thresholds.al.red ? 'text-red-600' :
+                            (progression.al_os || 0) >= settings.thresholds.al.yellow ? 'text-yellow-600' : 
+                            'text-green-600'
+                          }`}>
+                            {progression.al_os !== undefined ? `${progression.al_os.toFixed(2)}mm/yr` : '-'}
+                          </span>
+                        </span>
                       </div>
                     </div>
-                    {progression.se_od === undefined && progression.se_os === undefined && 
-                     progression.al_od === undefined && progression.al_os === undefined && (
-                      <span className="text-sm text-slate-500">데이터 없음</span>
-                    )}
                   </div>
                 </div>
                 <div>
@@ -820,7 +786,7 @@ export default function PatientChartPage() {
                           ) : '-'
                         )}
                       </td>
-                      <td className="p-4 text-center font-semibold text-blue-600">
+                      <td className="p-4 text-center font-bold text-blue-600">
                         {odSE !== undefined ? `${odSE.toFixed(2)}` : '-'}
                       </td>
                       <td className="p-4 text-center text-sm">
@@ -851,7 +817,7 @@ export default function PatientChartPage() {
                           ) : '-'
                         )}
                       </td>
-                      <td className="p-4 text-center font-semibold text-orange-600">
+                      <td className="p-4 text-center font-bold text-blue-600">
                         {osSE !== undefined ? `${osSE.toFixed(2)}` : '-'}
                       </td>
                       <td className="p-4 text-center text-sm">
@@ -864,7 +830,9 @@ export default function PatientChartPage() {
                             className="w-20 text-center"
                           />
                         ) : (
-                          visit.od_axial_length !== undefined ? visit.od_axial_length.toFixed(2) : '-'
+                          <span className="font-bold text-blue-600">
+                            {visit.od_axial_length !== undefined ? visit.od_axial_length.toFixed(2) : '-'}
+                          </span>
                         )}
                       </td>
                       <td className="p-4 text-center text-sm">
@@ -877,7 +845,9 @@ export default function PatientChartPage() {
                             className="w-20 text-center"
                           />
                         ) : (
-                          visit.os_axial_length !== undefined ? visit.os_axial_length.toFixed(2) : '-'
+                          <span className="font-bold text-blue-600">
+                            {visit.os_axial_length !== undefined ? visit.os_axial_length.toFixed(2) : '-'}
+                          </span>
                         )}
                       </td>
                       <td className="p-2 text-center text-sm">
@@ -888,14 +858,22 @@ export default function PatientChartPage() {
                             <>
                               {progression.se_od !== undefined && (
                                 <div className="text-xs">
-                                  OD: <span className={progression.se_od > 0 ? "text-red-600 font-semibold" : "text-green-600 font-semibold"}>
+                                  OD: <span className={`font-bold ${
+                                    Math.abs(progression.se_od) >= settings.thresholds.se.red ? 'text-red-600' :
+                                    Math.abs(progression.se_od) >= settings.thresholds.se.yellow ? 'text-yellow-600' : 
+                                    'text-green-600'
+                                  }`}>
                                     {progression.se_od.toFixed(2)}
                                   </span>
                                 </div>
                               )}
                               {progression.se_os !== undefined && (
                                 <div className="text-xs">
-                                  OS: <span className={progression.se_os > 0 ? "text-red-600 font-semibold" : "text-green-600 font-semibold"}>
+                                  OS: <span className={`font-bold ${
+                                    Math.abs(progression.se_os) >= settings.thresholds.se.red ? 'text-red-600' :
+                                    Math.abs(progression.se_os) >= settings.thresholds.se.yellow ? 'text-yellow-600' : 
+                                    'text-green-600'
+                                  }`}>
                                     {progression.se_os.toFixed(2)}
                                   </span>
                                 </div>
@@ -912,14 +890,22 @@ export default function PatientChartPage() {
                             <>
                               {progression.al_od !== undefined && (
                                 <div className="text-xs">
-                                  OD: <span className={progression.al_od > 0 ? "text-red-600 font-semibold" : "text-green-600 font-semibold"}>
+                                  OD: <span className={`font-bold ${
+                                    progression.al_od >= settings.thresholds.al.red ? 'text-red-600' :
+                                    progression.al_od >= settings.thresholds.al.yellow ? 'text-yellow-600' : 
+                                    'text-green-600'
+                                  }`}>
                                     {progression.al_od.toFixed(2)}
                                   </span>
                                 </div>
                               )}
                               {progression.al_os !== undefined && (
                                 <div className="text-xs">
-                                  OS: <span className={progression.al_os > 0 ? "text-red-600 font-semibold" : "text-green-600 font-semibold"}>
+                                  OS: <span className={`font-bold ${
+                                    progression.al_os >= settings.thresholds.al.red ? 'text-red-600' :
+                                    progression.al_os >= settings.thresholds.al.yellow ? 'text-yellow-600' : 
+                                    'text-green-600'
+                                  }`}>
                                     {progression.al_os.toFixed(2)}
                                   </span>
                                 </div>
