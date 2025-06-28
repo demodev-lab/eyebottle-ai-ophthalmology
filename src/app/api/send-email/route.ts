@@ -1,8 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-// Resend 인스턴스 생성 - API 키는 환경변수에서 가져옴
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +12,19 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // API 키 확인
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not set');
+      return NextResponse.json(
+        { error: '이메일 서비스가 설정되지 않았습니다.' },
+        { status: 500 }
+      );
+    }
+
+    // Dynamic import를 사용하여 런타임에 Resend 로드
+    const { Resend } = await import('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // 이메일 전송
     const data = await resend.emails.send({

@@ -16,7 +16,8 @@
       "Bash(mkdir:*)",
       "Bash(npx shadcn@latest add:*)",
       "Bash(grep:*)",
-      "Bash(npx shadcn-ui:*)"
+      "Bash(npx shadcn-ui:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   },
