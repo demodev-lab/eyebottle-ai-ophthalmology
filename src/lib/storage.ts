@@ -10,6 +10,9 @@ import {
   STORAGE_KEYS,
   DEFAULT_SETTINGS,
 } from '@/types/database';
+import { getFromStorage, setToStorage, updateArrayInStorage } from './storage-helpers';
+import { calculateSE } from './calculations';
+import { getISODateString } from './date-utils';
 
 // 현재 사용자 관리
 export const getCurrentUser = (): User | null => {
@@ -26,8 +29,7 @@ export const setCurrentUser = (userId: string) => {
 
 // 사용자 CRUD
 export const getUsers = (): User[] => {
-  const data = localStorage.getItem(STORAGE_KEYS.USERS);
-  return data ? JSON.parse(data) : [];
+  return getFromStorage(STORAGE_KEYS.USERS, []);
 };
 
 export const createUser = (userData: Omit<User, 'id' | 'created_at' | 'updated_at'>): User => {
@@ -35,19 +37,18 @@ export const createUser = (userData: Omit<User, 'id' | 'created_at' | 'updated_a
   const newUser: User = {
     ...userData,
     id: uuidv4(),
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: getISODateString(),
+    updated_at: getISODateString(),
   };
   
   users.push(newUser);
-  localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+  setToStorage(STORAGE_KEYS.USERS, users);
   return newUser;
 };
 
 // 환자 CRUD
 export const getPatients = (userId?: string): Patient[] => {
-  const data = localStorage.getItem(STORAGE_KEYS.PATIENTS);
-  const patients: Patient[] = data ? JSON.parse(data) : [];
+  const patients = getFromStorage<Patient[]>(STORAGE_KEYS.PATIENTS, []);
   
   // 현재 사용자의 환자만 필터링
   const currentUserId = userId || getCurrentUser()?.id;
@@ -111,12 +112,6 @@ export const getVisits = (patientId?: string): MyoCareVisit[] => {
   const data = localStorage.getItem(STORAGE_KEYS.VISITS);
   const visits: MyoCareVisit[] = data ? JSON.parse(data) : [];
   
-  // SE 값이 없는 기존 데이터에 대한 재계산
-  const calculateSE = (sphere?: number, cylinder?: number): number | undefined => {
-    if (sphere === undefined) return undefined;
-    return sphere + (cylinder || 0) / 2;
-  };
-  
   // 데이터 무결성 검증 및 SE 값 재계산
   const validatedVisits = visits.map(visit => {
     const needsUpdate = visit.od_se === undefined && visit.od_sphere !== undefined ||
@@ -166,12 +161,6 @@ export const createVisit = (visitData: Omit<MyoCareVisit, 'id' | 'created_by' | 
   const currentUser = getCurrentUser();
   if (!currentUser) throw new Error('No current user');
   
-  // S.E. 자동 계산
-  const calculateSE = (sphere?: number, cylinder?: number): number | undefined => {
-    if (sphere === undefined) return undefined;
-    return sphere + (cylinder || 0) / 2;
-  };
-  
   const allVisits = JSON.parse(localStorage.getItem(STORAGE_KEYS.VISITS) || '[]');
   const newVisit: MyoCareVisit = {
     ...visitData,
@@ -193,12 +182,6 @@ export const updateVisit = (visitId: string, updates: Partial<Omit<MyoCareVisit,
   const index = allVisits.findIndex((v: MyoCareVisit) => v.id === visitId);
   
   if (index === -1) throw new Error('Visit not found');
-  
-  // S.E. 재계산
-  const calculateSE = (sphere?: number, cylinder?: number): number | undefined => {
-    if (sphere === undefined) return undefined;
-    return sphere + (cylinder || 0) / 2;
-  };
   
   const updatedData = {
     ...updates,

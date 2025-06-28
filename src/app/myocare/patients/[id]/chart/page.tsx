@@ -23,6 +23,7 @@ import {
   getRiskText 
 } from '@/lib/calculations';
 import { ArrowLeft, Edit2, Trash2, Save, X, Printer, Copy, FileText, Plus } from 'lucide-react';
+import { TREATMENT_COLORS, TREATMENT_COLORS_SOLID, CHART_CONSTANTS, CHART_Y_RANGES, PRINT_CONSTANTS } from '@/constants';
 import {
   LineChart,
   Line,
@@ -36,29 +37,6 @@ import {
   ReferenceArea,
 } from 'recharts';
 
-// 치료 방법별 색상 정의 (투명도 포함)
-const TREATMENT_COLORS: Record<string, string> = {
-  atropine_0_042: 'rgba(33, 150, 243, 0.45)',    // #2196f3 with 45% opacity
-  atropine_0_05: 'rgba(25, 118, 210, 0.45)',     // #1976d2 with 45% opacity
-  atropine_0_063: 'rgba(21, 101, 192, 0.45)',    // #1565c0 with 45% opacity
-  atropine_0_125: 'rgba(13, 71, 161, 0.45)',     // #0d47a1 with 45% opacity
-  dream_lens: 'rgba(233, 30, 99, 0.45)',         // #e91e63 with 45% opacity
-  myosight: 'rgba(194, 24, 91, 0.45)',           // #c2185b with 45% opacity
-  dims_glasses: 'rgba(76, 175, 80, 0.45)',       // #4caf50 with 45% opacity
-  combined: 'rgba(255, 152, 0, 0.45)',           // #ff9800 with 45% opacity
-};
-
-// 치료 방법별 진한 색상 (범례용)
-const TREATMENT_COLORS_SOLID: Record<string, string> = {
-  atropine_0_042: '#2196f3',
-  atropine_0_05: '#1976d2',
-  atropine_0_063: '#1565c0',
-  atropine_0_125: '#0d47a1',
-  dream_lens: '#e91e63',
-  myosight: '#c2185b',
-  dims_glasses: '#4caf50',
-  combined: '#ff9800',
-};
 
 
 // 커스텀 Dot 컴포넌트
@@ -214,8 +192,8 @@ export default function PatientChartPage() {
         if (mainElement) {
           mainElement.classList.remove('printing');
         }
-      }, 1000);
-    }, 500); // 500ms 대기
+      }, PRINT_CONSTANTS.DELAY_AFTER_PRINT);
+    }, PRINT_CONSTANTS.DELAY_BEFORE_PRINT);
   };
 
   // EMR 텍스트 생성 함수

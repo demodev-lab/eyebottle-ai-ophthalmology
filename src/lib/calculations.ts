@@ -2,6 +2,7 @@
 
 import { differenceInYears, differenceInDays, parseISO } from 'date-fns';
 import { MyoCareVisit, RiskLevel, UserSettings, ProgressionRate } from '@/types/database';
+import { DATE_CONSTANTS, RISK_COLORS, RISK_TEXT, PROGRESSION_CONSTANTS } from '@/constants';
 
 // 연간 진행 속도 계산
 export const calculateProgressionRate = (
@@ -53,13 +54,13 @@ export const calculateProgressionRate = (
   // 시간 차이 계산 (년 단위)
   const daysDiff = differenceInDays(parseISO(lastVisit.visit_date), parseISO(firstVisit.visit_date));
   
-  // 최소 90일 이상의 간격이 있어야 의미있는 계산
-  if (daysDiff < 90) {
+  // 최소 검사 간격 이상이 있어야 의미있는 계산
+  if (daysDiff < DATE_CONSTANTS.MIN_EXAM_INTERVAL_DAYS) {
     console.log('[MyoCare] 검사 간격이 너무 짧음:', daysDiff, '일');
     return { riskLevel: RiskLevel.NORMAL };
   }
 
-  const yearsDiffExact = daysDiff / 365.25;
+  const yearsDiffExact = daysDiff / DATE_CONSTANTS.DAYS_IN_YEAR;
 
   // SE 진행 속도 계산 (D/yr)
   // 근시는 음수값이므로, 진행 시 더 음수가 됨 (예: -1 → -2)
@@ -149,12 +150,12 @@ export const daysSinceLastVisit = (lastVisitDate: string): number => {
 
 // 활성 환자 여부 (6개월 이내 방문)
 export const isActivePatient = (lastVisitDate: string): boolean => {
-  return daysSinceLastVisit(lastVisitDate) <= 180;
+  return daysSinceLastVisit(lastVisitDate) <= DATE_CONSTANTS.ACTIVE_PATIENT_DAYS;
 };
 
 // 최근 등록 환자 여부 (30일 이내)
 export const isRecentPatient = (createdDate: string): boolean => {
-  return differenceInDays(new Date(), parseISO(createdDate)) <= 30;
+  return differenceInDays(new Date(), parseISO(createdDate)) <= DATE_CONSTANTS.RECENT_PATIENT_DAYS;
 };
 
 // SE 계산 (Sphere + Cylinder/2)
@@ -167,11 +168,11 @@ export const calculateSE = (sphere?: number, cylinder?: number): number | undefi
 export const getRiskColor = (riskLevel: RiskLevel): string => {
   switch (riskLevel) {
     case RiskLevel.RED:
-      return '#ef4444'; // red-500
+      return RISK_COLORS.RED;
     case RiskLevel.YELLOW:
-      return '#eab308'; // yellow-500
+      return RISK_COLORS.YELLOW;
     default:
-      return '#22c55e'; // green-500
+      return RISK_COLORS.GREEN;
   }
 };
 
@@ -179,11 +180,11 @@ export const getRiskColor = (riskLevel: RiskLevel): string => {
 export const getRiskBgColor = (riskLevel: RiskLevel): string => {
   switch (riskLevel) {
     case RiskLevel.RED:
-      return '#fee2e2'; // red-100
+      return RISK_COLORS.RED_BG;
     case RiskLevel.YELLOW:
-      return '#fef3c7'; // yellow-100
+      return RISK_COLORS.YELLOW_BG;
     default:
-      return '#dcfce7'; // green-100
+      return RISK_COLORS.GREEN_BG;
   }
 };
 
@@ -191,11 +192,11 @@ export const getRiskBgColor = (riskLevel: RiskLevel): string => {
 export const getRiskText = (riskLevel: RiskLevel): string => {
   switch (riskLevel) {
     case RiskLevel.RED:
-      return '고위험';
+      return RISK_TEXT.RED;
     case RiskLevel.YELLOW:
-      return '중위험';
+      return RISK_TEXT.YELLOW;
     default:
-      return '정상';
+      return RISK_TEXT.GREEN;
   }
 };
 
