@@ -623,7 +623,7 @@ export default function PatientChartPage() {
                       if (!active || !payload || !payload.length) return null;
                       
                       const data = payload[0]?.payload;
-                      const treatment = data?.treatment;
+                      const treatment = data?.treatment as TreatmentMethod | undefined;
                       
                       return (
                         <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
@@ -755,7 +755,7 @@ export default function PatientChartPage() {
                       if (!active || !payload || !payload.length) return null;
                       
                       const data = payload[0]?.payload;
-                      const treatment = data?.treatment;
+                      const treatment = data?.treatment as TreatmentMethod | undefined;
                       
                       return (
                         <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
