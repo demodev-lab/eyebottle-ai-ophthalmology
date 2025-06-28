@@ -33,6 +33,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
+  ReferenceArea,
 } from 'recharts';
 
 // 치료 방법별 색상 정의 (향후 사용 예정)
@@ -55,14 +56,28 @@ const CustomDot = (props: any) => {
   const color = getRiskColor(riskLevel);
   
   return (
-    <circle 
-      cx={cx} 
-      cy={cy} 
-      r={5} 
-      fill={color} 
-      stroke="#fff" 
-      strokeWidth={2}
-    />
+    <g>
+      <circle 
+        cx={cx} 
+        cy={cy} 
+        r={5} 
+        fill={color} 
+        stroke="#fff" 
+        strokeWidth={2}
+      />
+      {/* 안경 처방 표시 */}
+      {payload.new_prescription && (
+        <text
+          x={cx}
+          y={cy - 10}
+          textAnchor="middle"
+          fontSize="14"
+          fill="#4b5563"
+        >
+          👓
+        </text>
+      )}
+    </g>
   );
 };
 
@@ -161,6 +176,49 @@ export default function PatientChartPage() {
     window.print();
   };
 
+  // 치료 구간 계산
+  const getTreatmentAreas = () => {
+    const areas: any[] = [];
+    if (visits.length < 2) return areas;
+
+    for (let i = 0; i < visits.length - 1; i++) {
+      const currentVisit = visits[i];
+      const nextVisit = visits[i + 1];
+      
+      if (currentVisit.treatment_method) {
+        const startAge = calculateAge(patient.birth_date, currentVisit.visit_date);
+        const endAge = calculateAge(patient.birth_date, nextVisit.visit_date);
+        
+        areas.push({
+          x1: startAge,
+          x2: endAge,
+          fill: _TREATMENT_COLORS[currentVisit.treatment_method] || '#f0f0f0',
+          opacity: 0.3,
+          key: `area-${i}`,
+          treatment: currentVisit.treatment_method,
+        });
+      }
+    }
+
+    // 마지막 치료 구간 (마지막 검사부터 현재까지)
+    const lastVisit = visits[visits.length - 1];
+    if (lastVisit.treatment_method) {
+      const startAge = calculateAge(patient.birth_date, lastVisit.visit_date);
+      const currentAge = calculateAge(patient.birth_date);
+      
+      areas.push({
+        x1: startAge,
+        x2: currentAge,
+        fill: _TREATMENT_COLORS[lastVisit.treatment_method] || '#f0f0f0',
+        opacity: 0.3,
+        key: `area-last`,
+        treatment: lastVisit.treatment_method,
+      });
+    }
+
+    return areas;
+  };
+
   // 두 검사 간의 진행 속도 계산
   const calculateProgressionBetweenVisits = (prevVisit: MyoCareVisit, currentVisit: MyoCareVisit) => {
     const prevDate = new Date(prevVisit.visit_date);
@@ -253,6 +311,7 @@ export default function PatientChartPage() {
         odRisk,
         osRisk,
         treatment: visit.treatment_method,
+        new_prescription: visit.new_prescription,
       };
     });
   };
@@ -524,6 +583,19 @@ export default function PatientChartPage() {
                   margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                  
+                  {/* 치료 방법별 배경색 */}
+                  {getTreatmentAreas().map((area) => (
+                    <ReferenceArea
+                      key={area.key}
+                      x1={area.x1}
+                      x2={area.x2}
+                      y1={-20}
+                      y2={5}
+                      fill={area.fill}
+                      fillOpacity={area.opacity}
+                    />
+                  ))}
                   <XAxis 
                     dataKey="age" 
                     label={{ value: '나이 (세)', position: 'insideBottom', offset: -5 }}
@@ -617,6 +689,10 @@ export default function PatientChartPage() {
                   <div className="w-4 h-0.5 bg-orange-500"></div>
                   <span className="text-slate-600">중등도근시 기준 (-3D)</span>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl">👓</span>
+                  <span className="text-slate-600">안경처방</span>
+                </div>
               </div>
               {/* 치료 방법 색상 범례 */}
               <div className="text-center text-xs text-slate-500">
@@ -639,6 +715,19 @@ export default function PatientChartPage() {
                   margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                  
+                  {/* 치료 방법별 배경색 */}
+                  {getTreatmentAreas().map((area) => (
+                    <ReferenceArea
+                      key={area.key}
+                      x1={area.x1}
+                      x2={area.x2}
+                      y1={20}
+                      y2={30}
+                      fill={area.fill}
+                      fillOpacity={area.opacity}
+                    />
+                  ))}
                   <XAxis 
                     dataKey="age" 
                     label={{ value: '나이 (세)', position: 'insideBottom', offset: -5 }}

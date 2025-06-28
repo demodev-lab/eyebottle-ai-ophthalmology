@@ -233,7 +233,6 @@ export default function NewVisitPage() {
                         <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                           <span className="text-sm font-bold text-blue-600">우안</span>
                         </div>
-                        <span className="text-base font-medium">Right Eye</span>
                       </div>
                     </td>
                     <td className="p-3">
@@ -280,7 +279,6 @@ export default function NewVisitPage() {
                         <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                           <span className="text-sm font-bold text-orange-600">좌안</span>
                         </div>
-                        <span className="text-base font-medium">Left Eye</span>
                       </div>
                     </td>
                     <td className="p-3">

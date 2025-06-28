@@ -19,7 +19,8 @@ import {
   getVisits,
   getCurrentUser,
   createDemoUser,
-  getUserSettings 
+  getUserSettings,
+  deletePatient 
 } from '@/lib/storage';
 import { 
   calculateProgressionRate,
@@ -33,7 +34,7 @@ import {
   TREATMENT_METHOD_LABELS,
   RiskLevel
 } from '@/types/database';
-import { Search, UserPlus, Users, FileText, LineChart, Edit2 } from 'lucide-react';
+import { Search, UserPlus, Users, FileText, LineChart, Edit2, Trash2 } from 'lucide-react';
 import { NewPatientModal } from '@/components/myocare/patients/new-patient-modal';
 import { EditPatientModal } from '@/components/myocare/patients/edit-patient-modal';
 
@@ -45,6 +46,7 @@ export default function PatientsPage() {
   const [loading, setLoading] = useState(true);
   const [showNewPatientModal, setShowNewPatientModal] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [deletingPatientId, setDeletingPatientId] = useState<string | null>(null);
 
   useEffect(() => {
     loadPatients();
@@ -112,6 +114,20 @@ export default function PatientsPage() {
       
       return daysB - daysA; // 오래된 방문이 먼저 오도록
     });
+  };
+
+  const handleDeletePatient = async (patientId: string) => {
+    if (confirm('정말로 이 환자를 삭제하시겠습니까? 모든 검사 기록도 함께 삭제됩니다.')) {
+      try {
+        await deletePatient(patientId);
+        alert('환자가 삭제되었습니다.');
+        loadPatients();
+      } catch (error) {
+        console.error('환자 삭제 실패:', error);
+        alert('환자 삭제 중 오류가 발생했습니다.');
+      }
+    }
+    setDeletingPatientId(null);
   };
 
   if (loading) {
@@ -214,6 +230,14 @@ export default function PatientsPage() {
                             onClick={() => setEditingPatient(patient)}
                           >
                             <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-600 hover:text-red-600"
+                            onClick={() => handleDeletePatient(patient.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                           <p className="font-semibold text-lg text-slate-800">{patient.name}</p>
                         </div>

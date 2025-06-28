@@ -374,3 +374,58 @@
   - 구 파일 삭제: CHANGELOG.md, DEPLOYMENT_LOG.md
   - 신규 생성: PROJECT_HISTORY.md, docs/prd/ 구조
   - README.md 업데이트: 베타테스터 관련 내용 제거
+
+---
+
+### **2025년 6월 28일**
+
+- **MyoCare 차트 UI/UX 개선 사항** 🎨
+
+  **완료된 작업:**
+  
+  1. **근시 진행 속도 계산 수정**
+     - 근시는 음수값이므로 -1 → -2 진행 시 1D 증가로 계산
+     - 표시는 음수값(-1D/yr)으로 유지하되, 위험도 판정시에만 절대값 사용
+     - `/src/lib/calculations.ts` 수정
+  
+  2. **진행 상태 카드 개선**
+     - 최근 2개 검사 기준으로 진행 속도 계산
+     - 위험도에 따른 카드 스타일링 (배경색, 상단 바)
+     - 글자 크기 증가 (text-xl → text-2xl)
+     - SE/AL 값은 파란색 볼드, 진행속도는 위험도별 색상
+     - `/src/app/myocare/patients/[id]/chart/page.tsx` 수정
+  
+  3. **대시보드 위험도 기준 변경**
+     - SE 기준에서 AL 기준으로 변경
+     - 고위험: AL 진행속도 > 0.6mm/yr
+     - 중위험: AL 진행속도 > 0.3mm/yr
+     - `/src/app/myocare/dashboard/page.tsx` 수정
+  
+  4. **인쇄 기능 추가**
+     - 진행 그래프 페이지에 인쇄 버튼 추가
+     - 인쇄 시 헤더/버튼 숨김
+     - 1페이지 최적화: 폰트 8pt, 여백 0.5cm, 그래프 높이 180px
+     - `/src/app/globals.css` 인쇄 스타일 추가
+  
+  5. **UI 텍스트 정리**
+     - 검사결과 입력 페이지에서 "Right Eye", "Left Eye" 텍스트 제거
+     - 한글 라벨(우안, 좌안)만 유지
+     - `/src/app/myocare/patients/[id]/visits/new/page.tsx` 수정
+  
+  6. **치료법별 배경색 구현**
+     - 진행 그래프에 치료 기간별 배경색 표시
+     - `getTreatmentAreas()` 함수로 기간 계산
+     - `ReferenceArea` 컴포넌트로 시각화
+  
+  7. **안경 처방 표시**
+     - 그래프 데이터 포인트에 안경 이모지(👓) 표시
+     - `CustomDot` 컴포넌트 수정
+  
+  8. **환자 삭제 버튼 추가**
+     - 환자 리스트에 직접 삭제 버튼 추가
+     - 확인 다이얼로그 포함
+     - `/src/app/myocare/patients/page.tsx` 수정
+  
+  **버그 수정:**
+  - Vercel 빌드 에러: 미사용 `TREATMENT_COLORS` 변수 → `_TREATMENT_COLORS`로 변경
+  - CSS 파싱 에러: `print\\:hidden` → `print\:hidden` 수정

@@ -114,6 +114,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   clinicInfo: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  clinicLogo: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+  },
+  clinicText: {
     fontSize: 9,
     lineHeight: 1.3,
   },
@@ -240,9 +249,12 @@ export const DiabeticReportPDF = ({ data }: { data: any }) => (
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
-          <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
-          <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
-          <Text>Tel. 051-866-7592~4</Text>
+          <Image src="/lee_eye_symbol.png" style={styles.clinicLogo} />
+          <View style={styles.clinicText}>
+            <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
+            <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
+            <Text>Tel. 051-866-7592~4</Text>
+          </View>
         </View>
         <View style={styles.issueDate}>
           <Text>발행일: {data.examDate}</Text>
@@ -368,9 +380,12 @@ export const HypertensionReportPDF = ({ data }: { data: any }) => (
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
-          <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
-          <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
-          <Text>Tel. 051-866-7592~4</Text>
+          <Image src="/lee_eye_symbol.png" style={styles.clinicLogo} />
+          <View style={styles.clinicText}>
+            <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
+            <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
+            <Text>Tel. 051-866-7592~4</Text>
+          </View>
         </View>
         <View style={styles.issueDate}>
           <Text>발행일: {data.examDate}</Text>
@@ -496,9 +511,12 @@ export const ComprehensiveReportPDF = ({ data }: { data: any }) => (
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
-          <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
-          <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
-          <Text>Tel. 051-866-7592~4</Text>
+          <Image src="/lee_eye_symbol.png" style={styles.clinicLogo} />
+          <View style={styles.clinicText}>
+            <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
+            <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
+            <Text>Tel. 051-866-7592~4</Text>
+          </View>
         </View>
         <View style={styles.issueDate}>
           <Text>발행일: {data.examDate}</Text>
