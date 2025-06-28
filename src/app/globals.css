@@ -73,7 +73,7 @@ body {
   }
   
   /* 불필요한 요소 숨김 */
-  .print\\:hidden {
+  .print\:hidden {
     display: none !important;
   }
   
