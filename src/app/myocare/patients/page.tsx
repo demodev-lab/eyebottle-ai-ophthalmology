@@ -46,7 +46,6 @@ export default function PatientsPage() {
   const [loading, setLoading] = useState(true);
   const [showNewPatientModal, setShowNewPatientModal] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
-  const [deletingPatientId, setDeletingPatientId] = useState<string | null>(null);
 
   useEffect(() => {
     loadPatients();
@@ -127,7 +126,6 @@ export default function PatientsPage() {
         alert('환자 삭제 중 오류가 발생했습니다.');
       }
     }
-    setDeletingPatientId(null);
   };
 
   if (loading) {
