@@ -2,7 +2,7 @@
 
 import { differenceInYears, differenceInDays, parseISO } from 'date-fns';
 import { MyoCareVisit, RiskLevel, UserSettings, ProgressionRate } from '@/types/database';
-import { DATE_CONSTANTS, RISK_COLORS, RISK_TEXT, PROGRESSION_CONSTANTS } from '@/constants';
+import { DATE_CONSTANTS, RISK_COLORS, RISK_TEXT } from '@/constants';
 
 // 연간 진행 속도 계산
 export const calculateProgressionRate = (

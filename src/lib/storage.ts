@@ -10,7 +10,7 @@ import {
   STORAGE_KEYS,
   DEFAULT_SETTINGS,
 } from '@/types/database';
-import { getFromStorage, setToStorage, updateArrayInStorage } from './storage-helpers';
+import { getFromStorage, setToStorage } from './storage-helpers';
 import { calculateSE } from './calculations';
 import { getISODateString } from './date-utils';
 

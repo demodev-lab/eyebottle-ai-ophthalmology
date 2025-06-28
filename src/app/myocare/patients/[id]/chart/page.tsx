@@ -22,8 +22,9 @@ import {
   getRiskColor,
   getRiskText 
 } from '@/lib/calculations';
-import { ArrowLeft, Edit2, Trash2, Save, X, Printer, Copy, FileText, Plus } from 'lucide-react';
-import { TREATMENT_COLORS, TREATMENT_COLORS_SOLID, CHART_CONSTANTS, CHART_Y_RANGES, PRINT_CONSTANTS } from '@/constants';
+import { ArrowLeft, Edit2, Trash2, Save, X, Printer, FileText, Plus } from 'lucide-react';
+import { TREATMENT_COLORS, TREATMENT_COLORS_SOLID, PRINT_CONSTANTS } from '@/constants';
+import { TreatmentArea } from '@/types/chart-props';
 import {
   LineChart,
   Line,
@@ -40,6 +41,7 @@ import {
 
 
 // 커스텀 Dot 컴포넌트
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomDot = (props: any) => {
   const { cx, cy, payload, dataKey } = props;
   const riskLevel = dataKey === 'od' ? payload.odRisk : payload.osRisk;
@@ -297,8 +299,8 @@ export default function PatientChartPage() {
   };
 
   // 치료 구간 계산
-  const getTreatmentAreas = () => {
-    const areas: any[] = [];
+  const getTreatmentAreas = (): TreatmentArea[] => {
+    const areas: TreatmentArea[] = [];
     if (visits.length < 2 || !patient) return areas;
     
     console.log('[MyoCare Chart] 치료 구간 계산 시작:', {
@@ -796,7 +798,7 @@ export default function PatientChartPage() {
                       y2={5}
                       fill={area.fill}
                       fillOpacity={1}
-                      stroke={area.isCurrent ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
+                      stroke={area.isCurrent && area.treatment ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
                       strokeWidth={area.isCurrent ? 2 : undefined}
                       strokeDasharray={area.isCurrent ? "5 5" : undefined}
                       ifOverflow="visible"
@@ -827,11 +829,13 @@ export default function PatientChartPage() {
                     tick={{ fontSize: 12 }}
                   />
                   <Tooltip 
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     formatter={(value: any) => {
                       if (value === null || value === undefined) return '-';
                       return `${value}D`;
                     }}
                     labelFormatter={(label) => `${Number(label).toFixed(1)}세`}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     content={(props: any) => {
                       const { active, payload, label } = props;
                       if (!active || !payload || !payload.length) return null;
@@ -842,9 +846,10 @@ export default function PatientChartPage() {
                       return (
                         <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
                           <p className="font-semibold">{`${Number(label).toFixed(1)}세`}</p>
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                           {payload.map((entry: any, index: number) => (
                             <p key={index} style={{ color: entry.color }}>
-                              {entry.name}: {entry.value}D
+                              {entry.dataKey}: {entry.value}D
                             </p>
                           ))}
                           {treatment && (
@@ -972,7 +977,7 @@ export default function PatientChartPage() {
                       y2={30}
                       fill={area.fill}
                       fillOpacity={1}
-                      stroke={area.isCurrent ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
+                      stroke={area.isCurrent && area.treatment ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
                       strokeWidth={area.isCurrent ? 2 : undefined}
                       strokeDasharray={area.isCurrent ? "5 5" : undefined}
                       ifOverflow="visible"
@@ -1003,11 +1008,13 @@ export default function PatientChartPage() {
                     tick={{ fontSize: 12 }}
                   />
                   <Tooltip 
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     formatter={(value: any) => {
                       if (value === null || value === undefined) return '-';
                       return `${value}mm`;
                     }}
                     labelFormatter={(label) => `${Number(label).toFixed(1)}세`}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     content={(props: any) => {
                       const { active, payload, label } = props;
                       if (!active || !payload || !payload.length) return null;
@@ -1018,9 +1025,10 @@ export default function PatientChartPage() {
                       return (
                         <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
                           <p className="font-semibold">{`${Number(label).toFixed(1)}세`}</p>
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                           {payload.map((entry: any, index: number) => (
                             <p key={index} style={{ color: entry.color }}>
-                              {entry.name}: {entry.value}mm
+                              {entry.dataKey}: {entry.value}mm
                             </p>
                           ))}
                           {treatment && (
@@ -1355,7 +1363,7 @@ export default function PatientChartPage() {
                         {isEditing ? (
                           <Select
                             value={editingData.treatment_method || visit.treatment_method || ''}
-                            onValueChange={(value) => setEditingData({ ...editingData, treatment_method: value as any })}
+                            onValueChange={(value) => setEditingData({ ...editingData, treatment_method: value as TreatmentMethod })}
                           >
                             <SelectTrigger className="w-36">
                               <SelectValue />

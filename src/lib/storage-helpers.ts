@@ -78,7 +78,7 @@ export function updateArrayInStorage<T>(
  * @param updates - 업데이트할 필드들
  * @param defaultValue - 기본 객체 값
  */
-export function updateObjectInStorage<T extends Record<string, any>>(
+export function updateObjectInStorage<T extends Record<string, unknown>>(
   key: string,
   updates: Partial<T>,
   defaultValue: T
