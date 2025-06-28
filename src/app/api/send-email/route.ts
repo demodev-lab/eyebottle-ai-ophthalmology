@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         </div>
       `,
       // 답장 받을 이메일 설정
-      reply_to: email,
+      replyTo: email,
     });
 
     return NextResponse.json({ success: true, data });
