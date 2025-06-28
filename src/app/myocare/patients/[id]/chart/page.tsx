@@ -35,8 +35,8 @@ import {
   ReferenceLine,
 } from 'recharts';
 
-// 치료 방법별 색상 정의
-const TREATMENT_COLORS: Record<string, string> = {
+// 치료 방법별 색상 정의 (향후 사용 예정)
+const _TREATMENT_COLORS: Record<string, string> = {
   atropine_0_042: '#e3f2fd',
   atropine_0_05: '#bbdefb',
   atropine_0_063: '#90caf9',
