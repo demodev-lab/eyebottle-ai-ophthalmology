@@ -22,7 +22,7 @@ import {
   getRiskColor,
   getRiskText 
 } from '@/lib/calculations';
-import { ArrowLeft, TrendingUp, TrendingDown, Eye, Activity, Edit2, Trash2, Save, X } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Edit2, Trash2, Save, X } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -33,8 +33,6 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-  Area,
-  ComposedChart,
 } from 'recharts';
 
 
@@ -187,7 +185,6 @@ export default function PatientChartPage() {
   };
 
   const prepareChartData = (type: 'se' | 'axial') => {
-    const settings = getUserSettings();
     return visits.map((visit, index) => {
       const age = calculateAge(patient!.birth_date, visit.visit_date);
       
@@ -625,7 +622,7 @@ export default function PatientChartPage() {
                   const isEditing = editingVisitId === visit.id;
                   
                   // 진행 속도 계산 (이전 검사와 비교)
-                  let progression = { se_od: undefined, se_os: undefined, al_od: undefined, al_os: undefined };
+                  let progression: { se_od: number | undefined; se_os: number | undefined; al_od: number | undefined; al_os: number | undefined } = { se_od: undefined, se_os: undefined, al_od: undefined, al_os: undefined };
                   if (actualIndex > 0) {
                     progression = calculateProgressionBetweenVisits(visits[actualIndex - 1], visits[actualIndex]);
                   }

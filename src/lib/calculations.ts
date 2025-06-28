@@ -22,7 +22,6 @@ export const calculateProgressionRate = (
   const lastVisit = sortedVisits[sortedVisits.length - 1];
 
   // 시간 차이 계산 (년 단위)
-  const yearsDiff = differenceInYears(parseISO(lastVisit.visit_date), parseISO(firstVisit.visit_date));
   const daysDiff = differenceInDays(parseISO(lastVisit.visit_date), parseISO(firstVisit.visit_date));
   
   // 최소 90일 이상의 간격이 있어야 의미있는 계산

@@ -68,7 +68,7 @@ export default function NewVisitPage() {
       // 최근 방문의 치료방법을 기본값으로 설정
       const visits = getVisits(patientId);
       if (visits.length > 0 && visits[0].treatment_method) {
-        setFormData(prev => ({ ...prev, treatment_method: visits[0].treatment_method }));
+        setFormData(prev => ({ ...prev, treatment_method: visits[0].treatment_method as string }));
       }
     } catch (error) {
       console.error('환자 로드 실패:', error);

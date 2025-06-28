@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, FileText, Printer, Eye, Heart, Activity, Play, Download } from 'lucide-react'
+import { ArrowLeft, FileText, Printer, Eye, Heart, Activity, Play } from 'lucide-react'
 import { QuickNavMenu } from '@/components/common/quick-nav-menu'
 import { pdf } from '@react-pdf/renderer'
 import { DiabeticReportPDF, HypertensionReportPDF, ComprehensiveReportPDF } from '@/components/pdf/exam-pdf'

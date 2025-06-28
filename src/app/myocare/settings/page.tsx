@@ -51,7 +51,7 @@ export default function SettingsPage() {
 
     setSaving(true);
     try {
-      const { id, user_id, created_at, ...updates } = settings;
+      const { id: _id, user_id: _userId, created_at: _createdAt, ...updates } = settings;
       await updateUserSettings(updates);
       alert('설정이 저장되었습니다.');
     } catch (error) {

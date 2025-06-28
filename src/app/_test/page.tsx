@@ -1,6 +1,6 @@
 // Shadcn/ui 컴포넌트 테스트 페이지 - 기존 홈페이지 디자인과 조화롭게 구성
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, GlassCard } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FilmIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline"
 
 export default function TestPage() {
@@ -13,7 +13,7 @@ export default function TestPage() {
             <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">
               Shadcn/ui 테스트 페이지
             </h1>
-            <Button variant="eyebottle" size="lg">
+            <Button variant="default" size="lg">
               홈으로 돌아가기
             </Button>
           </div>
@@ -36,8 +36,8 @@ export default function TestPage() {
           <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">버튼 컴포넌트</h3>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button variant="default">기본 버튼</Button>
-            <Button variant="eyebottle" size="lg">아이보틀 그라데이션</Button>
-            <Button variant="glass" size="lg">글래스모피즘</Button>
+            <Button variant="default" size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600">아이보틀 그라데이션</Button>
+            <Button variant="outline" size="lg" className="bg-white/50 backdrop-blur-sm">글래스모피즘</Button>
             <Button variant="outline">아웃라인</Button>
             <Button variant="secondary">보조</Button>
           </div>
@@ -48,7 +48,7 @@ export default function TestPage() {
           <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">카드 컴포넌트</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* 기존 스타일 글래스 카드 */}
-            <GlassCard className="p-8 lg:p-10 text-center">
+            <div className="bg-white/90 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-2xl p-8 lg:p-10 text-center">
               <div className="bg-gradient-to-br from-pink-500/10 to-rose-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <FilmIcon className="w-8 h-8 lg:w-10 lg:h-10 text-pink-600" />
               </div>
@@ -56,10 +56,10 @@ export default function TestPage() {
               <p className="text-base lg:text-lg text-slate-600 mb-6 leading-relaxed">
                 기존 아이보틀 디자인과 동일한 스타일
               </p>
-              <Button variant="eyebottle" size="sm">
+              <Button variant="default" size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600">
                 자세히 보기
               </Button>
-            </GlassCard>
+            </div>
 
             {/* 표준 Shadcn 카드 */}
             <Card className="hover:shadow-lg transition-shadow">
@@ -95,10 +95,10 @@ export default function TestPage() {
                   두 스타일의 장점을 모두 활용한 카드입니다.
                 </p>
                 <div className="space-y-2">
-                  <Button variant="eyebottle" size="sm" className="w-full">
+                  <Button variant="default" size="sm" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600">
                     아이보틀 스타일
                   </Button>
-                  <Button variant="glass" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full bg-white/50 backdrop-blur-sm">
                     글래스 스타일
                   </Button>
                 </div>
@@ -109,7 +109,7 @@ export default function TestPage() {
 
         {/* 결과 요약 */}
         <section className="text-center">
-          <GlassCard className="p-8 lg:p-10 max-w-4xl mx-auto">
+          <div className="bg-white/90 backdrop-blur-sm border border-slate-200/50 shadow-xl rounded-2xl p-8 lg:p-10 max-w-4xl mx-auto">
             <h3 className="text-2xl lg:text-3xl font-bold text-slate-800 mb-6">
               ✅ 호환성 테스트 완료
             </h3>
@@ -117,14 +117,14 @@ export default function TestPage() {
               Shadcn/ui 컴포넌트들이 기존 아이보틀 디자인과 완벽하게 조화롭게 작동합니다!
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button variant="eyebottle" size="lg">
+              <Button variant="default" size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600">
                 메인 홈페이지로
               </Button>
-              <Button variant="glass" size="lg">
+              <Button variant="outline" size="lg" className="bg-white/50 backdrop-blur-sm">
                 개발 계속하기
               </Button>
             </div>
-          </GlassCard>
+          </div>
         </section>
       </main>
     </div>

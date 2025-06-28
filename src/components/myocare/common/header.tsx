@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { DemoVideoButton } from '@/components/common/demo-video-button';
 import { QuickNavMenu } from '@/components/common/quick-nav-menu';
-import { PlayCircle, User, Home, ChevronRight } from 'lucide-react';
+import { User, Home, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [

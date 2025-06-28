@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -30,11 +30,10 @@ import {
 } from '@/lib/calculations';
 import { 
   Patient, 
-  MyoCareVisit,
   TREATMENT_METHOD_LABELS,
   RiskLevel
 } from '@/types/database';
-import { Search, UserPlus, Eye, Edit, Trash2, Users, FileText, LineChart, Edit2 } from 'lucide-react';
+import { Search, UserPlus, Users, FileText, LineChart, Edit2 } from 'lucide-react';
 import { NewPatientModal } from '@/components/myocare/patients/new-patient-modal';
 import { EditPatientModal } from '@/components/myocare/patients/edit-patient-modal';
 

@@ -12,18 +12,15 @@ import {
 import { 
   calculateProgressionRate, 
   isActivePatient, 
-  isRecentPatient,
-  daysSinceLastVisit 
+  isRecentPatient
 } from '@/lib/calculations';
 import { 
-  Patient, 
-  MyoCareVisit, 
   DashboardStats, 
   RiskLevel,
   TREATMENT_METHOD_LABELS,
   TreatmentMethod
 } from '@/types/database';
-import { Users, AlertTriangle, Activity, UserPlus, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
+import { Users, AlertTriangle, Activity, UserPlus, TrendingUp, Calendar } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 export default function DashboardPage() {
@@ -262,7 +259,7 @@ export default function DashboardPage() {
                 <PieChart>
                   <Pie
                     data={Object.entries(stats.treatmentDistribution)
-                      .filter(([_, count]) => count > 0)
+                      .filter(([, count]) => count > 0)
                       .map(([key, count]) => ({
                         name: TREATMENT_METHOD_LABELS[key as TreatmentMethod],
                         value: count,
@@ -286,8 +283,8 @@ export default function DashboardPage() {
                     dataKey="value"
                   >
                     {Object.entries(stats.treatmentDistribution)
-                      .filter(([_, count]) => count > 0)
-                      .map(([key, _], index) => {
+                      .filter(([, count]) => count > 0)
+                      .map(([key], index) => {
                         const colors = {
                           'atropine_0.042': '#3b82f6',
                           'atropine_0.05': '#2563eb',

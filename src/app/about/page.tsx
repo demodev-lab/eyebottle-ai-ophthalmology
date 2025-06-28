@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { 
-  CalendarIcon,
   ArrowRightIcon,
   EnvelopeIcon,
   XMarkIcon,
@@ -16,8 +15,7 @@ import {
   Droplets,
   Baby,
   Moon,
-  Microscope,
-  Contact
+  Microscope
 } from "lucide-react";
 import { QuickNavMenu } from '@/components/common/quick-nav-menu';
 

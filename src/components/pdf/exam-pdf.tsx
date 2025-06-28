@@ -1,6 +1,6 @@
 // 의료 검진 결과 PDF 생성 컴포넌트
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
 // 폰트 등록 (한글 지원)
 Font.register({
@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   table: {
-    display: 'table',
     width: 'auto',
     borderStyle: 'solid',
     borderWidth: 1,
