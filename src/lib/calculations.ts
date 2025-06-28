@@ -32,15 +32,17 @@ export const calculateProgressionRate = (
   const yearsDiffExact = daysDiff / 365.25;
 
   // SE 진행 속도 계산 (D/yr)
+  // 근시는 음수값이므로, 진행 시 더 음수가 됨 (예: -1 → -2)
+  // 따라서 진행률을 양수로 표시하기 위해 음수를 곱함
   let se_od: number | undefined;
   let se_os: number | undefined;
   
   if (firstVisit.od_se !== undefined && lastVisit.od_se !== undefined) {
-    se_od = (lastVisit.od_se - firstVisit.od_se) / yearsDiffExact;
+    se_od = -(lastVisit.od_se - firstVisit.od_se) / yearsDiffExact;
   }
   
   if (firstVisit.os_se !== undefined && lastVisit.os_se !== undefined) {
-    se_os = (lastVisit.os_se - firstVisit.os_se) / yearsDiffExact;
+    se_os = -(lastVisit.os_se - firstVisit.os_se) / yearsDiffExact;
   }
 
   // AL 진행 속도 계산 (mm/yr)
