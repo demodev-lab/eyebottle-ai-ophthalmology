@@ -83,7 +83,18 @@ export default function PatientChartPage() {
   const [loading, setLoading] = useState(true);
   const [selectedEye, setSelectedEye] = useState<'both' | 'od' | 'os'>('both');
   const [editingVisitId, setEditingVisitId] = useState<string | null>(null);
-  const [editingData, setEditingData] = useState<Partial<MyoCareVisit>>({});
+  // 편집 중에는 문자열로 관리하기 위한 타입
+  const [editingData, setEditingData] = useState<{
+    visit_date?: string;
+    od_sphere?: string;
+    od_cylinder?: string;
+    od_axial_length?: string;
+    os_sphere?: string;
+    os_cylinder?: string;
+    os_axial_length?: string;
+    new_prescription?: boolean;
+    treatment_method?: TreatmentMethod;
+  }>({});
   const [copyButtonText, setCopyButtonText] = useState('EMR 복사');
 
   useEffect(() => {
@@ -128,12 +139,12 @@ export default function PatientChartPage() {
     setEditingVisitId(visit.id);
     setEditingData({
       visit_date: visit.visit_date,
-      od_sphere: visit.od_sphere,
-      od_cylinder: visit.od_cylinder,
-      od_axial_length: visit.od_axial_length,
-      os_sphere: visit.os_sphere,
-      os_cylinder: visit.os_cylinder,
-      os_axial_length: visit.os_axial_length,
+      od_sphere: visit.od_sphere?.toString() || '',
+      od_cylinder: visit.od_cylinder?.toString() || '',
+      od_axial_length: visit.od_axial_length?.toString() || '',
+      os_sphere: visit.os_sphere?.toString() || '',
+      os_cylinder: visit.os_cylinder?.toString() || '',
+      os_axial_length: visit.os_axial_length?.toString() || '',
       new_prescription: visit.new_prescription,
       treatment_method: visit.treatment_method,
     });
@@ -141,7 +152,20 @@ export default function PatientChartPage() {
 
   const handleSave = async (visitId: string) => {
     try {
-      await updateVisit(visitId, editingData);
+      // 문자열을 숫자로 변환
+      const dataToSave: Partial<MyoCareVisit> = {
+        visit_date: editingData.visit_date,
+        od_sphere: editingData.od_sphere ? parseFloat(editingData.od_sphere) : undefined,
+        od_cylinder: editingData.od_cylinder ? parseFloat(editingData.od_cylinder) : undefined,
+        od_axial_length: editingData.od_axial_length ? parseFloat(editingData.od_axial_length) : undefined,
+        os_sphere: editingData.os_sphere ? parseFloat(editingData.os_sphere) : undefined,
+        os_cylinder: editingData.os_cylinder ? parseFloat(editingData.os_cylinder) : undefined,
+        os_axial_length: editingData.os_axial_length ? parseFloat(editingData.os_axial_length) : undefined,
+        new_prescription: editingData.new_prescription,
+        treatment_method: editingData.treatment_method,
+      };
+      
+      await updateVisit(visitId, dataToSave);
       await loadPatientData();
       setEditingVisitId(null);
       setEditingData({});
@@ -334,12 +358,16 @@ export default function PatientChartPage() {
       const startAge = calculateAge(patient.birth_date, lastVisit.visit_date);
       const currentAge = calculateAge(patient.birth_date);
       
+      // TREATMENT_COLORS에서 해당 색상이 있는지 확인
+      const baseColor = TREATMENT_COLORS[lastVisit.treatment_method];
+      const fillColor = baseColor 
+        ? baseColor.replace('0.45)', '0.6)') // 현재 치료 중이므로 60% 투명도
+        : 'rgba(240, 240, 240, 0.6)'; // 기본 색상
+      
       areas.push({
         x1: startAge,
         x2: currentAge,
-        fill: lastVisit.treatment_method ? 
-          TREATMENT_COLORS[lastVisit.treatment_method].replace('0.45)', '0.6)') : // 현재 치료 중이므로 60% 투명도
-          'rgba(240, 240, 240, 0.6)',
+        fill: fillColor,
         opacity: 1,
         key: `area-last`,
         treatment: lastVisit.treatment_method,
@@ -1189,19 +1217,36 @@ export default function PatientChartPage() {
                         {isEditing ? (
                           <div className="flex gap-1">
                             <Input
-                              type="number"
-                              step="0.25"
-                              value={editingData.od_sphere ?? visit.od_sphere ?? ''}
-                              onChange={(e) => setEditingData({ ...editingData, od_sphere: e.target.value ? parseFloat(e.target.value) : undefined })}
-                              className="w-16 text-center"
+                              type="text"
+                              value={editingData.od_sphere || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // 숫자, 마이너스, 소수점만 허용
+                                if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                                  setEditingData({ 
+                                    ...editingData, 
+                                    od_sphere: value
+                                  });
+                                }
+                              }}
+                              className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              placeholder="0.00"
                             />
                             <span>/</span>
                             <Input
-                              type="number"
-                              step="0.25"
-                              value={editingData.od_cylinder ?? visit.od_cylinder ?? ''}
-                              onChange={(e) => setEditingData({ ...editingData, od_cylinder: e.target.value ? parseFloat(e.target.value) : undefined })}
-                              className="w-16 text-center"
+                              type="text"
+                              value={editingData.od_cylinder || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                                  setEditingData({ 
+                                    ...editingData, 
+                                    od_cylinder: value
+                                  });
+                                }
+                              }}
+                              className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              placeholder="0.00"
                             />
                           </div>
                         ) : (
@@ -1220,19 +1265,35 @@ export default function PatientChartPage() {
                         {isEditing ? (
                           <div className="flex gap-1">
                             <Input
-                              type="number"
-                              step="0.25"
-                              value={editingData.os_sphere ?? visit.os_sphere ?? ''}
-                              onChange={(e) => setEditingData({ ...editingData, os_sphere: e.target.value ? parseFloat(e.target.value) : undefined })}
-                              className="w-16 text-center"
+                              type="text"
+                              value={editingData.os_sphere || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                                  setEditingData({ 
+                                    ...editingData, 
+                                    os_sphere: value
+                                  });
+                                }
+                              }}
+                              className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              placeholder="0.00"
                             />
                             <span>/</span>
                             <Input
-                              type="number"
-                              step="0.25"
-                              value={editingData.os_cylinder ?? visit.os_cylinder ?? ''}
-                              onChange={(e) => setEditingData({ ...editingData, os_cylinder: e.target.value ? parseFloat(e.target.value) : undefined })}
-                              className="w-16 text-center"
+                              type="text"
+                              value={editingData.os_cylinder || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                                  setEditingData({ 
+                                    ...editingData, 
+                                    os_cylinder: value
+                                  });
+                                }
+                              }}
+                              className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              placeholder="0.00"
                             />
                           </div>
                         ) : (
@@ -1250,11 +1311,19 @@ export default function PatientChartPage() {
                       <td className="p-4 text-center text-sm">
                         {isEditing ? (
                           <Input
-                            type="number"
-                            step="0.01"
-                            value={editingData.od_axial_length ?? visit.od_axial_length ?? ''}
-                            onChange={(e) => setEditingData({ ...editingData, od_axial_length: e.target.value ? parseFloat(e.target.value) : undefined })}
-                            className="w-20 text-center"
+                            type="text"
+                            value={editingData.od_axial_length || ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                                setEditingData({ 
+                                  ...editingData, 
+                                  od_axial_length: value
+                                });
+                              }
+                            }}
+                            className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            placeholder="0.00"
                           />
                         ) : (
                           <span className="font-bold text-blue-600">
@@ -1265,11 +1334,19 @@ export default function PatientChartPage() {
                       <td className="p-4 text-center text-sm">
                         {isEditing ? (
                           <Input
-                            type="number"
-                            step="0.01"
-                            value={editingData.os_axial_length ?? visit.os_axial_length ?? ''}
-                            onChange={(e) => setEditingData({ ...editingData, os_axial_length: e.target.value ? parseFloat(e.target.value) : undefined })}
-                            className="w-20 text-center"
+                            type="text"
+                            value={editingData.os_axial_length || ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                                setEditingData({ 
+                                  ...editingData, 
+                                  os_axial_length: value
+                                });
+                              }
+                            }}
+                            className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            placeholder="0.00"
                           />
                         ) : (
                           <span className="font-bold text-blue-600">

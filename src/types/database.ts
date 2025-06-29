@@ -173,18 +173,7 @@ export const DEFAULT_SETTINGS: Omit<UserSettings, 'id' | 'user_id' | 'created_at
     [TreatmentMethod.DIMS_GLASSES]: '#c8e6c9',
     [TreatmentMethod.COMBINED]: '#b2dfdb',
   },
-  emrTemplate: `환자명: [환자명]
-치료방법: [치료방법]
-
-검사일: [검사일]
-우안 S.E.: [SE_OD] D
-좌안 S.E.: [SE_OS] D
-우안 안축장: [AL_OD] mm
-좌안 안축장: [AL_OS] mm
-
-연간 진행속도:
-우안 S.E.: [SE_PROGRESS_OD] D/yr
-좌안 S.E.: [SE_PROGRESS_OS] D/yr`,
+  emrTemplate: '', // 빈 템플릿으로 설정 (generateTemplate으로 동적 생성)
   emrTemplateVariables: [
     '[치료방법]',
     '[구면상당치]',

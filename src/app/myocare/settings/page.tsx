@@ -38,6 +38,23 @@ export default function SettingsPage() {
       }
 
       const userSettings = getUserSettings();
+      
+      // emrTemplateVariables가 없으면 기본값으로 설정
+      if (!userSettings.emrTemplateVariables || userSettings.emrTemplateVariables.length === 0) {
+        userSettings.emrTemplateVariables = DEFAULT_SETTINGS.emrTemplateVariables || [];
+      }
+      
+      // 템플릿 생성 (항상 재생성하여 최신 변수 선택사항 반영)
+      const originalTemplate = userSettings.emrTemplate;
+      const newTemplate = generateTemplate(userSettings);
+      userSettings.emrTemplate = newTemplate;
+      
+      // 템플릿이 변경되었으면 저장소에 저장
+      if (newTemplate !== originalTemplate) {
+        const { id: _id, user_id: _userId, created_at: _createdAt, ...updates } = userSettings;
+        await updateUserSettings(updates);
+      }
+      
       setSettings(userSettings);
     } catch (error) {
       console.error('설정 로드 실패:', error);
@@ -64,9 +81,16 @@ export default function SettingsPage() {
 
   const handleReset = () => {
     if (confirm('모든 설정을 초기값으로 되돌리시겠습니까?')) {
-      setSettings({
+      const resetSettings = {
         ...settings!,
         ...DEFAULT_SETTINGS,
+      };
+      
+      // 템플릿도 재생성
+      const newTemplate = generateTemplate(resetSettings);
+      setSettings({
+        ...resetSettings,
+        emrTemplate: newTemplate,
       });
     }
   };
@@ -357,7 +381,9 @@ export default function SettingsPage() {
                 { var: '[안경처방]', desc: '당일 안경처방 여부' },
                 { var: '[사용자 경과 문구]', desc: '사용자 정의 문구' },
               ].map(({ var: variable, desc }) => {
-                const isChecked = settings.emrTemplateVariables?.includes(variable) ?? true;
+                // emrTemplateVariables가 없거나 비어있으면 모든 변수를 기본 선택된 것으로 처리
+                const variables = settings.emrTemplateVariables || DEFAULT_SETTINGS.emrTemplateVariables || [];
+                const isChecked = variables.length === 0 ? true : variables.includes(variable);
                 return (
                   <div key={variable} className="flex items-center space-x-3 bg-white p-3 rounded-lg border border-amber-200">
                     <input

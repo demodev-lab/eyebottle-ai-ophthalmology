@@ -237,22 +237,31 @@ export default function NewVisitPage() {
                     </td>
                     <td className="p-3">
                       <Input
-                        type="number"
-                        step="0.25"
+                        type="text"
                         placeholder="-2.50"
                         value={formData.od_sphere}
-                        onChange={(e) => setFormData({ ...formData, od_sphere: e.target.value })}
-                        className="text-center"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // 숫자, 마이너스, 소수점만 허용
+                          if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                            setFormData({ ...formData, od_sphere: value });
+                          }
+                        }}
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                     <td className="p-3">
                       <Input
-                        type="number"
-                        step="0.25"
+                        type="text"
                         placeholder="-1.00"
                         value={formData.od_cylinder}
-                        onChange={(e) => setFormData({ ...formData, od_cylinder: e.target.value })}
-                        className="text-center"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                            setFormData({ ...formData, od_cylinder: value });
+                          }
+                        }}
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                     <td className="p-3 bg-blue-50">
@@ -262,12 +271,17 @@ export default function NewVisitPage() {
                     </td>
                     <td className="p-3">
                       <Input
-                        type="number"
-                        step="0.01"
+                        type="text"
                         placeholder="24.50"
                         value={formData.od_axial_length}
-                        onChange={(e) => setFormData({ ...formData, od_axial_length: e.target.value })}
-                        className="text-center"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // 양수, 소수점만 허용 (안축장은 음수가 없음)
+                          if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                            setFormData({ ...formData, od_axial_length: value });
+                          }
+                        }}
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                   </tr>
@@ -283,22 +297,30 @@ export default function NewVisitPage() {
                     </td>
                     <td className="p-3">
                       <Input
-                        type="number"
-                        step="0.25"
+                        type="text"
                         placeholder="-2.50"
                         value={formData.os_sphere}
-                        onChange={(e) => setFormData({ ...formData, os_sphere: e.target.value })}
-                        className="text-center"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                            setFormData({ ...formData, os_sphere: value });
+                          }
+                        }}
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                     <td className="p-3">
                       <Input
-                        type="number"
-                        step="0.25"
+                        type="text"
                         placeholder="-1.00"
                         value={formData.os_cylinder}
-                        onChange={(e) => setFormData({ ...formData, os_cylinder: e.target.value })}
-                        className="text-center"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+                            setFormData({ ...formData, os_cylinder: value });
+                          }
+                        }}
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                     <td className="p-3 bg-orange-50">
@@ -308,12 +330,16 @@ export default function NewVisitPage() {
                     </td>
                     <td className="p-3">
                       <Input
-                        type="number"
-                        step="0.01"
+                        type="text"
                         placeholder="24.50"
                         value={formData.os_axial_length}
-                        onChange={(e) => setFormData({ ...formData, os_axial_length: e.target.value })}
-                        className="text-center"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                            setFormData({ ...formData, os_axial_length: value });
+                          }
+                        }}
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                   </tr>
