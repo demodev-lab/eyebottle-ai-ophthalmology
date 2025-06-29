@@ -1545,7 +1545,7 @@ export default function ExamResultsPage() {
         <h3 className="text-lg font-semibold mb-4">정밀 검사</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">각막지형도 검사 (Topography)</label>
+            <label className="block text-sm font-medium mb-1">각막지형도 검사</label>
             {directInputMode.topography ? (
               <div className="flex gap-2">
                 <input
@@ -1598,7 +1598,7 @@ export default function ExamResultsPage() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">빛간섭단층촬영 (OCT)</label>
+            <label className="block text-sm font-medium mb-1">망막단층촬영</label>
             {directInputMode.oct ? (
               <div className="flex gap-2">
                 <input
@@ -1651,7 +1651,7 @@ export default function ExamResultsPage() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">시야 검사 (VF)</label>
+            <label className="block text-sm font-medium mb-1">시야검사</label>
             {directInputMode.visualField ? (
               <div className="flex gap-2">
                 <input
@@ -1704,7 +1704,7 @@ export default function ExamResultsPage() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">안구 초음파 (Sono)</label>
+            <label className="block text-sm font-medium mb-1">초음파 검사</label>
             {directInputMode.sono ? (
               <div className="flex gap-2">
                 <input
@@ -2246,7 +2246,7 @@ export default function ExamResultsPage() {
       <section className="max-w-[18cm] mx-auto border border-gray-300 p-4 rounded-xl shadow-lg print:shadow-none bg-white">
         {/* Header */}
         <header className="text-center mb-3">
-          <h1 className="text-xl font-semibold">눈종합검사 결과 안내서</h1>
+          <h1 className="text-xl font-semibold">눈 종합검사 결과서</h1>
           <p className="text-xs text-gray-500">검사일: {comprehensiveData.examDate}</p>
         </header>
 
@@ -2293,12 +2293,12 @@ export default function ExamResultsPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border p-0.5">OD</td>
+                  <td className="border p-0.5">우안</td>
                   <td className="border p-0.5">{comprehensiveData.vision.od.naked}</td>
                   <td className="border p-0.5">{comprehensiveData.vision.od.corrected}</td>
                 </tr>
                 <tr>
-                  <td className="border p-0.5">OS</td>
+                  <td className="border p-0.5">좌안</td>
                   <td className="border p-0.5">{comprehensiveData.vision.os.naked}</td>
                   <td className="border p-0.5">{comprehensiveData.vision.os.corrected}</td>
                 </tr>
@@ -2313,11 +2313,11 @@ export default function ExamResultsPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border p-0.5">OD</td>
+                  <td className="border p-0.5">우안</td>
                   <td className="border p-0.5">{comprehensiveData.iop.od}</td>
                 </tr>
                 <tr>
-                  <td className="border p-0.5">OS</td>
+                  <td className="border p-0.5">좌안</td>
                   <td className="border p-0.5">{comprehensiveData.iop.os}</td>
                 </tr>
               </tbody>
@@ -2358,19 +2358,19 @@ export default function ExamResultsPage() {
             <table className="w-full border text-left text-xs">
               <tbody>
                 <tr className="bg-gray-50">
-                  <th className="border p-0.5 w-16">Topography</th>
+                  <th className="border p-0.5 w-16">각막지형도</th>
                   <td className="border p-0.5">{comprehensiveData.detailedExam.topography}</td>
                 </tr>
                 <tr>
-                  <th className="border p-0.5">OCT</th>
+                  <th className="border p-0.5">망막단층촬영</th>
                   <td className="border p-0.5">{comprehensiveData.detailedExam.oct}</td>
                 </tr>
                 <tr className="bg-gray-50">
-                  <th className="border p-0.5">VF</th>
+                  <th className="border p-0.5">시야검사</th>
                   <td className="border p-0.5">{comprehensiveData.detailedExam.visualField}</td>
                 </tr>
                 <tr>
-                  <th className="border p-0.5">Sono</th>
+                  <th className="border p-0.5">초음파</th>
                   <td className="border p-0.5">{comprehensiveData.detailedExam.sono}</td>
                 </tr>
               </tbody>
