@@ -64,6 +64,7 @@ interface ComprehensiveData extends PatientInfo {
     riskLevel: string
     mainFindings: string
     followUp: string
+    comprehensiveFinding: string  // 종합소견 추가
   }
   vision: {
     od: { naked: string; corrected: string }
@@ -83,7 +84,7 @@ interface ComprehensiveData extends PatientInfo {
     topography: string
     oct: string
     visualField: string
-    dryEye: string
+    sono: string  // 안구초음파로 변경
   }
 }
 
@@ -271,15 +272,48 @@ export default function ExamResultsPage() {
     }
   })
 
+  // 눈종합검진 위험도별 자동 멘트 시스템
+  const getComprehensiveRiskInfo = (riskLevel: string) => {
+    const riskInfo = {
+      '정상': {
+        summary: '전반적 상태 양호 — 특이 소견 없이 건강한 눈 상태입니다',
+        mainFindings: '특이 소견 없음',
+        followUp: '12개월',
+        comprehensiveFinding: '정기적인 검진을 통해 건강한 눈 상태를 유지하시기 바랍니다.'
+      },
+      '경미한': {
+        summary: '경미한 이상 — 일상생활에 지장 없는 가벼운 문제가 관찰됩니다',
+        mainFindings: '경미한 이상 소견',
+        followUp: '6개월',
+        comprehensiveFinding: '경미한 이상이 있으나 일상생활에는 지장이 없습니다. 정기적인 추적 관찰이 필요합니다.'
+      },
+      '중등도': {
+        summary: '중등도 이상 — 정기적인 관찰과 관리가 필요한 상태입니다',
+        mainFindings: '중등도 이상 소견',
+        followUp: '3개월',
+        comprehensiveFinding: '적극적인 관리와 치료가 필요한 상태입니다. 담당의와 상의하여 치료 계획을 수립하시기 바랍니다.'
+      },
+      '심각한': {
+        summary: '심각한 이상 — 즉시 치료가 필요한 문제가 발견되었습니다',
+        mainFindings: '심각한 이상 소견',
+        followUp: '즉시 재검 필요',
+        comprehensiveFinding: '심각한 문제가 발견되어 즉각적인 치료가 필요합니다. 조속히 정밀 검사 및 치료를 시작하시기 바랍니다.'
+      }
+    }
+    
+    return riskInfo[riskLevel as keyof typeof riskInfo] || riskInfo['정상']
+  }
+
   const [comprehensiveData, setComprehensiveData] = useState<ComprehensiveData>({
     name: '',
     birthDate: '',
     examDate: today,
     doctorName: '이동은',
     summary: {
-      riskLevel: 'Low Risk',
-      mainFindings: '경미한 건성안 의심',
-      followUp: '12개월'
+      riskLevel: '정상',
+      mainFindings: '특이 소견 없음',
+      followUp: '12개월',
+      comprehensiveFinding: '정기적인 검진을 통해 건강한 눈 상태를 유지하시기 바랍니다.'
     },
     vision: {
       od: { naked: '', corrected: '' },
@@ -290,17 +324,29 @@ export default function ExamResultsPage() {
       os: ''
     },
     basicExam: {
-      refraction: '경도 근시 / 규칙 난시',
-      externalEye: '결막 약간 충혈',
-      lens: '수정체 투명',
+      refraction: '정상',
+      externalEye: '정상',
+      lens: '투명',
       fundus: '정상'
     },
     detailedExam: {
       topography: '정상',
       oct: '정상',
       visualField: '정상',
-      dryEye: '경미'
+      sono: '정상'
     }
+  })
+
+  // 직접입력 모드 상태 관리
+  const [directInputMode, setDirectInputMode] = useState({
+    refraction: false,
+    externalEye: false,
+    lens: false,
+    fundus: false,
+    topography: false,
+    oct: false,
+    visualField: false,
+    sono: false
   })
 
   // 고혈압망막병증 양안 단계 변경 시 자동 요약 업데이트
@@ -316,6 +362,20 @@ export default function ExamResultsPage() {
       }
     }))
   }, [hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage])
+
+  // 눈종합검진 위험도 변경 시 자동 멘트 업데이트
+  useEffect(() => {
+    const riskInfo = getComprehensiveRiskInfo(comprehensiveData.summary.riskLevel)
+    setComprehensiveData(prevData => ({
+      ...prevData,
+      summary: {
+        ...prevData.summary,
+        mainFindings: riskInfo.mainFindings,
+        followUp: riskInfo.followUp,
+        comprehensiveFinding: riskInfo.comprehensiveFinding
+      }
+    }))
+  }, [comprehensiveData.summary.riskLevel])
 
   // PDF 다운로드 함수
   const handleDownloadPDF = async () => {
@@ -1079,9 +1139,10 @@ export default function ExamResultsPage() {
               })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             >
-              <option value="Low Risk">Low Risk</option>
-              <option value="Moderate Risk">Moderate Risk</option>
-              <option value="High Risk">High Risk</option>
+              <option value="정상">정상</option>
+              <option value="경미한">경미한</option>
+              <option value="중등도">중등도</option>
+              <option value="심각한">심각한</option>
             </select>
           </div>
           <div>
@@ -1094,7 +1155,20 @@ export default function ExamResultsPage() {
                 summary: { ...comprehensiveData.summary, mainFindings: e.target.value }
               })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="경미한 건성안 의심"
+              placeholder="자동으로 채워지며, 직접 수정도 가능합니다"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">종합 소견</label>
+            <textarea
+              value={comprehensiveData.summary.comprehensiveFinding}
+              onChange={(e) => setComprehensiveData({
+                ...comprehensiveData,
+                summary: { ...comprehensiveData.summary, comprehensiveFinding: e.target.value }
+              })}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              rows={3}
+              placeholder="자동으로 채워지며, 직접 수정도 가능합니다"
             />
           </div>
         </div>
@@ -1239,55 +1313,229 @@ export default function ExamResultsPage() {
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium mb-1">굴절</label>
-            <input
-              type="text"
-              value={comprehensiveData.basicExam.refraction}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                basicExam: { ...comprehensiveData.basicExam, refraction: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="경도 근시 / 규칙 난시"
-            />
+            {directInputMode.refraction ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.basicExam.refraction}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    basicExam: { ...comprehensiveData.basicExam, refraction: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, refraction: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, refraction: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.basicExam.refraction}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, refraction: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, refraction: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, refraction: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="경도 근시">경도 근시</option>
+                <option value="중등도 근시">중등도 근시</option>
+                <option value="고도 근시">고도 근시</option>
+                <option value="경도 원시">경도 원시</option>
+                <option value="규칙 난시">규칙 난시</option>
+                <option value="불규칙 난시">불규칙 난시</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">외안부</label>
-            <input
-              type="text"
-              value={comprehensiveData.basicExam.externalEye}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                basicExam: { ...comprehensiveData.basicExam, externalEye: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="결막 약간 충혈"
-            />
+            {directInputMode.externalEye ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.basicExam.externalEye}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    basicExam: { ...comprehensiveData.basicExam, externalEye: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, externalEye: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, externalEye: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.basicExam.externalEye}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, externalEye: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, externalEye: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, externalEye: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="결막 충혈">결막 충혈</option>
+                <option value="안검염">안검염</option>
+                <option value="다래끼">다래끼</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">수정체</label>
-            <input
-              type="text"
-              value={comprehensiveData.basicExam.lens}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                basicExam: { ...comprehensiveData.basicExam, lens: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="수정체 투명"
-            />
+            {directInputMode.lens ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.basicExam.lens}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    basicExam: { ...comprehensiveData.basicExam, lens: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, lens: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, lens: '투명' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.basicExam.lens}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, lens: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, lens: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, lens: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="투명">투명</option>
+                <option value="경미한 혼탁">경미한 혼탁</option>
+                <option value="백내장 의심">백내장 의심</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">안저</label>
-            <input
-              type="text"
-              value={comprehensiveData.basicExam.fundus}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                basicExam: { ...comprehensiveData.basicExam, fundus: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="정상"
-            />
+            {directInputMode.fundus ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.basicExam.fundus}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    basicExam: { ...comprehensiveData.basicExam, fundus: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, fundus: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, fundus: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.basicExam.fundus}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, fundus: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, fundus: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      basicExam: { ...comprehensiveData.basicExam, fundus: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="망막변성">망막변성</option>
+                <option value="시신경 창백">시신경 창백</option>
+                <option value="출혈">출혈</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
         </div>
       </div>
@@ -1297,65 +1545,216 @@ export default function ExamResultsPage() {
         <h3 className="text-lg font-semibold mb-4">정밀 검사</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">각막지형도 검사</label>
-            <select
-              value={comprehensiveData.detailedExam.topography}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                detailedExam: { ...comprehensiveData.detailedExam, topography: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-            >
-              <option value="정상">정상</option>
-              <option value="경미한 이상">경미한 이상</option>
-              <option value="이상 소견">이상 소견</option>
-            </select>
+            <label className="block text-sm font-medium mb-1">각막지형도 검사 (Topography)</label>
+            {directInputMode.topography ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.detailedExam.topography}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    detailedExam: { ...comprehensiveData.detailedExam, topography: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, topography: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, topography: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.detailedExam.topography}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, topography: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, topography: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, topography: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">OCT 검사</label>
-            <select
-              value={comprehensiveData.detailedExam.oct}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                detailedExam: { ...comprehensiveData.detailedExam, oct: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-            >
-              <option value="정상">정상</option>
-              <option value="경미한 이상">경미한 이상</option>
-              <option value="이상 소견">이상 소견</option>
-            </select>
+            <label className="block text-sm font-medium mb-1">빛간섭단층촬영 (OCT)</label>
+            {directInputMode.oct ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.detailedExam.oct}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    detailedExam: { ...comprehensiveData.detailedExam, oct: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, oct: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, oct: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.detailedExam.oct}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, oct: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, oct: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, oct: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">시야 검사</label>
-            <select
-              value={comprehensiveData.detailedExam.visualField}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                detailedExam: { ...comprehensiveData.detailedExam, visualField: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-            >
-              <option value="정상">정상</option>
-              <option value="경미한 이상">경미한 이상</option>
-              <option value="이상 소견">이상 소견</option>
-            </select>
+            <label className="block text-sm font-medium mb-1">시야 검사 (VF)</label>
+            {directInputMode.visualField ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.detailedExam.visualField}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    detailedExam: { ...comprehensiveData.detailedExam, visualField: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, visualField: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, visualField: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.detailedExam.visualField}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, visualField: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, visualField: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, visualField: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">안구건조증 검사</label>
-            <select
-              value={comprehensiveData.detailedExam.dryEye}
-              onChange={(e) => setComprehensiveData({
-                ...comprehensiveData,
-                detailedExam: { ...comprehensiveData.detailedExam, dryEye: e.target.value }
-              })}
-              className="w-full px-3 py-2 border rounded-lg"
-            >
-              <option value="정상">정상</option>
-              <option value="경미">경미</option>
-              <option value="중등도">중등도</option>
-              <option value="중증">중증</option>
-            </select>
+            <label className="block text-sm font-medium mb-1">안구 초음파 (Sono)</label>
+            {directInputMode.sono ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={comprehensiveData.detailedExam.sono}
+                  onChange={(e) => setComprehensiveData({
+                    ...comprehensiveData,
+                    detailedExam: { ...comprehensiveData.detailedExam, sono: e.target.value }
+                  })}
+                  className="flex-1 px-3 py-2 border rounded-lg"
+                  placeholder="직접 입력하세요"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setDirectInputMode({ ...directInputMode, sono: false })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, sono: '정상' }
+                    })
+                  }}
+                  className="px-3 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <select
+                value={comprehensiveData.detailedExam.sono}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '직접입력') {
+                    setDirectInputMode({ ...directInputMode, sono: true })
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, sono: '' }
+                    });
+                  } else {
+                    setComprehensiveData({
+                      ...comprehensiveData,
+                      detailedExam: { ...comprehensiveData.detailedExam, sono: value }
+                    });
+                  }
+                }}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="정상">정상</option>
+                <option value="직접입력">직접입력...</option>
+              </select>
+            )}
           </div>
         </div>
       </div>
@@ -1381,7 +1780,7 @@ export default function ExamResultsPage() {
           </div>
           
           {/* 미리보기 내용 */}
-          <div className="border border-gray-300 rounded-lg bg-white overflow-y-auto max-h-[calc(100vh-200px)] print-hide" style={{transform: 'scale(0.95)', transformOrigin: 'top left', width: '105.26%', height: 'auto'}}>
+          <div className="border border-gray-300 rounded-lg bg-white overflow-y-auto max-h-[calc(100vh-200px)] print-hide" style={{transform: 'scale(0.8)', transformOrigin: 'top left', width: '125%', height: 'auto'}}>
             {renderComprehensivePreview()}
           </div>
           
@@ -1790,261 +2189,248 @@ export default function ExamResultsPage() {
   )
 
   const renderComprehensivePreview = () => (
-    <div id="comprehensive-preview">
-      <div className="bg-white p-8 space-y-6 comprehensive-page-1">
-        {/* 인쇄용 스타일 */}
-        <style jsx global>{`
-          @media print {
-            @page { 
-              size: A4; 
-              margin: 15mm; 
-            }
-            .page-break { page-break-after: always; }
-            body { 
-              -webkit-print-color-adjust: exact; 
-              font-size: 11px;
-            }
-            
-            /* 인쇄 시 숨길 요소들 */
-            .print-hide { display: none !important; }
-            
-            /* 미리보기 영역 최적화 */
-            .print-content { 
-              transform: none !important;
-              width: 100% !important;
-              max-width: 100% !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-              box-shadow: none !important;
-              border-radius: 0 !important;
-            }
-            
-            /* 브라우저 기본 헤더/푸터 제거 시도 */
-            @page {
-              margin-top: 0;
-              margin-bottom: 0;
-            }
-            
-            /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
-            .print-header, .print-footer { display: none !important; }
+    <div id="comprehensive-preview" className="bg-white p-8">
+      {/* 인쇄용 스타일 */}
+      <style jsx global>{`
+        @media print {
+          @page { 
+            size: A4; 
+            margin: 10mm; 
           }
-        `}</style>
+          body { 
+            -webkit-print-color-adjust: exact; 
+            font-size: 10px;
+          }
+          
+          /* 인쇄 시 숨길 요소들 */
+          .print-hide { display: none !important; }
+          
+          /* 미리보기 영역 최적화 */
+          .print-content { 
+            transform: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+          
+          /* 콤팩트한 인쇄 스타일 */
+          #comprehensive-preview h1 { font-size: 16px !important; }
+          #comprehensive-preview h2 { font-size: 12px !important; }
+          #comprehensive-preview h3 { font-size: 11px !important; }
+          #comprehensive-preview .text-base { font-size: 10px !important; }
+          #comprehensive-preview .text-sm { font-size: 9px !important; }
+          #comprehensive-preview .text-xs { font-size: 8px !important; }
+          #comprehensive-preview .mb-6 { margin-bottom: 8px !important; }
+          #comprehensive-preview .mb-4 { margin-bottom: 6px !important; }
+          #comprehensive-preview .p-4 { padding: 6px !important; }
+          #comprehensive-preview .p-6 { padding: 8px !important; }
+          #comprehensive-preview .space-y-1 > * { margin-bottom: 2px !important; }
+          #comprehensive-preview table { margin-bottom: 4px !important; }
+          
+          /* 브라우저 기본 헤더/푸터 제거 시도 */
+          @page {
+            margin-top: 0;
+            margin-bottom: 0;
+          }
+          
+          /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
+          .print-header, .print-footer { display: none !important; }
+        }
+      `}</style>
         
-        {/* ================= PAGE 1 ================= */}
-        <section className="max-w-[18cm] mx-auto border border-gray-300 p-6 rounded-xl shadow-lg print:shadow-none bg-white">
-          {/* Header */}
-          <header className="text-center mb-6">
-            <h1 className="text-2xl font-semibold">눈종합검사 결과 안내서</h1>
-            <p className="text-xs text-gray-500">검사일: {comprehensiveData.examDate}</p>
-          </header>
+      {/* ================= 한 페이지 통합 버전 ================= */}
+      <section className="max-w-[18cm] mx-auto border border-gray-300 p-4 rounded-xl shadow-lg print:shadow-none bg-white">
+        {/* Header */}
+        <header className="text-center mb-3">
+          <h1 className="text-xl font-semibold">눈종합검사 결과 안내서</h1>
+          <p className="text-xs text-gray-500">검사일: {comprehensiveData.examDate}</p>
+        </header>
 
-          {/* Executive Summary */}
-          <section className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h2 className="text-base font-semibold mb-2">요약</h2>
-            <ul className="list-disc pl-6 space-y-1">
-              <li><span className="font-medium">{comprehensiveData.summary.riskLevel}</span> &mdash; 전반적 상태 양호</li>
-              <li>주요 이상: {comprehensiveData.summary.mainFindings}</li>
-              <li>{comprehensiveData.summary.followUp} 후 간단한 시력·안압·안저 검사 권장</li>
-            </ul>
-          </section>
-
-          {/* Patient Info */}
-          <section className="grid grid-cols-2 gap-x-6 gap-y-2 mb-6">
-            <div><span className="font-medium">환자</span><span className="ml-2">{comprehensiveData.name}</span></div>
-            <div><span className="font-medium">생년월일</span><span className="ml-2">{comprehensiveData.birthDate}</span></div>
-            <div><span className="font-medium">검사기관</span><span className="ml-2">이안과의원</span></div>
-            <div><span className="font-medium">판독의</span><span className="ml-2">{comprehensiveData.doctorName}</span></div>
-          </section>
-
-          {/* Vision & IOP */}
-          <section className="mb-6">
-            <h2 className="text-base font-semibold mb-2">1. 시력 &amp; 안압</h2>
-            <div className="grid grid-cols-2 gap-6">
-              <table className="w-full border text-center">
-                <caption className="caption-top font-medium mb-1 text-left">시력</caption>
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="border p-1"> </th>
-                    <th className="border p-1">나안</th>
-                    <th className="border p-1">교정</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border p-1 font-medium">우안</td>
-                    <td className="border p-1">{comprehensiveData.vision.od.naked}</td>
-                    <td className="border p-1">{comprehensiveData.vision.od.corrected}</td>
-                  </tr>
-                  <tr>
-                    <td className="border p-1 font-medium">좌안</td>
-                    <td className="border p-1">{comprehensiveData.vision.os.naked}</td>
-                    <td className="border p-1">{comprehensiveData.vision.os.corrected}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <table className="w-full border text-center">
-                <caption className="caption-top font-medium mb-1 text-left">안압 (mmHg)</caption>
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="border p-1"> </th>
-                    <th className="border p-1">결과</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border p-1 font-medium">우안</td>
-                    <td className="border p-1">{comprehensiveData.iop.od}</td>
-                  </tr>
-                  <tr>
-                    <td className="border p-1 font-medium">좌안</td>
-                    <td className="border p-1">{comprehensiveData.iop.os}</td>
-                  </tr>
-                </tbody>
-              </table>
+        {/* 2단 레이아웃: 환자정보 + 요약/종합소견 */}
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          {/* 왼쪽: 환자정보 */}
+          <section className="border border-gray-200 rounded p-2">
+            <h3 className="text-sm font-semibold mb-1">환자 정보</h3>
+            <div className="text-xs space-y-0.5">
+              <div><span className="font-medium">환자:</span> {comprehensiveData.name}</div>
+              <div><span className="font-medium">생년월일:</span> {comprehensiveData.birthDate}</div>
+              <div><span className="font-medium">검사기관:</span> 이안과의원</div>
+              <div><span className="font-medium">판독의:</span> {comprehensiveData.doctorName}</div>
             </div>
           </section>
+          
+          {/* 오른쪽: 요약 및 종합소견 */}
+          <div className="space-y-2">
+            <section className="bg-gray-50 border border-gray-200 rounded p-2">
+              <h3 className="text-sm font-semibold mb-1">검진 요약</h3>
+              <ul className="text-xs list-disc pl-4 space-y-0.5">
+                <li>{comprehensiveData.summary.riskLevel} - {getComprehensiveRiskInfo(comprehensiveData.summary.riskLevel).summary.split(' — ')[1]}</li>
+                <li>주요 이상: {comprehensiveData.summary.mainFindings}</li>
+              </ul>
+            </section>
+            <section className="bg-blue-50 border border-blue-200 rounded p-2">
+              <h3 className="text-sm font-semibold mb-1">종합 소견</h3>
+              <p className="text-xs leading-snug">{comprehensiveData.summary.comprehensiveFinding}</p>
+            </section>
+          </div>
+        </div>
 
-          {/* Basic Exam */}
-          <section className="mb-6">
-            <h2 className="text-base font-semibold mb-2">2. 기본 검사</h2>
-            <table className="w-full border text-left">
+        {/* 시력 & 안압 */}
+        <section className="mb-3">
+          <h3 className="text-sm font-semibold mb-1">시력 &amp; 안압</h3>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <table className="w-full border text-center">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border p-0.5 text-xs" rowSpan={2}>시력</th>
+                  <th className="border p-0.5">나안</th>
+                  <th className="border p-0.5">교정</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border p-0.5">OD</td>
+                  <td className="border p-0.5">{comprehensiveData.vision.od.naked}</td>
+                  <td className="border p-0.5">{comprehensiveData.vision.od.corrected}</td>
+                </tr>
+                <tr>
+                  <td className="border p-0.5">OS</td>
+                  <td className="border p-0.5">{comprehensiveData.vision.os.naked}</td>
+                  <td className="border p-0.5">{comprehensiveData.vision.os.corrected}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table className="w-full border text-center">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border p-0.5 text-xs">안압</th>
+                  <th className="border p-0.5">mmHg</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border p-0.5">OD</td>
+                  <td className="border p-0.5">{comprehensiveData.iop.od}</td>
+                </tr>
+                <tr>
+                  <td className="border p-0.5">OS</td>
+                  <td className="border p-0.5">{comprehensiveData.iop.os}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* 2단 레이아웃: 기본검사 + 정밀검사 */}
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          {/* 기본 검사 */}
+          <section>
+            <h3 className="text-sm font-semibold mb-1">기본 검사</h3>
+            <table className="w-full border text-left text-xs">
               <tbody>
                 <tr className="bg-gray-50">
-                  <th className="border p-1 w-40">굴절</th>
-                  <td className="border p-1">{comprehensiveData.basicExam.refraction}</td>
+                  <th className="border p-0.5 w-16">굴절</th>
+                  <td className="border p-0.5">{comprehensiveData.basicExam.refraction}</td>
                 </tr>
                 <tr>
-                  <th className="border p-1">외안부</th>
-                  <td className="border p-1">{comprehensiveData.basicExam.externalEye}</td>
+                  <th className="border p-0.5">외안부</th>
+                  <td className="border p-0.5">{comprehensiveData.basicExam.externalEye}</td>
                 </tr>
                 <tr className="bg-gray-50">
-                  <th className="border p-1">수정체</th>
-                  <td className="border p-1">{comprehensiveData.basicExam.lens}</td>
+                  <th className="border p-0.5">수정체</th>
+                  <td className="border p-0.5">{comprehensiveData.basicExam.lens}</td>
                 </tr>
                 <tr>
-                  <th className="border p-1">안저</th>
-                  <td className="border p-1">{comprehensiveData.basicExam.fundus}</td>
+                  <th className="border p-0.5">안저</th>
+                  <td className="border p-0.5">{comprehensiveData.basicExam.fundus}</td>
                 </tr>
               </tbody>
             </table>
           </section>
 
-          {/* Recommendations */}
-          <section className="mb-8">
-            <h2 className="text-base font-semibold mb-2">3. 권고 사항</h2>
-            <ol className="list-decimal pl-6 space-y-1">
-              <li>인공눈물 하루 4회 &nbsp;—&nbsp; 건성안 증상 지속 시 유지</li>
-              <li>{comprehensiveData.summary.followUp} 후 간단한 시력·안압·안저 검사 권장</li>
+          {/* 정밀 검사 */}
+          <section>
+            <h3 className="text-sm font-semibold mb-1">정밀 검사</h3>
+            <table className="w-full border text-left text-xs">
+              <tbody>
+                <tr className="bg-gray-50">
+                  <th className="border p-0.5 w-16">Topography</th>
+                  <td className="border p-0.5">{comprehensiveData.detailedExam.topography}</td>
+                </tr>
+                <tr>
+                  <th className="border p-0.5">OCT</th>
+                  <td className="border p-0.5">{comprehensiveData.detailedExam.oct}</td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <th className="border p-0.5">VF</th>
+                  <td className="border p-0.5">{comprehensiveData.detailedExam.visualField}</td>
+                </tr>
+                <tr>
+                  <th className="border p-0.5">Sono</th>
+                  <td className="border p-0.5">{comprehensiveData.detailedExam.sono}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+
+        {/* 권고 사항 */}
+        <section className="mb-3">
+          <h3 className="text-sm font-semibold mb-1">권고 사항</h3>
+          <div className="bg-gray-50 border border-gray-200 rounded p-2">
+            <ol className="list-decimal pl-4 text-xs space-y-0.5">
+              {comprehensiveData.summary.riskLevel === '정상' && (
+                <>
+                  <li>정기적인 눈 건강 검진을 유지하세요</li>
+                  <li>{comprehensiveData.summary.followUp} 후 간단한 시력·안압·안저 검사 권장</li>
+                </>
+              )}
+              {comprehensiveData.summary.riskLevel === '경미한' && (
+                <>
+                  <li>경미한 이상에 대한 주기적인 모니터링이 필요합니다</li>
+                  <li>{comprehensiveData.summary.followUp} 후 정밀 검사 권장</li>
+                  <li>증상 변화 시 즉시 내원하세요</li>
+                </>
+              )}
+              {comprehensiveData.summary.riskLevel === '중등도' && (
+                <>
+                  <li>적극적인 치료 계획 수립이 필요합니다</li>
+                  <li>{comprehensiveData.summary.followUp} 후 반드시 재검하세요</li>
+                  <li>전문의와 상의하여 치료 방향을 결정하세요</li>
+                </>
+              )}
+              {comprehensiveData.summary.riskLevel === '심각한' && (
+                <>
+                  <li>즉각적인 치료가 필요한 상태입니다</li>
+                  <li>{comprehensiveData.summary.followUp}</li>
+                  <li>가능한 빠른 시일 내에 정밀 검사 및 치료를 시작하세요</li>
+                </>
+              )}
             </ol>
-          </section>
+          </div>
         </section>
 
-        <div className="page-break"></div>
-
-        {/* ================= PAGE 2 ================= */}
-        <section className="max-w-[18cm] mx-auto border border-gray-300 p-6 rounded-xl shadow-lg print:shadow-none bg-white">
-          <header className="text-center mb-6">
-            <h2 className="text-xl font-semibold">정밀 검사 세부 소견</h2>
-          </header>
-
-          {/* Topography */}
-          <section className="mb-6">
-            <h3 className="text-base font-semibold mb-2">1. 각막·전안부 (토포그래피)</h3>
-            <p className="pl-4 flex items-center space-x-2 text-sm">
-              <span className={`px-2 py-0.5 rounded text-xs ${
-                comprehensiveData.detailedExam.topography === '정상' 
-                  ? 'bg-green-100 text-green-800' 
-                  : comprehensiveData.detailedExam.topography === '경미한 이상'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {comprehensiveData.detailedExam.topography}
-              </span>
-              <span>각막 형태와 두께 정상 범위</span>
-            </p>
-          </section>
-
-          {/* OCT */}
-          <section className="mb-6">
-            <h3 className="text-base font-semibold mb-2">2. 망막·시신경 (OCT)</h3>
-            <p className="pl-4 flex items-center space-x-2 text-sm">
-              <span className={`px-2 py-0.5 rounded text-xs ${
-                comprehensiveData.detailedExam.oct === '정상' 
-                  ? 'bg-green-100 text-green-800' 
-                  : comprehensiveData.detailedExam.oct === '경미한 이상'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {comprehensiveData.detailedExam.oct}
-              </span>
-              <span>시신경층 두께 정상</span>
-            </p>
-          </section>
-
-          {/* Visual Field */}
-          <section className="mb-6">
-            <h3 className="text-base font-semibold mb-2">3. 시야 검사</h3>
-            <p className="pl-4 flex items-center space-x-2 text-sm">
-              <span className={`px-2 py-0.5 rounded text-xs ${
-                comprehensiveData.detailedExam.visualField === '정상' 
-                  ? 'bg-green-100 text-green-800' 
-                  : comprehensiveData.detailedExam.visualField === '경미한 이상'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {comprehensiveData.detailedExam.visualField}
-              </span>
-              <span>주변 시야 이상 없음</span>
-            </p>
-          </section>
-
-          {/* Dry Eye */}
-          <section className="mb-6">
-            <h3 className="text-base font-semibold mb-2">4. 안구건조증 검사</h3>
-            <p className="pl-4 flex items-center space-x-2 text-sm">
-              <span className={`px-2 py-0.5 rounded text-xs ${
-                comprehensiveData.detailedExam.dryEye === '정상' 
-                  ? 'bg-green-100 text-green-800' 
-                  : comprehensiveData.detailedExam.dryEye === '경미'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : comprehensiveData.detailedExam.dryEye === '중등도'
-                  ? 'bg-orange-100 text-orange-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {comprehensiveData.detailedExam.dryEye}
-              </span>
-              <span>눈물량 약간 부족</span>
-            </p>
-          </section>
-
-          {/* Final Comments */}
-          <section className="mb-8 border-t pt-6">
-            <h3 className="text-base font-semibold mb-2">종합 소견</h3>
-            <p className="text-sm leading-relaxed">
-              전반적인 눈 건강 상태는 양호합니다. {comprehensiveData.summary.mainFindings}이 관찰되어 인공눈물 사용을 권장드립니다. 
-              정기적인 검진을 통해 눈 건강을 유지하시기 바랍니다.
-            </p>
-          </section>
-
-          {/* Footer */}
-          <footer className="flex justify-between items-start mt-6 pt-4 border-t border-gray-200">
-            <div className="flex items-start space-x-3 text-xs leading-snug">
-              <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
-              <div>
-                <div className="font-medium">이안과의원</div>
-                <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
-                <div>Tel. 051-866-7592~4</div>
-              </div>
+        {/* Footer */}
+        <footer className="flex justify-between items-start pt-2 border-t border-gray-200">
+          <div className="flex items-start gap-2 text-xs leading-tight">
+            <Image src="/lee_eye_symbol.png" alt="이안과의원" width={24} height={24} className="rounded" />
+            <div>
+              <div className="font-medium">이안과의원</div>
+              <div className="text-gray-600">부산광역시 연제구 반송로 30</div>
+              <div className="text-gray-600">Tel. 051-866-7592~4</div>
             </div>
-            <div className="text-right">
-              <div className="text-xs text-gray-500">발행일: {comprehensiveData.examDate}</div>
-              <div className="text-sm font-medium mt-2">{comprehensiveData.doctorName}</div>
-              <div className="w-24 h-10 border-t border-gray-400 mt-1"></div>
-            </div>
-          </footer>
-        </section>
-      </div>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500">발행일: {comprehensiveData.examDate}</div>
+            <div className="text-xs font-medium mt-1">{comprehensiveData.doctorName}</div>
+            <div className="w-16 h-6 border-t border-gray-400 mt-1"></div>
+          </div>
+        </footer>
+      </section>
     </div>
   )
 

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   FilmIcon, 
   ChatBubbleLeftRightIcon, 
@@ -20,6 +20,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { QuickNavMenu } from "@/components/common/quick-nav-menu";
+import { updates, categoryStyles } from "@/data/updates";
 
 // 데모 영상 데이터 타입
 interface DemoVideo {
@@ -44,6 +45,23 @@ export default function Home() {
     subject: '',
     message: ''
   });
+
+  // 업데이트 모달 상태 관리
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsUpdateModalOpen(false);
+        setIsVideoModalOpen(false);
+        setIsMailPopupOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
 
   // 데모 영상 리스트
   const demoVideos: DemoVideo[] = [
@@ -264,6 +282,92 @@ export default function Home() {
         </div>
       )}
 
+      {/* 업데이트 모달 */}
+      {isUpdateModalOpen && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] shadow-2xl">
+            {/* 모달 헤더 */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h2 className="text-2xl font-bold text-slate-800 flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-yellow-200 rounded-xl flex items-center justify-center">
+                  <SparklesIcon className="w-6 h-6 text-amber-600" />
+                </div>
+                <span>최신 업데이트</span>
+              </h2>
+              <button
+                onClick={() => setIsUpdateModalOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <XMarkIcon className="w-6 h-6 text-slate-600" />
+              </button>
+            </div>
+            
+            {/* 업데이트 리스트 */}
+            <div className="p-6 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 180px)' }}>
+              {updates.map((update, index) => {
+                const categoryStyle = categoryStyles[update.category];
+                return (
+                  <div 
+                    key={update.id}
+                    className={`rounded-xl p-6 transition-all duration-300 ${
+                      index === 0 
+                        ? 'border-2 border-blue-200 bg-blue-50/30' 
+                        : 'border border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    {/* 버전 헤더 */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-2xl">{categoryStyle.icon}</span>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800">
+                            {update.version}
+                            {index === 0 && (
+                              <span className="ml-2 text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 px-2 py-1 rounded-full">
+                                최신
+                              </span>
+                            )}
+                          </h3>
+                          <p className="text-sm text-slate-500 mt-1">{update.date}</p>
+                        </div>
+                      </div>
+                      <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${categoryStyle.bgColor} ${categoryStyle.textColor} border ${categoryStyle.borderColor}`}>
+                        {categoryStyle.label}
+                      </span>
+                    </div>
+
+                    {/* 업데이트 내용 */}
+                    <div className="ml-11">
+                      <h4 className="font-semibold text-slate-800 mb-2">{update.title}</h4>
+                      <p className="text-sm text-slate-600 mb-3">{update.description}</p>
+                      
+                      {/* 주요 변경사항 */}
+                      {update.highlights && update.highlights.length > 0 && (
+                        <ul className="space-y-1">
+                          {update.highlights.map((highlight, idx) => (
+                            <li key={idx} className="text-sm text-slate-600 flex items-start">
+                              <span className="text-slate-400 mr-2">•</span>
+                              <span>{highlight}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* 모달 푸터 */}
+            <div className="p-6 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
+              <p className="text-sm text-slate-600 text-center">
+                더 자세한 변경사항은 <a href="https://github.com/Eyebottle/eyebottle-ai-ophthalmology" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">GitHub</a>에서 확인하세요
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 데모 영상 모달 */}
       {isVideoModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -386,7 +490,7 @@ export default function Home() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
               <a href="#features" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">주요 기능</a>
-              <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">업데이트</a>
+              <button onClick={() => setIsUpdateModalOpen(true)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">업데이트</button>
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">소개</a>
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">문의</a>
               
@@ -419,7 +523,7 @@ export default function Home() {
           <div className="lg:hidden bg-white/95 backdrop-blur-lg absolute top-full left-0 w-full border-b border-slate-200/60 shadow-md">
             <nav className="container mx-auto px-6 lg:px-8 py-4 flex flex-col space-y-4">
               <a href="#features" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">주요 기능</a>
-              <a href="#footer-nav" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">업데이트</a>
+              <button onClick={() => { setIsMenuOpen(false); setIsUpdateModalOpen(true); }} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100 w-full">업데이트</button>
               <a href="#footer-nav" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">소개</a>
               <a href="#footer-nav" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">문의</a>
             </nav>
@@ -718,7 +822,10 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 text-center items-stretch">
 
             {/* 업데이트 노트 */}
-            <div className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105">
+            <div 
+              onClick={() => setIsUpdateModalOpen(true)}
+              className="h-full flex flex-col group hover:bg-slate-50/80 p-8 lg:p-10 rounded-3xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <SparklesIcon className="w-8 h-8 lg:w-10 lg:h-10 text-amber-600" />
               </div>
