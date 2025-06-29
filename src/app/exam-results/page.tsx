@@ -1543,7 +1543,7 @@ export default function ExamResultsPage() {
       {/* 정밀 검사 */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold mb-4">정밀 검사</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">각막지형도 검사</label>
             {directInputMode.topography ? (
@@ -1800,15 +1800,27 @@ export default function ExamResultsPage() {
         @media print {
           @page { 
             size: A4; 
-            margin: 15mm; 
+            margin: 8mm;
           }
+          
+          /* 기본 설정 */
           body { 
-            -webkit-print-color-adjust: exact; 
-            font-size: 12px;
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            font-family: Arial, Verdana, sans-serif !important;
           }
           
           /* 인쇄 시 숨길 요소들 */
           .print-hide { display: none !important; }
+          
+          /* 인쇄 시 보여야 할 요소들 강제 표시 */
+          #diabetic-preview .max-w-\\[18cm\\],
+          #hypertension-preview .max-w-\\[18cm\\],
+          #comprehensive-preview .max-w-\\[18cm\\] {
+            display: block !important;
+            visibility: visible !important;
+          }
           
           /* 미리보기 영역 최적화 */
           .print-content { 
@@ -1822,140 +1834,711 @@ export default function ExamResultsPage() {
             border-radius: 0 !important;
           }
           
-          /* 브라우저 기본 헤더/푸터 제거 시도 */
-          @page {
-            margin-top: 0;
-            margin-bottom: 0;
+          /* 각 검진서 전용 최적화 */
+          #diabetic-preview,
+          #hypertension-preview,
+          #comprehensive-preview {
+            padding: 0 !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
           }
           
-          /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
-          .print-header, .print-footer { display: none !important; }
+          /* max-w-[18cm] 컨테이너 확실히 표시 */
+          .max-w-\\[18cm\\] {
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+            max-width: 100% !important;
+          }
+          
+          /* 인쇄용 폰트 크기 정의 - pt 단위 사용 */
+          h1 {
+            font-size: 24pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 8pt !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          h2 {
+            font-size: 18pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 6pt !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          h3 {
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 4pt !important;
+          }
+          
+          p, span, div {
+            font-size: 12pt !important;
+            line-height: 1.5 !important;
+            color: #000 !important;
+          }
+          
+          /* 텍스트 크기 클래스 재정의 */
+          .text-5xl { font-size: 24pt !important; }
+          .text-4xl { font-size: 20pt !important; }
+          .text-3xl { font-size: 18pt !important; }
+          .text-2xl { font-size: 16pt !important; }
+          .text-xl { font-size: 14pt !important; }
+          .text-lg { font-size: 12pt !important; }
+          .text-base { font-size: 11pt !important; }
+          .text-sm { font-size: 10pt !important; }
+          .text-xs { font-size: 9pt !important; }
+          
+          /* 헤더 가시성 확보 */
+          header {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            margin-top: 2pt !important;
+            padding: 12pt !important;
+            padding-top: 14pt !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+            background-color: #f0f8ff !important;
+            border: 1pt solid #ddd !important;
+          }
+          
+          /* 모든 헤더의 h1 강제 표시 */
+          header h1 {
+            font-size: 24pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 8pt !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+          }
+          
+          /* 색상 최적화 - 인쇄용 */
+          .bg-gradient-to-r,
+          .from-blue-50,
+          .to-indigo-50,
+          .from-green-50,
+          .to-emerald-50,
+          .from-yellow-50,
+          .to-amber-50,
+          .from-red-50,
+          .to-rose-50,
+          .from-cyan-50,
+          .to-teal-50 {
+            background-color: #f5f5f5 !important;
+            background-image: none !important;
+          }
+          
+          /* 경계선 색상 최적화 */
+          .border-blue-200 { border-color: #666 !important; }
+          .border-green-500 { border-color: #333 !important; }
+          .border-yellow-500 { border-color: #333 !important; }
+          .border-red-500 { border-color: #333 !important; }
+          .border-cyan-500 { border-color: #333 !important; }
+          
+          /* 텍스트 색상 최적화 */
+          .text-gray-600, .text-gray-500 { color: #333 !important; }
+          .text-gray-700, .text-gray-800 { color: #000 !important; }
+          .text-green-700 { color: #006400 !important; }
+          .text-yellow-700 { color: #8B8000 !important; }
+          .text-orange-700 { color: #8B4500 !important; }
+          .text-red-700 { color: #8B0000 !important; }
+          .text-cyan-600 { color: #006064 !important; }
+          
+          /* 테이블 스타일 */
+          table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 8pt 0 !important;
+          }
+          
+          th, td {
+            border: 1pt solid #333 !important;
+            padding: 6pt !important;
+            font-size: 11pt !important;
+          }
+          
+          thead {
+            background-color: #e0e0e0 !important;
+          }
+          
+          /* 레이아웃 단순화 */
+          .grid {
+            display: block !important;
+          }
+          
+          .grid > div {
+            margin-bottom: 12pt !important;
+          }
+          
+          /* 불릿 포인트 */
+          .bullet-point::before {
+            content: "•";
+            color: #000 !important;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+          }
+          
+          /* 리스트 스타일 */
+          ul, ol {
+            margin-left: 20pt !important;
+          }
+          
+          li {
+            font-size: 12pt !important;
+            line-height: 1.6 !important;
+            margin-bottom: 4pt !important;
+          }
+          
+          /* 검사 결과 박스 스타일 */
+          .bg-gray-50 {
+            background-color: #f5f5f5 !important;
+            border: 1pt solid #333 !important;
+            padding: 8pt !important;
+            margin-bottom: 8pt !important;
+          }
+          
+          /* 페이지 브레이크 관리 */
+          section {
+            page-break-inside: avoid !important;
+          }
+          
+          footer {
+            page-break-inside: avoid !important;
+            margin-top: 16pt !important;
+            padding-top: 8pt !important;
+            border-top: 2pt solid #333 !important;
+          }
+          
+          /* 이미지 최적화 */
+          img {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          
+          /* SVG 아이콘 스타일 */
+          svg {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            width: 24pt !important;
+            height: 24pt !important;
+          }
+          
+          /* 한 페이지 인쇄를 위한 공간 최적화 */
+          .mb-8 { margin-bottom: 8pt !important; }
+          .mb-6 { margin-bottom: 6pt !important; }
+          .mb-4 { margin-bottom: 4pt !important; }
+          
+          .p-6 { padding: 6pt !important; }
+          .p-5 { padding: 4pt !important; }
+          .p-4 { padding: 4pt !important; }
+          .p-3 { padding: 3pt !important; }
+          
+          /* 시력/안압 한 줄 배치 */
+          .grid-cols-2 {
+            display: flex !important;
+            gap: 12pt !important;
+          }
+          
+          .grid-cols-2 > div {
+            flex: 1 !important;
+          }
+          
+          /* 당뇨병 검진 특별 조정 - 증식 단계도 한 페이지에 */
+          #diabetic-preview header {
+            margin-bottom: 2pt !important;
+            padding: 3pt !important;
+          }
+          
+          #diabetic-preview section {
+            margin-bottom: 3pt !important;
+          }
+          
+          #diabetic-preview .text-xl {
+            font-size: 10pt !important;
+          }
+          
+          #diabetic-preview .text-lg {
+            font-size: 9pt !important;
+          }
+          
+          #diabetic-preview .text-base {
+            font-size: 9pt !important;
+          }
+          
+          #diabetic-preview footer {
+            margin-top: 4pt !important;
+            padding-top: 3pt !important;
+          }
+          
+          /* 제목 섹션 높이 줄이기 */
+          #diabetic-preview h1 {
+            font-size: 16pt !important;
+            margin-bottom: 2pt !important;
+          }
+          
+          #diabetic-preview h2 {
+            font-size: 12pt !important;
+            margin-bottom: 2pt !important;
+          }
+          
+          #diabetic-preview h3 {
+            font-size: 11pt !important;
+            margin-bottom: 2pt !important;
+          }
+          
+          #diabetic-preview .text-5xl {
+            font-size: 16pt !important;
+          }
+          
+          #diabetic-preview .text-3xl {
+            font-size: 12pt !important;
+          }
+          
+          #diabetic-preview .text-2xl {
+            font-size: 11pt !important;
+          }
+          
+          /* 테이블 간격 줄이기 */
+          #diabetic-preview table td,
+          #diabetic-preview table th {
+            padding: 3pt !important;
+          }
+          
+          /* 리스트 간격 줄이기 */
+          #diabetic-preview li {
+            margin-bottom: 1pt !important;
+            line-height: 1.3 !important;
+          }
+          
+          /* 카드 패딩 줄이기 */
+          #diabetic-preview .p-6 {
+            padding: 3pt !important;
+          }
+          
+          #diabetic-preview .p-5 {
+            padding: 2pt !important;
+          }
+          
+          #diabetic-preview .p-4 {
+            padding: 2pt !important;
+          }
+          
+          #diabetic-preview .p-3 {
+            padding: 2pt !important;
+          }
+          
+          /* 박스 간격 줄이기 */
+          #diabetic-preview .mb-8 {
+            margin-bottom: 4pt !important;
+          }
+          
+          #diabetic-preview .mb-6 {
+            margin-bottom: 3pt !important;
+          }
+          
+          #diabetic-preview .mb-4 {
+            margin-bottom: 2pt !important;
+          }
+          
+          /* 시력/안압 테이블 높이 최소화 */
+          #diabetic-preview .grid-cols-2 {
+            gap: 6pt !important;
+          }
+          
+          /* 안저검사 결과 공간 최소화 */
+          #diabetic-preview .space-y-4 {
+            gap: 2pt !important;
+          }
+          
+          /* rounded 요소들 패딩 최소화 */
+          #diabetic-preview .rounded-lg {
+            padding: 2pt !important;
+          }
+          
+          /* 로고 크기 축소 */
+          #diabetic-preview img {
+            width: 36pt !important;
+            height: 36pt !important;
+          }
+          
+          /* border 두께 최소화 */
+          #diabetic-preview .border-b-2 {
+            border-bottom-width: 1pt !important;
+          }
+          
+          #diabetic-preview .border-t-2 {
+            border-top-width: 1pt !important;
+          }
+          
+          /* 아이콘 크기 최소화 */
+          #diabetic-preview svg {
+            width: 16pt !important;
+            height: 16pt !important;
+          }
+          
+          /* 라인 높이 더 줄이기 */
+          #diabetic-preview p,
+          #diabetic-preview div {
+            line-height: 1.2 !important;
+          }
+          
+          /* 기본 컨테이너 패딩도 줄이기 */
+          #diabetic-preview .bg-white {
+            padding: 6pt !important;
+          }
+          
+          /* 색상 박스들 높이 최소화 */
+          #diabetic-preview .bg-gray-50,
+          #diabetic-preview .bg-blue-50,
+          #diabetic-preview .bg-gradient-to-r {
+            padding: 2pt 4pt !important;
+          }
+          
+          /* 특정 섹션 간 여백 완전 제거 */
+          /* 환자 정보 섹션(2번째) 위 여백 제거 */
+          #diabetic-preview section:nth-child(3) {
+            margin-bottom: 0pt !important;
+          }
+          
+          /* 시력/안압 섹션(3번째) 위 여백 제거 */
+          #diabetic-preview section:nth-child(4) {
+            margin-top: 0pt !important;
+            margin-bottom: 2pt !important;
+          }
+          
+          /* 안저검사 섹션(4번째) 위 여백 제거 */
+          #diabetic-preview section:nth-child(5) {
+            margin-top: 0pt !important;
+          }
+          
+          /* ULTRA 최적화 - 증식을 위한 극단적 조치 */
+          @page {
+            margin: 5mm !important;
+          }
+          
+          #diabetic-preview {
+            font-size: 8pt !important;
+          }
+          
+          #diabetic-preview * {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          #diabetic-preview header {
+            padding: 2pt !important;
+            margin-bottom: 2pt !important;
+          }
+          
+          #diabetic-preview section {
+            margin-bottom: 2pt !important;
+            padding: 2pt !important;
+          }
+          
+          #diabetic-preview h1 {
+            font-size: 14pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          #diabetic-preview h2 {
+            font-size: 10pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          #diabetic-preview h3 {
+            font-size: 9pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          #diabetic-preview p,
+          #diabetic-preview span,
+          #diabetic-preview div,
+          #diabetic-preview td,
+          #diabetic-preview th {
+            font-size: 8pt !important;
+            line-height: 1.1 !important;
+            margin: 0 !important;
+            padding: 1pt !important;
+          }
+          
+          #diabetic-preview .mb-8,
+          #diabetic-preview .mb-6,
+          #diabetic-preview .mb-4,
+          #diabetic-preview .mb-3,
+          #diabetic-preview .mb-2,
+          #diabetic-preview .mb-1 {
+            margin-bottom: 0 !important;
+          }
+          
+          #diabetic-preview table {
+            border-collapse: collapse !important;
+            margin: 0 !important;
+          }
+          
+          #diabetic-preview .grid-cols-2 {
+            display: flex !important;
+            gap: 4pt !important;
+          }
+          
+          #diabetic-preview footer {
+            margin-top: 2pt !important;
+            padding: 2pt !important;
+          }
+          
+          #diabetic-preview img {
+            width: 24pt !important;
+            height: 24pt !important;
+          }
+          
+          #diabetic-preview .border-b-2,
+          #diabetic-preview .border-t-2 {
+            border-width: 0.5pt !important;
+          }
+          
+          #diabetic-preview .rounded-lg,
+          #diabetic-preview .rounded-xl {
+            border-radius: 0 !important;
+          }
         }
       `}</style>
       
-      <div className="max-w-[18cm] mx-auto border border-gray-300 p-4 rounded-xl shadow-lg print:shadow-none print:border-none print:rounded-none print:p-2 bg-white">
-        {/* Header */}
-        <header className="mb-4 text-center print:mb-3">
-          <h1 className="text-xl font-semibold tracking-tight print:text-lg">당뇨망막병증 검진 결과 안내</h1>
-          <p className="text-xs text-gray-500">검사일: {diabeticData.examDate}</p>
-        </header>
-
-        {/* Executive Summary */}
-        <section className="mb-4 bg-gray-50 border border-gray-200 rounded-lg p-3 print:mb-3 print:p-2">
-          <h2 className="text-sm font-semibold mb-2 print:text-xs print:mb-1">요약</h2>
-          <ul className="list-disc pl-5 space-y-1 text-sm print:text-xs print:space-y-0">
-            <li><span className="font-medium">{getDiabeticRetinopathyInfo(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).message}</span></li>
-            <li>혈당·혈압·지질을 꾸준히 관리하시면 진행을 늦출 수 있습니다.</li>
-            <li><strong>{getDiabeticRetinopathyInfo(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).followUp} 후</strong> 안저 검사를 통해 변화 여부를 다시 확인하세요.</li>
-          </ul>
-        </section>
-
-        {/* Patient Info */}
-        <section className="grid grid-cols-2 gap-x-4 gap-y-1 mb-4 text-sm print:text-xs print:mb-3">
-          <div><span className="font-medium">환자</span><span className="ml-2">{diabeticData.name}</span></div>
-          <div><span className="font-medium">생년월일</span><span className="ml-2">{diabeticData.birthDate}</span></div>
-          <div><span className="font-medium">검사일</span><span className="ml-2">{diabeticData.examDate}</span></div>
-          <div><span className="font-medium">판독의</span><span className="ml-2">{diabeticData.doctorName}</span></div>
-        </section>
-
-        {/* Vision & IOP */}
-        <section className="mb-4 print:mb-3">
-          <h2 className="text-sm font-semibold mb-2 print:text-xs print:mb-1">1. 시력 &amp; 안압</h2>
-          <div className="grid grid-cols-2 gap-4 print:gap-3">
-            <table className="w-full border text-center text-sm print:text-xs">
-              <caption className="caption-top font-medium mb-1 text-left text-xs print:text-[10px]">시력</caption>
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-1 print:p-0.5"></th>
-                  <th className="border p-1 print:p-0.5">나안</th>
-                  <th className="border p-1 print:p-0.5">교정</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-1 font-medium print:p-0.5">우안</td>
-                  <td className="border p-1 print:p-0.5">{diabeticData.vision.od.naked}</td>
-                  <td className="border p-1 print:p-0.5">{diabeticData.vision.od.corrected}</td>
-                </tr>
-                <tr>
-                  <td className="border p-1 font-medium print:p-0.5">좌안</td>
-                  <td className="border p-1 print:p-0.5">{diabeticData.vision.os.naked}</td>
-                  <td className="border p-1 print:p-0.5">{diabeticData.vision.os.corrected}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table className="w-full border text-center text-sm print:text-xs">
-              <caption className="caption-top font-medium mb-1 text-left text-xs print:text-[10px]">안압 (mmHg)</caption>
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-1 print:p-0.5"></th>
-                  <th className="border p-1 print:p-0.5">결과</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-1 font-medium print:p-0.5">우안</td>
-                  <td className="border p-1 print:p-0.5">{diabeticData.iop.od}</td>
-                </tr>
-                <tr>
-                  <td className="border p-1 font-medium print:p-0.5">좌안</td>
-                  <td className="border p-1 print:p-0.5">{diabeticData.iop.os}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Fundus Exam */}
-        <section className="mb-4 print:mb-3">
-          <h2 className="text-sm font-semibold mb-2 print:text-xs print:mb-1">2. 안저 검사</h2>
-          <table className="w-full border text-center mb-2 text-sm print:text-xs print:mb-1">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border p-1 w-16 print:p-0.5">부위</th>
-                <th className="border p-1 print:p-0.5">단계</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border p-1 font-medium print:p-0.5">우안</td>
-                <td className="border p-1 text-black font-semibold print:p-0.5">{diabeticData.fundus.od.stage}</td>
-              </tr>
-              <tr>
-                <td className="border p-1 font-medium print:p-0.5">좌안</td>
-                <td className="border p-1 text-black font-semibold print:p-0.5">{diabeticData.fundus.os.stage}</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        {/* Recommendations */}
-        <section className="mb-4 print:mb-3">
-          <h2 className="text-sm font-semibold mb-2 print:text-xs print:mb-1">3. 권고 사항</h2>
-          <ol className="list-decimal pl-5 space-y-1 text-sm print:text-xs print:space-y-0 print:pl-4">
-            <li>혈당·혈압·지질을 목표 범위로 관리하세요.</li>
-            <li>{getDiabeticRetinopathyInfo(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).followUp} 후 안저 검사를 예약해 진행 여부를 확인하세요.</li>
-            <li>시력 저하·비문증·광시증이 나타나면 즉시 내원하세요.</li>
-          </ol>
-        </section>
-
-        {/* Integrated Plan */}
-        <section className="mb-4 print:mb-3">
-          <h2 className="text-sm font-semibold mb-2 print:text-xs print:mb-1">4. 통합 해석 &amp; 향후 계획</h2>
-          <p className="pl-3 text-sm print:text-xs print:pl-2" dangerouslySetInnerHTML={{__html: getDiabeticRetinopathyPlan(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}}></p>
-        </section>
-
-        {/* Footer */}
-        <footer className="flex justify-between items-start mt-4 pt-3 border-t border-gray-200 print:mt-3 print:pt-2">
-          <div className="flex items-start space-x-2 text-xs leading-snug print:text-[10px] print:space-x-1">
-            <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
+      <div className="max-w-[18cm] mx-auto bg-white">
+        {/* Header with gradient background */}
+        <header className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b-2 border-blue-200 p-6 rounded-t-xl mb-8">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="font-medium">이안과의원</div>
-              <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
-              <div>Tel. 051-866-7592~4</div>
+              <h1 className="text-5xl font-bold text-gray-800 mb-1">당뇨망막병증 검진 결과</h1>
+              <p className="text-xl text-gray-600">검사일: {diabeticData.examDate}</p>
+            </div>
+            <div className="text-right">
+              {/* 불필요한 텍스트 제거 */}
             </div>
           </div>
-          <div className="text-right text-xs text-gray-500 print:text-[10px]">발행일: {diabeticData.examDate}</div>
+        </header>
+
+        {/* Executive Summary with visual enhancement */}
+        <section className="mb-8">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-r-lg p-6 shadow-sm">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mr-4">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-gray-800 mb-3">검진 결과 요약</h2>
+                <ul className="space-y-2 text-xl">
+                  <li className="flex items-start">
+                    <span className="bullet-point text-green-600 mr-2 mt-0.5 pl-4"></span>
+                    <span><span className="font-semibold text-gray-700">{getDiabeticRetinopathyInfo(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).message}</span></span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bullet-point text-blue-600 mr-2 mt-0.5 pl-4"></span>
+                    <span>혈당·혈압·지질을 꾸준히 관리하시면 진행을 늦출 수 있습니다</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bullet-point text-orange-600 mr-2 mt-0.5 pl-4"></span>
+                    <span><strong className="text-orange-700">{getDiabeticRetinopathyInfo(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).followUp} 후</strong> 안저 검사를 통해 변화 여부를 다시 확인하세요</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Patient Info Card */}
+        <section className="mb-1">
+          <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">환자명</span>
+                <span className="text-xl font-bold text-gray-800">{diabeticData.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">생년월일</span>
+                <span className="text-xl font-bold text-gray-800">{diabeticData.birthDate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">검사일</span>
+                <span className="text-xl font-bold text-gray-800">{diabeticData.examDate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">담당의</span>
+                <span className="text-xl font-bold text-gray-800">{diabeticData.doctorName}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Vision & IOP with Icons */}
+        <section className="mb-1">
+          <div className="grid grid-cols-2 gap-2">
+            {/* Vision Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+              <div className="flex items-center mb-1">
+                <svg className="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">시력 검사</h3>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-2 text-left text-xl text-gray-600">구분</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">나안</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">교정</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2 text-xl font-medium text-gray-700">우안</td>
+                    <td className="py-2 text-xl text-center">{diabeticData.vision.od.naked}</td>
+                    <td className="py-2 text-xl text-center font-bold text-blue-600">{diabeticData.vision.od.corrected}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-xl font-medium text-gray-700">좌안</td>
+                    <td className="py-2 text-xl text-center">{diabeticData.vision.os.naked}</td>
+                    <td className="py-2 text-xl text-center font-bold text-blue-600">{diabeticData.vision.os.corrected}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            {/* IOP Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">안압 검사</h3>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-2 text-left text-xl text-gray-600">구분</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">측정값</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">정상범위</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2 text-xl font-medium text-gray-700">우안</td>
+                    <td className="py-2 text-xl text-center font-bold text-green-600">{diabeticData.iop.od} mmHg</td>
+                    <td className="py-2 text-xl text-center text-gray-500" rowSpan={2}>10-21 mmHg</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-xl font-medium text-gray-700">좌안</td>
+                    <td className="py-2 text-xl text-center font-bold text-green-600">{diabeticData.iop.os} mmHg</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* Fundus Exam with Stage Visualization */}
+        <section className="mb-2">
+          <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+            <div className="flex items-center mb-1">
+              <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <h3 className="text-2xl font-bold text-gray-800">안저 검사 결과</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-xl font-medium text-gray-700 mr-3">우안</span>
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xl font-semibold">
+                    {diabeticData.fundus.od.stage}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-xl font-medium text-gray-700 mr-3">좌안</span>
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xl font-semibold">
+                    {diabeticData.fundus.os.stage}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Recommendations & Plan Combined */}
+        <section className="mb-8">
+          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-6 border border-orange-200">
+            <h3 className="text-3xl font-bold text-gray-800 mb-4 flex items-center">
+              <svg className="w-6 h-6 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              권고사항 및 향후 계획
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-xl font-semibold text-gray-700 mb-2">필수 관리사항</h4>
+                <ol className="space-y-2 text-xl">
+                  <li className="flex items-start">
+                    <span className="font-bold text-orange-600 mr-2">1.</span>
+                    <span>혈당·혈압·지질을 목표 범위로 관리</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-orange-600 mr-2">2.</span>
+                    <span>{getDiabeticRetinopathyInfo(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).followUp} 후 안저 검사 예약</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-orange-600 mr-2">3.</span>
+                    <span>시력 저하·비문증·광시증 시 즉시 내원</span>
+                  </li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="text-xl font-semibold text-gray-700 mb-2">종합 소견</h4>
+                <p className="text-xl text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{__html: getDiabeticRetinopathyPlan(diabeticData.fundus.od.stage, diabeticData.fundus.os.stage).replace(/\*\*(.*?)\*\*/g, '<strong class="text-orange-700">$1</strong>')}}></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer with unified logo */}
+        <footer className="mt-auto pt-6 border-t-2 border-gray-200">
+          <div className="flex justify-between items-end">
+            <div className="flex items-center space-x-3">
+              <Image src="/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
+              <div>
+                <div className="font-bold text-xl text-gray-800">이안과의원</div>
+                <div className="text-lg text-gray-600">부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
+                <div className="text-lg text-gray-600">Tel. 051-866-7592~4</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-lg text-gray-500 mb-1">발행일: {diabeticData.examDate}</div>
+              <div className="text-xl font-semibold text-gray-700">{diabeticData.doctorName}</div>
+              <div className="mt-2 pt-1 border-t border-gray-400 w-24 ml-auto"></div>
+            </div>
+          </div>
         </footer>
       </div>
     </div>
@@ -1970,13 +2553,25 @@ export default function ExamResultsPage() {
             size: A4; 
             margin: 8mm;
           }
+          
+          /* 기본 설정 */
           body { 
-            -webkit-print-color-adjust: exact; 
-            font-size: 10px;
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            font-family: Arial, Verdana, sans-serif !important;
           }
           
           /* 인쇄 시 숨길 요소들 */
           .print-hide { display: none !important; }
+          
+          /* 인쇄 시 보여야 할 요소들 강제 표시 */
+          #diabetic-preview .max-w-\\[18cm\\],
+          #hypertension-preview .max-w-\\[18cm\\],
+          #comprehensive-preview .max-w-\\[18cm\\] {
+            display: block !important;
+            visibility: visible !important;
+          }
           
           /* 미리보기 영역 최적화 */
           .print-content { 
@@ -1993,29 +2588,209 @@ export default function ExamResultsPage() {
           /* 고혈압망막병증 전용 최적화 */
           #hypertension-preview {
             padding: 0 !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
           }
           
+          /* 인쇄용 폰트 크기 정의 - pt 단위 사용 */
+          h1, #hypertension-preview h1 {
+            font-size: 24pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 8pt !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          h2, #hypertension-preview h2 {
+            font-size: 18pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 6pt !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          h3, #hypertension-preview h3 {
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 4pt !important;
+          }
+          
+          p, span, div,
+          #hypertension-preview p, 
+          #hypertension-preview span, 
+          #hypertension-preview div {
+            font-size: 12pt !important;
+            line-height: 1.5 !important;
+            color: #000 !important;
+          }
+          
+          /* 텍스트 크기 클래스 재정의 */
+          .text-5xl, #hypertension-preview .text-5xl { font-size: 24pt !important; }
+          .text-4xl, #hypertension-preview .text-4xl { font-size: 20pt !important; }
+          .text-3xl, #hypertension-preview .text-3xl { font-size: 18pt !important; }
+          .text-2xl, #hypertension-preview .text-2xl { font-size: 16pt !important; }
+          .text-xl, #hypertension-preview .text-xl { font-size: 14pt !important; }
+          .text-lg, #hypertension-preview .text-lg { font-size: 12pt !important; }
+          .text-base, #hypertension-preview .text-base { font-size: 11pt !important; }
+          .text-sm, #hypertension-preview .text-sm { font-size: 10pt !important; }
+          .text-xs, #hypertension-preview .text-xs { font-size: 9pt !important; }
+          
+          /* 헤더 가시성 확보 */
+          header, #hypertension-preview header {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            margin-top: 2pt !important;
+            padding: 12pt !important;
+            padding-top: 14pt !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+            background-color: #fffaf0 !important;
+            border: 1pt solid #ddd !important;
+          }
+          
+          /* 제목 강제 표시 - ULTRA FIX */
+          #hypertension-preview header h1 {
+            font-size: 24pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 8pt !important;
+            margin-top: 4pt !important;
+            padding-top: 4pt !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+            overflow: visible !important;
+          }
+          
+          /* 고혈압 헤더 전체 조정 */
           #hypertension-preview .max-w-\\[18cm\\] {
-            padding: 12px !important;
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
+            padding-top: 8pt !important;
           }
           
-          #hypertension-preview header {
-            margin-bottom: 12px !important;
+          #hypertension-preview header:first-child {
+            margin-top: 4pt !important;
           }
           
+          /* 고혈압 제목 컨테이너 */
+          #hypertension-preview header > div {
+            padding-top: 4pt !important;
+          }
+          
+          /* 색상 최적화 - 인쇄용 */
+          #hypertension-preview .bg-gradient-to-r,
+          #hypertension-preview .from-yellow-50,
+          #hypertension-preview .to-amber-50,
+          #hypertension-preview .from-green-50,
+          #hypertension-preview .to-emerald-50 {
+            background-color: #f5f5f5 !important;
+            background-image: none !important;
+          }
+          
+          /* 경계선 색상 최적화 */
+          #hypertension-preview .border-yellow-200 { border-color: #666 !important; }
+          #hypertension-preview .border-yellow-500 { border-color: #333 !important; }
+          #hypertension-preview .border-green-500 { border-color: #333 !important; }
+          
+          /* 텍스트 색상 최적화 */
+          #hypertension-preview .text-gray-600, 
+          #hypertension-preview .text-gray-500 { color: #333 !important; }
+          #hypertension-preview .text-gray-700, 
+          #hypertension-preview .text-gray-800 { color: #000 !important; }
+          #hypertension-preview .text-yellow-700 { color: #8B8000 !important; }
+          #hypertension-preview .text-green-700 { color: #006400 !important; }
+          #hypertension-preview .text-orange-700 { color: #8B4500 !important; }
+          #hypertension-preview .text-red-700 { color: #8B0000 !important; }
+          
+          /* 테이블 스타일 */
+          #hypertension-preview table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 8pt 0 !important;
+          }
+          
+          #hypertension-preview th, 
+          #hypertension-preview td {
+            border: 1pt solid #333 !important;
+            padding: 6pt !important;
+            font-size: 11pt !important;
+          }
+          
+          #hypertension-preview thead {
+            background-color: #e0e0e0 !important;
+          }
+          
+          /* 레이아웃 단순화 */
+          #hypertension-preview .grid {
+            display: block !important;
+          }
+          
+          #hypertension-preview .grid > div {
+            margin-bottom: 12pt !important;
+          }
+          
+          /* 불릿 포인트 */
+          #hypertension-preview .bullet-point::before {
+            content: "•";
+            color: #000 !important;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+          }
+          
+          /* 리스트 스타일 */
+          #hypertension-preview ul, 
+          #hypertension-preview ol {
+            margin-left: 20pt !important;
+          }
+          
+          #hypertension-preview li {
+            font-size: 12pt !important;
+            line-height: 1.6 !important;
+            margin-bottom: 4pt !important;
+          }
+          
+          /* 검사 결과 박스 스타일 */
+          #hypertension-preview .bg-gray-50 {
+            background-color: #f5f5f5 !important;
+            border: 1pt solid #333 !important;
+            padding: 8pt !important;
+            margin-bottom: 8pt !important;
+          }
+          
+          /* 페이지 브레이크 관리 */
           #hypertension-preview section {
-            margin-bottom: 8px !important;
+            page-break-inside: avoid !important;
           }
           
-          #hypertension-preview .mb-8 {
-            margin-bottom: 8px !important;
+          #hypertension-preview footer {
+            page-break-inside: avoid !important;
+            margin-top: 16pt !important;
+            padding-top: 8pt !important;
+            border-top: 2pt solid #333 !important;
           }
           
-          #hypertension-preview .mb-6 {
-            margin-bottom: 6px !important;
+          /* 이미지 최적화 */
+          #hypertension-preview img {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          
+          /* SVG 아이콘 스타일 */
+          #hypertension-preview svg {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            width: 24pt !important;
+            height: 24pt !important;
           }
           
           #hypertension-preview .p-4 {
@@ -2054,112 +2829,205 @@ export default function ExamResultsPage() {
           
           /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
           .print-header, .print-footer { display: none !important; }
+          
+          /* 한 페이지 인쇄를 위한 공간 최적화 */
+          .mb-8 { margin-bottom: 8pt !important; }
+          .mb-6 { margin-bottom: 6pt !important; }
+          .mb-4 { margin-bottom: 4pt !important; }
+          
+          .p-6 { padding: 6pt !important; }
+          .p-5 { padding: 4pt !important; }
+          .p-4 { padding: 4pt !important; }
+          .p-3 { padding: 3pt !important; }
+          
+          /* 시력/안압 한 줄 배치 */
+          .grid-cols-2 {
+            display: flex !important;
+            gap: 12pt !important;
+          }
+          
+          .grid-cols-2 > div {
+            flex: 1 !important;
+          }
         }
       `}</style>
       
-      <div className="max-w-[18cm] mx-auto border border-gray-300 p-6 rounded-xl shadow-lg print:shadow-none bg-white">
-        {/* Header */}
-        <header className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">고혈압망막병증 검진 결과 안내</h1>
-          <p className="text-xs text-gray-500">검사일: {hypertensionData.examDate}</p>
+      <div className="max-w-[18cm] mx-auto bg-white">
+        {/* Header with gradient background */}
+        <header className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-purple-200 p-6 rounded-t-xl mb-8 pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-5xl font-bold text-gray-800 mb-1">고혈압망막병증 검진 결과</h1>
+              <p className="text-xl text-gray-600">검사일: {hypertensionData.examDate}</p>
+            </div>
+            <div className="text-right">
+              {/* 불필요한 텍스트 제거 */}
+            </div>
+          </div>
         </header>
 
-        {/* Executive Summary */}
-        <section className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
-          <h2 className="text-base font-semibold mb-2">요약</h2>
-          <ul className="list-disc pl-6 space-y-1">
-            <li><span className="font-medium">{getHypertensionRetinopathyInfo(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage).message}</span></li>
-            <li>혈압을 <strong>{hypertensionData.summary.bloodPressureTarget}&nbsp;mmHg</strong> 미만으로 유지하시면 진행을 늦출 수 있습니다.</li>
-            <li><strong>{hypertensionData.summary.followUp} 후</strong> 안저 검사로 변화 여부를 다시 확인하세요.</li>
-          </ul>
+        {/* Executive Summary with visual enhancement */}
+        <section className="mb-8">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-r-lg p-6 shadow-sm">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mr-4">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-gray-800 mb-3">검진 결과 요약</h2>
+                <ul className="space-y-2 text-xl">
+                  <li className="flex items-start">
+                    <span className="bullet-point text-green-600 mr-2 mt-0.5 pl-4"></span>
+                    <span><span className="font-semibold text-gray-700">{getHypertensionRetinopathyInfo(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage).message}</span></span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bullet-point text-blue-600 mr-2 mt-0.5 pl-4"></span>
+                    <span>혈압을 <strong className="text-blue-700">{hypertensionData.summary.bloodPressureTarget} mmHg</strong> 미만으로 유지하시면 진행을 늦출 수 있습니다</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bullet-point text-orange-600 mr-2 mt-0.5 pl-4"></span>
+                    <span><strong className="text-orange-700">{hypertensionData.summary.followUp} 후</strong> 안저 검사로 변화 여부를 다시 확인하세요</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Patient Info */}
-        <section className="grid grid-cols-2 gap-x-6 gap-y-2 mb-6">
-          <div><span className="font-medium">환자</span><span className="ml-2">{hypertensionData.name}</span></div>
-          <div><span className="font-medium">생년월일</span><span className="ml-2">{hypertensionData.birthDate}</span></div>
-          <div><span className="font-medium">검사일</span><span className="ml-2">{hypertensionData.examDate}</span></div>
-          <div><span className="font-medium">판독의</span><span className="ml-2">{hypertensionData.doctorName}</span></div>
+        {/* Patient Info Card */}
+        <section className="mb-8">
+          <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">환자명</span>
+                <span className="text-xl font-bold text-gray-800">{hypertensionData.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">생년월일</span>
+                <span className="text-xl font-bold text-gray-800">{hypertensionData.birthDate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">검사일</span>
+                <span className="text-xl font-bold text-gray-800">{hypertensionData.examDate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">담당의</span>
+                <span className="text-xl font-bold text-gray-800">{hypertensionData.doctorName}</span>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Fundus Result */}
-        <section className="mb-6">
-          <h2 className="text-base font-semibold mb-2">1. 안저 검사</h2>
-          <table className="w-full border text-center mb-3">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border p-1 w-16"></th>
-                <th className="border p-1">단계</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border p-1 font-medium">우안</td>
-                <td className="border p-1 text-black font-semibold">{hypertensionData.fundus.od.stage}</td>
-              </tr>
-              <tr>
-                <td className="border p-1 font-medium">좌안</td>
-                <td className="border p-1 text-black font-semibold">{hypertensionData.fundus.os.stage}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p className="pl-4 text-sm"><span className="font-medium">소견:</span> {getHypertensionFundusFindings(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)}</p>
+        {/* Fundus Result with Stage Visualization */}
+        <section className="mb-8">
+          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+            <div className="flex items-center mb-4">
+              <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <h3 className="text-2xl font-bold text-gray-800">안저 검사 결과</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-lg font-medium text-gray-700 mr-3">우안</span>
+                  <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xl font-semibold">
+                    {hypertensionData.fundus.od.stage}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-lg font-medium text-gray-700 mr-3">좌안</span>
+                  <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xl font-semibold">
+                    {hypertensionData.fundus.os.stage}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-purple-50 rounded-lg">
+              <p className="text-xl text-gray-700">
+                <span className="font-medium">소견:</span> {getHypertensionFundusFindings(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)}
+              </p>
+            </div>
+          </div>
         </section>
 
-        {/* Vision & IOP */}
-        <section className="mb-6">
-          <h2 className="text-base font-semibold mb-2">2. 시력 &amp; 안압</h2>
+        {/* Vision & IOP with Icons */}
+        <section className="mb-8">
           <div className="grid grid-cols-2 gap-6">
-            {/* Vision table */}
-            <table className="w-full border text-center">
-              <caption className="caption-top font-medium mb-1 text-left">시력</caption>
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-1"></th>
-                  <th className="border p-1">나안</th>
-                  <th className="border p-1">교정</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-1 font-medium">우안</td>
-                  <td className="border p-1">{hypertensionData.vision.od.naked}</td>
-                  <td className="border p-1">{hypertensionData.vision.od.corrected}</td>
-                </tr>
-                <tr>
-                  <td className="border p-1 font-medium">좌안</td>
-                  <td className="border p-1">{hypertensionData.vision.os.naked}</td>
-                  <td className="border p-1">{hypertensionData.vision.os.corrected}</td>
-                </tr>
-              </tbody>
-            </table>
-            {/* IOP table */}
-            <table className="w-full border text-center">
-              <caption className="caption-top font-medium mb-1 text-left">안압 (mmHg)</caption>
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-1"></th>
-                  <th className="border p-1">결과</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-1 font-medium">우안</td>
-                  <td className="border p-1">{hypertensionData.iop.od}</td>
-                </tr>
-                <tr>
-                  <td className="border p-1 font-medium">좌안</td>
-                  <td className="border p-1">{hypertensionData.iop.os}</td>
-                </tr>
-              </tbody>
-            </table>
+            {/* Vision Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">시력 검사</h3>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-2 text-left text-xl text-gray-600">구분</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">나안</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">교정</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2 text-xl font-medium text-gray-700">우안</td>
+                    <td className="py-2 text-xl text-center">{hypertensionData.vision.od.naked}</td>
+                    <td className="py-2 text-xl text-center font-bold text-blue-600">{hypertensionData.vision.od.corrected}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-xl font-medium text-gray-700">좌안</td>
+                    <td className="py-2 text-xl text-center">{hypertensionData.vision.os.naked}</td>
+                    <td className="py-2 text-xl text-center font-bold text-blue-600">{hypertensionData.vision.os.corrected}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            {/* IOP Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">안압 검사</h3>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-2 text-left text-xl text-gray-600">구분</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">측정값</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">정상범위</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2 text-xl font-medium text-gray-700">우안</td>
+                    <td className="py-2 text-xl text-center font-bold text-green-600">{hypertensionData.iop.od} mmHg</td>
+                    <td className="py-2 text-xl text-center text-gray-500" rowSpan={2}>10-21 mmHg</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-xl font-medium text-gray-700">좌안</td>
+                    <td className="py-2 text-xl text-center font-bold text-green-600">{hypertensionData.iop.os} mmHg</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
         {/* Recommendations */}
         <section className="mb-8">
-          <h2 className="text-base font-semibold mb-2">3. 권고 사항</h2>
-          <ol className="list-decimal pl-6 space-y-1">
+          <h2 className="text-2xl font-semibold mb-2">3. 권고 사항</h2>
+          <ol className="list-decimal pl-6 space-y-1 text-xl">
             <li>혈압을 꾸준히 관리해 <strong>{hypertensionData.summary.bloodPressureTarget}&nbsp;mmHg</strong> 미만을 유지하세요.</li>
             <li>{hypertensionData.summary.followUp} 후 안저 검사를 예약해 변화 여부를 확인하세요.</li>
             <li>시력 변화·점이나 번쩍임이 느껴지면 바로 내원하세요.</li>
@@ -2168,42 +3036,60 @@ export default function ExamResultsPage() {
 
         {/* Integrated Plan */}
         <section className="mb-8">
-          <h2 className="text-base font-semibold mb-2">4. 통합 해석 &amp; 향후 계획</h2>
-          <p className="pl-4 text-sm" dangerouslySetInnerHTML={{__html: getHypertensionRetinopathyPlan(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)}}></p>
+          <h2 className="text-2xl font-semibold mb-2">4. 통합 해석 &amp; 향후 계획</h2>
+          <p className="pl-4 text-xl" dangerouslySetInnerHTML={{__html: getHypertensionRetinopathyPlan(hypertensionData.fundus.od.stage, hypertensionData.fundus.os.stage)}}></p>
         </section>
 
         {/* Footer */}
-        <footer className="flex justify-between items-start mt-6 pt-4 border-t border-gray-200">
-          <div className="flex items-start space-x-3 text-xs leading-snug">
-            <Image src="/lee-eyeclinic-logo.png" alt="이안과의원" width={40} height={40} className="rounded-full" />
-            <div>
-              <div className="font-medium">이안과의원</div>
-              <div>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
-              <div>Tel. 051-866-7592~4</div>
+        <footer className="mt-auto pt-6 border-t-2 border-gray-200">
+          <div className="flex justify-between items-end">
+            <div className="flex items-center space-x-3">
+              <Image src="/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
+              <div>
+                <div className="font-bold text-xl text-gray-800">이안과의원</div>
+                <div className="text-lg text-gray-600">부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
+                <div className="text-lg text-gray-600">Tel. 051-866-7592~4</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-base text-gray-500 mb-1">발행일: {hypertensionData.examDate}</div>
+              <div className="text-lg font-semibold text-gray-700">{hypertensionData.doctorName}</div>
+              <div className="mt-2 pt-1 border-t border-gray-400 w-24 ml-auto"></div>
             </div>
           </div>
-          <div className="text-right text-xs text-gray-500">발행일: {hypertensionData.examDate}</div>
         </footer>
       </div>
     </div>
   )
 
   const renderComprehensivePreview = () => (
-    <div id="comprehensive-preview" className="bg-white p-8">
+    <div id="comprehensive-preview" className="bg-white p-8 space-y-6">
       {/* 인쇄용 스타일 */}
       <style jsx global>{`
         @media print {
           @page { 
             size: A4; 
-            margin: 10mm; 
+            margin: 8mm;
           }
+          
+          /* 기본 설정 */
           body { 
-            -webkit-print-color-adjust: exact; 
-            font-size: 10px;
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            font-family: Arial, Verdana, sans-serif !important;
           }
           
           /* 인쇄 시 숨길 요소들 */
           .print-hide { display: none !important; }
+          
+          /* 인쇄 시 보여야 할 요소들 강제 표시 */
+          #diabetic-preview .max-w-\\[18cm\\],
+          #hypertension-preview .max-w-\\[18cm\\],
+          #comprehensive-preview .max-w-\\[18cm\\] {
+            display: block !important;
+            visibility: visible !important;
+          }
           
           /* 미리보기 영역 최적화 */
           .print-content { 
@@ -2217,220 +3103,531 @@ export default function ExamResultsPage() {
             border-radius: 0 !important;
           }
           
-          /* 콤팩트한 인쇄 스타일 */
-          #comprehensive-preview h1 { font-size: 16px !important; }
-          #comprehensive-preview h2 { font-size: 12px !important; }
-          #comprehensive-preview h3 { font-size: 11px !important; }
-          #comprehensive-preview .text-base { font-size: 10px !important; }
-          #comprehensive-preview .text-sm { font-size: 9px !important; }
-          #comprehensive-preview .text-xs { font-size: 8px !important; }
-          #comprehensive-preview .mb-6 { margin-bottom: 8px !important; }
-          #comprehensive-preview .mb-4 { margin-bottom: 6px !important; }
-          #comprehensive-preview .p-4 { padding: 6px !important; }
-          #comprehensive-preview .p-6 { padding: 8px !important; }
-          #comprehensive-preview .space-y-1 > * { margin-bottom: 2px !important; }
-          #comprehensive-preview table { margin-bottom: 4px !important; }
-          
-          /* 브라우저 기본 헤더/푸터 제거 시도 */
-          @page {
-            margin-top: 0;
-            margin-bottom: 0;
+          /* 눈종합검진 전용 최적화 */
+          #comprehensive-preview {
+            padding: 0 !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
           }
           
-          /* 인쇄 시 브라우저 헤더/푸터 숨기기 */
-          .print-header, .print-footer { display: none !important; }
+          /* 인쇄용 폰트 크기 정의 - pt 단위 사용 */
+          h1, #comprehensive-preview h1 {
+            font-size: 24pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 8pt !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          h2, #comprehensive-preview h2 {
+            font-size: 18pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 6pt !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+          
+          h3, #comprehensive-preview h3 {
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 4pt !important;
+          }
+          
+          p, span, div,
+          #comprehensive-preview p, 
+          #comprehensive-preview span, 
+          #comprehensive-preview div {
+            font-size: 12pt !important;
+            line-height: 1.5 !important;
+            color: #000 !important;
+          }
+          
+          /* 텍스트 크기 클래스 재정의 */
+          .text-5xl, #comprehensive-preview .text-5xl { font-size: 24pt !important; }
+          .text-4xl, #comprehensive-preview .text-4xl { font-size: 20pt !important; }
+          .text-3xl, #comprehensive-preview .text-3xl { font-size: 18pt !important; }
+          .text-2xl, #comprehensive-preview .text-2xl { font-size: 16pt !important; }
+          .text-xl, #comprehensive-preview .text-xl { font-size: 14pt !important; }
+          .text-lg, #comprehensive-preview .text-lg { font-size: 12pt !important; }
+          .text-base, #comprehensive-preview .text-base { font-size: 11pt !important; }
+          .text-sm, #comprehensive-preview .text-sm { font-size: 10pt !important; }
+          .text-xs, #comprehensive-preview .text-xs { font-size: 9pt !important; }
+          
+          /* 헤더 가시성 확보 */
+          header, #comprehensive-preview header {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            margin-top: 2pt !important;
+            padding: 12pt !important;
+            padding-top: 14pt !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+            background-color: #f0ffff !important;
+            border: 1pt solid #ddd !important;
+          }
+          
+          /* 제목 강제 표시 */
+          #comprehensive-preview header h1 {
+            font-size: 24pt !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            margin-bottom: 8pt !important;
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            opacity: 1 !important;
+          }
+          
+          /* 색상 최적화 - 인쇄용 */
+          #comprehensive-preview .bg-gradient-to-r,
+          #comprehensive-preview .from-teal-50,
+          #comprehensive-preview .to-cyan-50,
+          #comprehensive-preview .from-blue-50,
+          #comprehensive-preview .to-indigo-50,
+          #comprehensive-preview .from-green-50,
+          #comprehensive-preview .to-emerald-50,
+          #comprehensive-preview .from-yellow-50,
+          #comprehensive-preview .to-amber-50,
+          #comprehensive-preview .from-red-50,
+          #comprehensive-preview .to-rose-50 {
+            background-color: #f5f5f5 !important;
+            background-image: none !important;
+          }
+          
+          /* 경계선 색상 최적화 */
+          #comprehensive-preview .border-teal-200 { border-color: #666 !important; }
+          #comprehensive-preview .border-teal-500 { border-color: #333 !important; }
+          #comprehensive-preview .border-blue-500 { border-color: #333 !important; }
+          #comprehensive-preview .border-green-500 { border-color: #333 !important; }
+          #comprehensive-preview .border-yellow-500 { border-color: #333 !important; }
+          #comprehensive-preview .border-orange-500 { border-color: #333 !important; }
+          #comprehensive-preview .border-red-500 { border-color: #333 !important; }
+          #comprehensive-preview .border-cyan-500 { border-color: #333 !important; }
+          
+          /* 텍스트 색상 최적화 */
+          #comprehensive-preview .text-gray-600, 
+          #comprehensive-preview .text-gray-500 { color: #333 !important; }
+          #comprehensive-preview .text-gray-700, 
+          #comprehensive-preview .text-gray-800 { color: #000 !important; }
+          #comprehensive-preview .text-teal-700 { color: #006064 !important; }
+          #comprehensive-preview .text-green-700 { color: #006400 !important; }
+          #comprehensive-preview .text-yellow-700 { color: #8B8000 !important; }
+          #comprehensive-preview .text-orange-700 { color: #8B4500 !important; }
+          #comprehensive-preview .text-red-700 { color: #8B0000 !important; }
+          #comprehensive-preview .text-cyan-600 { color: #006064 !important; }
+          
+          /* 테이블 스타일 */
+          #comprehensive-preview table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 8pt 0 !important;
+          }
+          
+          #comprehensive-preview th, 
+          #comprehensive-preview td {
+            border: 1pt solid #333 !important;
+            padding: 6pt !important;
+            font-size: 11pt !important;
+          }
+          
+          #comprehensive-preview thead {
+            background-color: #e0e0e0 !important;
+          }
+          
+          /* 레이아웃 단순화 */
+          #comprehensive-preview .grid {
+            display: block !important;
+          }
+          
+          #comprehensive-preview .grid > div {
+            margin-bottom: 12pt !important;
+          }
+          
+          /* 불릿 포인트 */
+          #comprehensive-preview .bullet-point::before {
+            content: "•";
+            color: #000 !important;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+          }
+          
+          /* 리스트 스타일 */
+          #comprehensive-preview ul, 
+          #comprehensive-preview ol {
+            margin-left: 20pt !important;
+          }
+          
+          #comprehensive-preview li {
+            font-size: 12pt !important;
+            line-height: 1.6 !important;
+            margin-bottom: 4pt !important;
+          }
+          
+          /* 검사 결과 박스 스타일 */
+          #comprehensive-preview .bg-gray-50 {
+            background-color: #f5f5f5 !important;
+            border: 1pt solid #333 !important;
+            padding: 8pt !important;
+            margin-bottom: 8pt !important;
+          }
+          
+          /* 페이지 브레이크 관리 */
+          #comprehensive-preview section {
+            page-break-inside: avoid !important;
+          }
+          
+          /* 2페이지 분할 */
+          #comprehensive-preview .page-2 {
+            page-break-before: always !important;
+          }
+          
+          #comprehensive-preview footer {
+            page-break-inside: avoid !important;
+            margin-top: 16pt !important;
+            padding-top: 8pt !important;
+            border-top: 2pt solid #333 !important;
+          }
+          
+          /* 이미지 최적화 */
+          #comprehensive-preview img {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          
+          /* SVG 아이콘 스타일 */
+          #comprehensive-preview svg {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            width: 24pt !important;
+            height: 24pt !important;
+          }
+          
+          /* 한 페이지 인쇄를 위한 공간 최적화 */
+          .mb-8 { margin-bottom: 8pt !important; }
+          .mb-6 { margin-bottom: 6pt !important; }
+          .mb-4 { margin-bottom: 4pt !important; }
+          
+          .p-6 { padding: 6pt !important; }
+          .p-5 { padding: 4pt !important; }
+          .p-4 { padding: 4pt !important; }
+          .p-3 { padding: 3pt !important; }
+          
+          /* 시력/안압 한 줄 배치 */
+          .grid-cols-2 {
+            display: flex !important;
+            gap: 12pt !important;
+          }
+          
+          .grid-cols-2 > div {
+            flex: 1 !important;
+          }
         }
       `}</style>
         
-      {/* ================= 한 페이지 통합 버전 ================= */}
-      <section className="max-w-[18cm] mx-auto border border-gray-300 p-4 rounded-xl shadow-lg print:shadow-none bg-white">
-        {/* Header */}
-        <header className="text-center mb-3">
-          <h1 className="text-xl font-semibold">눈 종합검사 결과서</h1>
-          <p className="text-xs text-gray-500">검사일: {comprehensiveData.examDate}</p>
+      <div className="max-w-[18cm] mx-auto bg-white">
+        {/* Header with gradient background */}
+        <header className="bg-gradient-to-r from-teal-50 to-cyan-50 border-b-2 border-teal-200 p-6 rounded-t-xl mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-5xl font-bold text-gray-800 mb-1">눈 종합검사 결과</h1>
+              <p className="text-xl text-gray-600">검사일: {comprehensiveData.examDate}</p>
+            </div>
+            <div className="text-right">
+              {/* 불필요한 텍스트 제거 */}
+            </div>
+          </div>
         </header>
 
-        {/* 2단 레이아웃: 환자정보 + 요약/종합소견 */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {/* 왼쪽: 환자정보 */}
-          <section className="border border-gray-200 rounded p-2">
-            <h3 className="text-sm font-semibold mb-1">환자 정보</h3>
-            <div className="text-xs space-y-0.5">
-              <div><span className="font-medium">환자:</span> {comprehensiveData.name}</div>
-              <div><span className="font-medium">생년월일:</span> {comprehensiveData.birthDate}</div>
-              <div><span className="font-medium">검사기관:</span> 이안과의원</div>
-              <div><span className="font-medium">판독의:</span> {comprehensiveData.doctorName}</div>
+        {/* Executive Summary with visual enhancement */}
+        <section className="mb-8">
+          <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border-l-4 border-teal-500 rounded-r-lg p-6 shadow-sm">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mr-4">
+                <div className="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-gray-800 mb-3">검진 결과 요약</h2>
+                <ul className="space-y-2 text-xl">
+                  <li className="flex items-start">
+                    <span className="bullet-point text-teal-600 mr-2 mt-0.5 pl-4"></span>
+                    <span><span className="font-semibold text-gray-700">{comprehensiveData.summary.riskLevel} - {getComprehensiveRiskInfo(comprehensiveData.summary.riskLevel).summary.split(' — ')[1]}</span></span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bullet-point text-blue-600 mr-2 mt-0.5 pl-4"></span>
+                    <span>주요 이상: {comprehensiveData.summary.mainFindings}</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bullet-point text-orange-600 mr-2 mt-0.5 pl-4"></span>
+                    <span>종합 소견: <strong className="text-orange-700">{comprehensiveData.summary.comprehensiveFinding}</strong></span>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </section>
-          
-          {/* 오른쪽: 요약 및 종합소견 */}
-          <div className="space-y-2">
-            <section className="bg-gray-50 border border-gray-200 rounded p-2">
-              <h3 className="text-sm font-semibold mb-1">검진 요약</h3>
-              <ul className="text-xs list-disc pl-4 space-y-0.5">
-                <li>{comprehensiveData.summary.riskLevel} - {getComprehensiveRiskInfo(comprehensiveData.summary.riskLevel).summary.split(' — ')[1]}</li>
-                <li>주요 이상: {comprehensiveData.summary.mainFindings}</li>
-              </ul>
-            </section>
-            <section className="bg-blue-50 border border-blue-200 rounded p-2">
-              <h3 className="text-sm font-semibold mb-1">종합 소견</h3>
-              <p className="text-xs leading-snug">{comprehensiveData.summary.comprehensiveFinding}</p>
-            </section>
-          </div>
-        </div>
-
-        {/* 시력 & 안압 */}
-        <section className="mb-3">
-          <h3 className="text-sm font-semibold mb-1">시력 &amp; 안압</h3>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <table className="w-full border text-center">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-0.5 text-xs" rowSpan={2}>시력</th>
-                  <th className="border p-0.5">나안</th>
-                  <th className="border p-0.5">교정</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-0.5">우안</td>
-                  <td className="border p-0.5">{comprehensiveData.vision.od.naked}</td>
-                  <td className="border p-0.5">{comprehensiveData.vision.od.corrected}</td>
-                </tr>
-                <tr>
-                  <td className="border p-0.5">좌안</td>
-                  <td className="border p-0.5">{comprehensiveData.vision.os.naked}</td>
-                  <td className="border p-0.5">{comprehensiveData.vision.os.corrected}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table className="w-full border text-center">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-0.5 text-xs">안압</th>
-                  <th className="border p-0.5">mmHg</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-0.5">우안</td>
-                  <td className="border p-0.5">{comprehensiveData.iop.od}</td>
-                </tr>
-                <tr>
-                  <td className="border p-0.5">좌안</td>
-                  <td className="border p-0.5">{comprehensiveData.iop.os}</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </section>
 
-        {/* 2단 레이아웃: 기본검사 + 정밀검사 */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {/* 기본 검사 */}
-          <section>
-            <h3 className="text-sm font-semibold mb-1">기본 검사</h3>
-            <table className="w-full border text-left text-xs">
-              <tbody>
-                <tr className="bg-gray-50">
-                  <th className="border p-0.5 w-16">굴절</th>
-                  <td className="border p-0.5">{comprehensiveData.basicExam.refraction}</td>
-                </tr>
-                <tr>
-                  <th className="border p-0.5">외안부</th>
-                  <td className="border p-0.5">{comprehensiveData.basicExam.externalEye}</td>
-                </tr>
-                <tr className="bg-gray-50">
-                  <th className="border p-0.5">수정체</th>
-                  <td className="border p-0.5">{comprehensiveData.basicExam.lens}</td>
-                </tr>
-                <tr>
-                  <th className="border p-0.5">안저</th>
-                  <td className="border p-0.5">{comprehensiveData.basicExam.fundus}</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-
-          {/* 정밀 검사 */}
-          <section>
-            <h3 className="text-sm font-semibold mb-1">정밀 검사</h3>
-            <table className="w-full border text-left text-xs">
-              <tbody>
-                <tr className="bg-gray-50">
-                  <th className="border p-0.5 w-16">각막지형도</th>
-                  <td className="border p-0.5">{comprehensiveData.detailedExam.topography}</td>
-                </tr>
-                <tr>
-                  <th className="border p-0.5">망막단층촬영</th>
-                  <td className="border p-0.5">{comprehensiveData.detailedExam.oct}</td>
-                </tr>
-                <tr className="bg-gray-50">
-                  <th className="border p-0.5">시야검사</th>
-                  <td className="border p-0.5">{comprehensiveData.detailedExam.visualField}</td>
-                </tr>
-                <tr>
-                  <th className="border p-0.5">초음파</th>
-                  <td className="border p-0.5">{comprehensiveData.detailedExam.sono}</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-        </div>
-
-        {/* 권고 사항 */}
-        <section className="mb-3">
-          <h3 className="text-sm font-semibold mb-1">권고 사항</h3>
-          <div className="bg-gray-50 border border-gray-200 rounded p-2">
-            <ol className="list-decimal pl-4 text-xs space-y-0.5">
-              {comprehensiveData.summary.riskLevel === '정상' && (
-                <>
-                  <li>정기적인 눈 건강 검진을 유지하세요</li>
-                  <li>{comprehensiveData.summary.followUp} 후 간단한 시력·안압·안저 검사 권장</li>
-                </>
-              )}
-              {comprehensiveData.summary.riskLevel === '경미한' && (
-                <>
-                  <li>경미한 이상에 대한 주기적인 모니터링이 필요합니다</li>
-                  <li>{comprehensiveData.summary.followUp} 후 정밀 검사 권장</li>
-                  <li>증상 변화 시 즉시 내원하세요</li>
-                </>
-              )}
-              {comprehensiveData.summary.riskLevel === '중등도' && (
-                <>
-                  <li>적극적인 치료 계획 수립이 필요합니다</li>
-                  <li>{comprehensiveData.summary.followUp} 후 반드시 재검하세요</li>
-                  <li>전문의와 상의하여 치료 방향을 결정하세요</li>
-                </>
-              )}
-              {comprehensiveData.summary.riskLevel === '심각한' && (
-                <>
-                  <li>즉각적인 치료가 필요한 상태입니다</li>
-                  <li>{comprehensiveData.summary.followUp}</li>
-                  <li>가능한 빠른 시일 내에 정밀 검사 및 치료를 시작하세요</li>
-                </>
-              )}
-            </ol>
+        {/* Patient Info Card */}
+        <section className="mb-8">
+          <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">환자명</span>
+                <span className="text-xl font-bold text-gray-800">{comprehensiveData.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">생년월일</span>
+                <span className="text-xl font-bold text-gray-800">{comprehensiveData.birthDate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">검사일</span>
+                <span className="text-xl font-bold text-gray-800">{comprehensiveData.examDate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xl text-gray-600 font-medium">담당의</span>
+                <span className="text-xl font-bold text-gray-800">{comprehensiveData.doctorName}</span>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="flex justify-between items-start pt-2 border-t border-gray-200">
-          <div className="flex items-start gap-2 text-xs leading-tight">
-            <Image src="/lee_eye_symbol.png" alt="이안과의원" width={24} height={24} className="rounded" />
-            <div>
-              <div className="font-medium">이안과의원</div>
-              <div className="text-gray-600">부산광역시 연제구 반송로 30</div>
-              <div className="text-gray-600">Tel. 051-866-7592~4</div>
+        {/* Vision & IOP with Icons */}
+        <section className="mb-8">
+          <div className="grid grid-cols-2 gap-6">
+            {/* Vision Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">시력 검사</h3>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-2 text-left text-xl text-gray-600">구분</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">나안</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">교정</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2 text-xl font-medium text-gray-700">우안</td>
+                    <td className="py-2 text-xl text-center">{comprehensiveData.vision.od.naked}</td>
+                    <td className="py-2 text-xl text-center font-bold text-blue-600">{comprehensiveData.vision.od.corrected}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-xl font-medium text-gray-700">좌안</td>
+                    <td className="py-2 text-xl text-center">{comprehensiveData.vision.os.naked}</td>
+                    <td className="py-2 text-xl text-center font-bold text-blue-600">{comprehensiveData.vision.os.corrected}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            {/* IOP Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">안압 검사</h3>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="pb-2 text-left text-xl text-gray-600">구분</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">측정값</th>
+                    <th className="pb-2 text-center text-xl text-gray-600">정상범위</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2 text-xl font-medium text-gray-700">우안</td>
+                    <td className="py-2 text-xl text-center font-bold text-green-600">{comprehensiveData.iop.od} mmHg</td>
+                    <td className="py-2 text-xl text-center text-gray-500" rowSpan={2}>10-21 mmHg</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-xl font-medium text-gray-700">좌안</td>
+                    <td className="py-2 text-xl text-center font-bold text-green-600">{comprehensiveData.iop.os} mmHg</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-xs text-gray-500">발행일: {comprehensiveData.examDate}</div>
-            <div className="text-xs font-medium mt-1">{comprehensiveData.doctorName}</div>
-            <div className="w-16 h-6 border-t border-gray-400 mt-1"></div>
+        </section>
+
+        {/* Basic & Detailed Exams with Cards */}
+        <section className="mb-8">
+          <div className="grid grid-cols-2 gap-6">
+            {/* Basic Exam Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">기본 검사</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">굴절검사</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.basicExam.refraction}</span>
+                </div>
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">외안부</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.basicExam.externalEye}</span>
+                </div>
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">수정체</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.basicExam.lens}</span>
+                </div>
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">안저</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.basicExam.fundus}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Exam Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <h3 className="text-2xl font-bold text-gray-800">정밀 검사</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">각막지형도</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.detailedExam.topography}</span>
+                </div>
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">망막단층촬영</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.detailedExam.oct}</span>
+                </div>
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">시야검사</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.detailedExam.visualField}</span>
+                </div>
+                <div className="flex justify-between p-2 bg-gray-50 rounded">
+                  <span className="text-xl font-medium text-gray-700">초음파</span>
+                  <span className="text-xl text-gray-600">{comprehensiveData.detailedExam.sono}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Recommendations & Plan Combined */}
+        <section className="mb-8">
+          <div className="bg-gradient-to-r from-cyan-50 to-teal-50 rounded-lg p-6 border border-cyan-200">
+            <h3 className="text-3xl font-bold text-gray-800 mb-4 flex items-center">
+              <svg className="w-6 h-6 text-cyan-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              권고사항 및 향후 계획
+            </h3>
+            <div className="bg-white/50 rounded-lg p-5">
+              <h4 className="text-lg font-semibold text-gray-700 mb-3">위험도 평가: <span className="text-cyan-700">{comprehensiveData.summary.riskLevel}</span></h4>
+              <ol className="space-y-2 text-lg">
+                {comprehensiveData.summary.riskLevel === '정상' && (
+                  <>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">1.</span>
+                      <span>정기적인 눈 건강 검진을 유지하세요</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">2.</span>
+                      <span>{comprehensiveData.summary.followUp} 후 간단한 시력·안압·안저 검사 권장</span>
+                    </li>
+                  </>
+                )}
+                {comprehensiveData.summary.riskLevel === '경미한' && (
+                  <>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">1.</span>
+                      <span>경미한 이상에 대한 주기적인 모니터링이 필요합니다</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">2.</span>
+                      <span>{comprehensiveData.summary.followUp} 후 정밀 검사 권장</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">3.</span>
+                      <span>증상 변화 시 즉시 내원하세요</span>
+                    </li>
+                  </>
+                )}
+                {comprehensiveData.summary.riskLevel === '중등도' && (
+                  <>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">1.</span>
+                      <span>적극적인 치료 계획 수립이 필요합니다</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">2.</span>
+                      <span>{comprehensiveData.summary.followUp} 후 반드시 재검하세요</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">3.</span>
+                      <span>전문의와 상의하여 치료 방향을 결정하세요</span>
+                    </li>
+                  </>
+                )}
+                {comprehensiveData.summary.riskLevel === '심각한' && (
+                  <>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">1.</span>
+                      <span>즉각적인 치료가 필요한 상태입니다</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">2.</span>
+                      <span>{comprehensiveData.summary.followUp}</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-bold text-cyan-600 mr-2">3.</span>
+                      <span>가능한 빠른 시일 내에 정밀 검사 및 치료를 시작하세요</span>
+                    </li>
+                  </>
+                )}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer with unified logo */}
+        <footer className="mt-auto pt-6 border-t-2 border-gray-200">
+          <div className="flex justify-between items-end">
+            <div className="flex items-center space-x-3">
+              <Image src="/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
+              <div>
+                <div className="font-bold text-xl text-gray-800">이안과의원</div>
+                <div className="text-lg text-gray-600">부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
+                <div className="text-lg text-gray-600">Tel. 051-866-7592~4</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xl text-gray-500 mb-1">발행일: {comprehensiveData.examDate}</div>
+              <div className="text-2xl font-semibold text-gray-700">{comprehensiveData.doctorName}</div>
+              <div className="mt-2 pt-1 border-t border-gray-400 w-24 ml-auto"></div>
+            </div>
           </div>
         </footer>
-      </section>
+      </div>
     </div>
   )
 
@@ -2490,5 +3687,4 @@ export default function ExamResultsPage() {
         {selectedType === 'comprehensive' && renderComprehensiveForm()}
       </main>
     </div>
-  )
-}
+  )}
