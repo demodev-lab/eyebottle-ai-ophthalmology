@@ -15,6 +15,19 @@ export interface UpdateItem {
 // 최신 5개의 주요 업데이트만 표시
 export const updates: UpdateItem[] = [
   {
+    id: 'v1.3.5',
+    version: 'v1.3.5',
+    date: '2025년 1월 29일',
+    category: 'improved',
+    title: '눈종합검진 인쇄 양식 개선',
+    description: '환자가 이해하기 쉽도록 검진 결과서 디자인을 전면 개선했습니다.',
+    highlights: [
+      'OD/OS → 오른쪽/왼쪽으로 용어 변경',
+      '정밀검사 영어 용어를 한글로 변경',
+      '레이아웃 개선으로 가독성 향상'
+    ]
+  },
+  {
     id: 'v1.3.0',
     version: 'v1.3.0',
     date: '2025년 1월 28일',
