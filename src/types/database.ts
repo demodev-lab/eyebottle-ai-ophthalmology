@@ -140,6 +140,7 @@ export interface ProgressionRate {
   al_od?: number; // mm/yr
   al_os?: number; // mm/yr
   riskLevel: RiskLevel;
+  reliability?: 'high' | 'medium' | 'low'; // 데이터 신뢰도
 }
 
 // LocalStorage 키 상수

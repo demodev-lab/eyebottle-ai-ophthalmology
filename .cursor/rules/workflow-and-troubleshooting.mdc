@@ -1,0 +1,620 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Workflow Guidelines & Troubleshooting
+
+## 🔄 Development Workflows
+
+### 1. Feature Development Workflow
+
+**Chain of Thought Process:**
+```mermaid
+graph TD
+    A[Receive Feature Request] --> B[Analyze Medical Context]
+    B --> C[Design UI/UX]
+    C --> D[Implement with TypeScript]
+    D --> E[Add Korean Localization]
+    E --> F[Test Accessibility]
+    F --> G[Optimize Performance]
+    G --> H[Deploy to Vercel]
+```
+
+**Example: Adding New Examination Type**
+
+```bash
+# Step 1: Create feature branch
+git checkout -b feature/eye-pressure-exam
+
+# Step 2: Create component structure
+mkdir -p src/app/exam-results/components/eye-pressure
+touch src/app/exam-results/components/eye-pressure/form.tsx
+touch src/app/exam-results/components/eye-pressure/preview.tsx
+touch src/app/exam-results/components/eye-pressure/types.ts
+```
+
+```typescript
+// Step 3: Define types (types.ts)
+export interface EyePressureExam {
+  patientId: string;
+  examDate: string;
+  rightEyePressure: number; // mmHg
+  leftEyePressure: number;  // mmHg
+  method: 'goldmann' | 'tonopen' | 'icare';
+  notes?: string;
+}
+
+// Step 4: Implement form with validation
+export function EyePressureForm({ onSubmit }: Props) {
+  // Medical range validation: 10-21 mmHg normal
+  const validatePressure = (value: number) => {
+    if (value < 5 || value > 50) {
+      return '안압은 5-50 mmHg 범위여야 합니다.';
+    }
+    if (value > 21) {
+      return '경고: 정상 범위(10-21 mmHg)를 초과했습니다.';
+    }
+    return null;
+  };
+  // ... implementation
+}
+```
+
+### 2. Bug Fix Workflow
+
+**Structured Debugging Process:**
+
+```typescript
+// Step 1: Reproduce and isolate
+console.log('[디버그] 문제 재현 시작:', {
+  component: 'ExamResults',
+  action: 'print',
+  timestamp: new Date().toISOString()
+});
+
+// Step 2: Add temporary debugging
+if (process.env.NODE_ENV === 'development') {
+  console.log('[디버그] 상태 확인:', {
+    formData,
+    validationErrors,
+    printState
+  });
+}
+
+// Step 3: Fix with minimal changes
+// Before (buggy):
+const handlePrint = () => {
+  window.print(); // Prints entire page
+};
+
+// After (fixed):
+const handlePrint = () => {
+  const printContent = document.getElementById('print-area');
+  const originalDisplay = document.body.style.display;
+  
+  // Hide everything except print area
+  document.body.style.display = 'none';
+  if (printContent) {
+    printContent.style.display = 'block';
+  }
+  
+  window.print();
+  
+  // Restore original state
+  document.body.style.display = originalDisplay;
+};
+
+// Step 4: Add regression test
+test('인쇄 시 UI 요소가 숨겨지는지 확인', () => {
+  // ... test implementation
+});
+```
+
+### 3. Performance Optimization Workflow
+
+```typescript
+// Step 1: Measure current performance
+import { measurePerformance } from '@/lib/performance';
+
+const MyoCareChart = () => {
+  useEffect(() => {
+    const perfMark = measurePerformance.start('MyoCareChart');
+    
+    // Component logic...
+    
+    return () => {
+      const duration = measurePerformance.end('MyoCareChart');
+      if (duration > 100) {
+        console.warn(`차트 렌더링 시간 초과: ${duration}ms`);
+      }
+    };
+  }, []);
+};
+
+// Step 2: Identify bottlenecks
+const expensiveCalculation = useMemo(() => {
+  return calculateProgressionRate(examData);
+}, [examData]); // Only recalculate when examData changes
+
+// Step 3: Implement optimizations
+const VirtualizedPatientList = dynamic(
+  () => import('./VirtualizedPatientList'),
+  {
+    loading: () => <PatientListSkeleton />,
+    ssr: false
+  }
+);
+```
+
+## 🔧 Common Issues & Solutions
+
+### 1. WSL Hot Reload Not Working
+
+**Problem:** [[memory:2698088134171088322]]
+```bash
+# Symptom: File changes not reflected in browser
+```
+
+**Solution:**
+```json
+// package.json
+{
+  "scripts": {
+    "dev:hot": "WATCHPACK_POLLING=true CHOKIDAR_USEPOLLING=true next dev --turbopack"
+  }
+}
+```
+
+```typescript
+// next.config.ts
+const nextConfig: NextConfig = {
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+    }
+    return config;
+  },
+};
+```
+
+### 2. Korean Text Encoding Issues
+
+**Problem:**
+```
+Error: Invalid UTF-8 sequence in file
+한글이 깨져서 ����로 표시됨
+```
+
+**Solution:**
+```typescript
+// Always save files with UTF-8 encoding
+// Add to .gitattributes
+*.tsx text eol=lf encoding=utf-8
+*.ts text eol=lf encoding=utf-8
+*.md text eol=lf encoding=utf-8
+
+// When reading files
+const content = fs.readFileSync(filePath, 'utf-8');
+
+// When sending API responses
+res.setHeader('Content-Type', 'application/json; charset=utf-8');
+```
+
+### 3. Medical Data Validation Errors
+
+**Problem:**
+```
+TypeError: Cannot read property 'sphericalEquivalent' of undefined
+```
+
+**Solution:**
+```typescript
+// Defensive programming with medical data
+interface SafeExamData {
+  rightEye?: {
+    sphere?: number;
+    cylinder?: number;
+    axis?: number;
+  };
+  leftEye?: {
+    sphere?: number;
+    cylinder?: number;
+    axis?: number;
+  };
+}
+
+function calculateSE(eye?: SafeExamData['rightEye']): number | null {
+  if (!eye?.sphere) return null;
+  
+  const sphere = eye.sphere || 0;
+  const cylinder = eye.cylinder || 0;
+  
+  return sphere + (cylinder / 2);
+}
+
+// With error boundaries
+class MedicalDataErrorBoundary extends React.Component {
+  componentDidCatch(error: Error) {
+    console.error('의료 데이터 오류:', error);
+    // Log to monitoring service
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 bg-red-50 rounded-lg">
+          <p className="text-red-800">
+            의료 데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
+          <button onClick={() => window.location.reload()}>
+            새로고침
+          </button>
+        </div>
+      );
+    }
+    
+    return this.props.children;
+  }
+}
+```
+
+### 4. Print Layout Issues
+
+**Problem:**
+```
+인쇄 시 내용이 잘리거나 여백이 맞지 않음
+```
+
+**Solution:**
+```css
+/* Global print styles */
+@media print {
+  /* Reset margins for medical reports */
+  @page {
+    size: A4 portrait;
+    margin: 15mm 10mm;
+  }
+  
+  /* Korean font optimization */
+  * {
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif !important;
+  }
+  
+  /* Prevent breaking inside elements */
+  .medical-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Force new page for each report */
+  .report-page {
+    page-break-after: always;
+  }
+  
+  /* Hide interactive elements */
+  button, 
+  .no-print,
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none !important;
+  }
+  
+  /* Ensure tables fit */
+  table {
+    width: 100% !important;
+    font-size: 10pt;
+  }
+  
+  /* High contrast for medical data */
+  .medical-value {
+    font-weight: bold;
+    color: black !important;
+  }
+}
+```
+
+### 5. LocalStorage Quota Exceeded
+
+**Problem:**
+```
+DOMException: QuotaExceededError
+```
+
+**Solution:**
+```typescript
+// Implement storage management
+class StorageManager {
+  private readonly MAX_STORAGE_MB = 5; // 5MB limit
+  
+  async checkStorageUsage(): Promise<number> {
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+      const estimate = await navigator.storage.estimate();
+      return (estimate.usage || 0) / (1024 * 1024); // MB
+    }
+    
+    // Fallback: calculate localStorage size
+    let totalSize = 0;
+    for (const key in localStorage) {
+      totalSize += localStorage[key].length + key.length;
+    }
+    return totalSize / (1024 * 1024);
+  }
+  
+  async cleanOldData(): Promise<void> {
+    const usage = await this.checkStorageUsage();
+    
+    if (usage > this.MAX_STORAGE_MB * 0.8) {
+      // Remove old examination data (keep last 6 months)
+      const sixMonthsAgo = Date.now() - (180 * 24 * 60 * 60 * 1000);
+      
+      const exams = JSON.parse(
+        localStorage.getItem('eyebottle_exams') || '[]'
+      );
+      
+      const recentExams = exams.filter((exam: any) => 
+        new Date(exam.date).getTime() > sixMonthsAgo
+      );
+      
+      localStorage.setItem('eyebottle_exams', JSON.stringify(recentExams));
+      
+      console.log(`스토리지 정리 완료: ${exams.length - recentExams.length}개 항목 삭제`);
+    }
+  }
+}
+```
+
+## 🚀 Deployment Checklist
+
+### Pre-deployment Verification
+
+```typescript
+// deployment-check.ts
+interface DeploymentCheck {
+  name: string;
+  check: () => Promise<boolean>;
+  critical: boolean;
+}
+
+const deploymentChecks: DeploymentCheck[] = [
+  {
+    name: '환경변수 확인',
+    critical: true,
+    check: async () => {
+      return !!process.env.RESEND_API_KEY;
+    }
+  },
+  {
+    name: '타입스크립트 컴파일',
+    critical: true,
+    check: async () => {
+      const { execSync } = require('child_process');
+      try {
+        execSync('npm run type-check');
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  },
+  {
+    name: '의료 데이터 검증',
+    critical: true,
+    check: async () => {
+      // Verify medical constants and calculations
+      const testCases = [
+        { sphere: -3.0, cylinder: -1.0, expectedSE: -3.5 },
+        { sphere: -6.0, cylinder: -2.0, expectedSE: -7.0 }
+      ];
+      
+      return testCases.every(test => 
+        calculateSE(test.sphere, test.cylinder) === test.expectedSE
+      );
+    }
+  },
+  {
+    name: '한글 인코딩 테스트',
+    critical: false,
+    check: async () => {
+      const testStrings = ['안녕하세요', '검진결과', '당뇨망막병증'];
+      return testStrings.every(str => 
+        str === decodeURIComponent(encodeURIComponent(str))
+      );
+    }
+  }
+];
+
+// Run all checks before deployment
+async function runDeploymentChecks() {
+  console.log('🚀 배포 전 검증 시작...\n');
+  
+  let hasErrors = false;
+  
+  for (const check of deploymentChecks) {
+    try {
+      const passed = await check.check();
+      const status = passed ? '✅' : '❌';
+      console.log(`${status} ${check.name}`);
+      
+      if (!passed && check.critical) {
+        hasErrors = true;
+      }
+    } catch (error) {
+      console.log(`❌ ${check.name} - 오류: ${error.message}`);
+      if (check.critical) hasErrors = true;
+    }
+  }
+  
+  if (hasErrors) {
+    console.error('\n❌ 배포 중단: 필수 검증 실패');
+    process.exit(1);
+  } else {
+    console.log('\n✅ 모든 검증 통과! 배포 가능합니다.');
+  }
+}
+```
+
+### Vercel Deployment Configuration
+
+```json
+// vercel.json
+{
+  "functions": {
+    "app/api/send-email/route.ts": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "RESEND_API_KEY": "@resend-api-key"
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  }
+}
+```
+
+## 📊 Monitoring & Analytics
+
+### Error Tracking Implementation
+
+```typescript
+// lib/monitoring.ts
+class ErrorMonitor {
+  private queue: ErrorLog[] = [];
+  
+  logError(error: Error, context?: any) {
+    const errorLog: ErrorLog = {
+      timestamp: new Date().toISOString(),
+      message: error.message,
+      stack: error.stack,
+      context,
+      userAgent: navigator.userAgent,
+      url: window.location.href
+    };
+    
+    // Don't log sensitive medical data
+    if (context?.patientData) {
+      errorLog.context = {
+        ...context,
+        patientData: '[REDACTED]'
+      };
+    }
+    
+    this.queue.push(errorLog);
+    this.flush();
+  }
+  
+  private async flush() {
+    if (this.queue.length === 0) return;
+    
+    try {
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ errors: this.queue })
+      });
+      
+      this.queue = [];
+    } catch (error) {
+      console.error('로그 전송 실패:', error);
+    }
+  }
+}
+
+// Global error handler
+window.addEventListener('error', (event) => {
+  errorMonitor.logError(event.error, {
+    type: 'uncaught',
+    source: event.filename,
+    line: event.lineno,
+    column: event.colno
+  });
+});
+```
+
+### Performance Monitoring
+
+```typescript
+// lib/performance-monitor.ts
+interface PerformanceMetric {
+  name: string;
+  duration: number;
+  timestamp: number;
+}
+
+class PerformanceMonitor {
+  private metrics: PerformanceMetric[] = [];
+  
+  measureComponent(componentName: string) {
+    return {
+      start: () => performance.mark(`${componentName}-start`),
+      end: () => {
+        performance.mark(`${componentName}-end`);
+        performance.measure(
+          componentName,
+          `${componentName}-start`,
+          `${componentName}-end`
+        );
+        
+        const measure = performance.getEntriesByName(componentName)[0];
+        this.metrics.push({
+          name: componentName,
+          duration: measure.duration,
+          timestamp: Date.now()
+        });
+        
+        // Alert if component is slow
+        if (measure.duration > 100) {
+          console.warn(`느린 컴포넌트 감지: ${componentName} (${measure.duration.toFixed(2)}ms)`);
+        }
+      }
+    };
+  }
+  
+  getReport() {
+    const summary = this.metrics.reduce((acc, metric) => {
+      if (!acc[metric.name]) {
+        acc[metric.name] = {
+          count: 0,
+          totalDuration: 0,
+          avgDuration: 0,
+          maxDuration: 0
+        };
+      }
+      
+      acc[metric.name].count++;
+      acc[metric.name].totalDuration += metric.duration;
+      acc[metric.name].avgDuration = 
+        acc[metric.name].totalDuration / acc[metric.name].count;
+      acc[metric.name].maxDuration = 
+        Math.max(acc[metric.name].maxDuration, metric.duration);
+      
+      return acc;
+    }, {} as Record<string, any>);
+    
+    return summary;
+  }
+}
+```
+
+## 🎓 Learning Resources
+
+### Medical Domain Knowledge
+- [Korean Ophthalmology Terminology](mdc:docs/medical-terms.md)
+- [Examination Standards Guide](mdc:docs/exam-standards.md)
+
+### Technical Resources
+- [Next.js 15 Migration Guide](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration)
+- [Tailwind CSS v4 Features](https://tailwindcss.com/docs)
+- [React 19 New Features](https://react.dev/blog)
+
+### Project-Specific Guides
+- [MyoCare System Architecture](mdc:docs/myocare-architecture.md)
+- [Exam Results Workflow](mdc:docs/exam-results-workflow.md)
+- [Email Integration Guide](mdc:docs/RESEND_EMAIL_SETUP_GUIDE.md)
+
+Remember: Always prioritize medical accuracy, user experience, and Korean language support in every decision.

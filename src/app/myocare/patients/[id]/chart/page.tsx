@@ -681,19 +681,39 @@ export default function PatientChartPage() {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-slate-600 mb-2">위험도 평가</p>
-                  <Badge
-                    className="font-bold px-6 py-2 text-lg"
-                    style={{
-                      backgroundColor: getRiskColor(progression.riskLevel) + '20',
-                      color: getRiskColor(progression.riskLevel),
-                      borderColor: getRiskColor(progression.riskLevel),
-                    }}
-                    variant="outline"
-                  >
-                    {progression.riskLevel === RiskLevel.RED ? '⚠️ ' : 
-                     progression.riskLevel === RiskLevel.YELLOW ? '🟡 ' : '🟢 '}
-                    {getRiskText(progression.riskLevel)}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      className="font-bold px-6 py-2 text-lg"
+                      style={{
+                        backgroundColor: getRiskColor(progression.riskLevel) + '20',
+                        color: getRiskColor(progression.riskLevel),
+                        borderColor: getRiskColor(progression.riskLevel),
+                      }}
+                      variant="outline"
+                    >
+                      {progression.riskLevel === RiskLevel.RED ? '⚠️ ' : 
+                       progression.riskLevel === RiskLevel.YELLOW ? '🟡 ' : '🟢 '}
+                      {getRiskText(progression.riskLevel)}
+                    </Badge>
+                    {progression.reliability && progression.reliability !== 'high' && (
+                      <Badge
+                        className="text-xs px-3 py-1"
+                        variant="outline"
+                        style={{
+                          backgroundColor: progression.reliability === 'medium' ? '#fef3c7' : '#fee2e2',
+                          color: progression.reliability === 'medium' ? '#d97706' : '#dc2626',
+                          borderColor: progression.reliability === 'medium' ? '#fbbf24' : '#f87171',
+                        }}
+                      >
+                        {progression.reliability === 'medium' ? '참고값' : '단기 추적'}
+                      </Badge>
+                    )}
+                  </div>
+                  {progression.reliability && progression.reliability !== 'high' && (
+                    <p className="text-xs text-slate-500 mt-2">
+                      * 정확한 진행률 분석을 위해서는 3개월 이상의 간격을 권장합니다
+                    </p>
+                  )}
                 </div>
                 <div>
                   <p className="text-sm text-slate-600 mb-3">연간 진행속도</p>
@@ -767,7 +787,10 @@ export default function PatientChartPage() {
             ) : (
               <div className="text-center py-8">
                 <p className="text-slate-500">진행 분석을 위해서는</p>
-                <p className="text-slate-500">2회 이상의 검사가 필요합니다</p>
+                <p className="text-slate-500">1개월 이상 간격의 2회 이상 검사가 필요합니다</p>
+                <p className="text-xs text-slate-400 mt-2">
+                  (3개월 이상 간격을 권장합니다)
+                </p>
               </div>
             )}
           </CardContent>

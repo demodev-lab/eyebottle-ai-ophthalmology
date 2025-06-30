@@ -1,0 +1,568 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Technical Patterns & Best Practices
+
+## 🎯 Advanced Prompt Engineering Principles Applied
+
+This rule file demonstrates state-of-the-art prompt engineering techniques:
+1. **Structured Reasoning** - Step-by-step thinking process
+2. **Few-shot Examples** - Concrete code patterns
+3. **Error Prevention** - Common pitfalls and solutions
+4. **Context Awareness** - Project-specific knowledge
+5. **Output Formatting** - Clear, actionable responses
+
+## 🔍 Code Analysis Framework
+
+When analyzing code, use this structured approach:
+
+```
+STEP 1: Understand Intent
+- What is the business requirement?
+- What medical workflow does this support?
+- Who are the end users?
+
+STEP 2: Review Current Implementation
+- Check TypeScript types
+- Validate component structure
+- Assess accessibility
+- Review error handling
+
+STEP 3: Identify Improvements
+- Performance optimizations
+- Code reusability
+- Medical accuracy
+- User experience
+
+STEP 4: Provide Solution
+- Show before/after code
+- Explain reasoning
+- Include migration steps
+```
+
+## 💻 WSL Development Environment Specifics
+
+### Hot Reload Configuration [[memory:2698088134171088322]]
+```typescript
+// next.config.ts
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  // WSL hot reload fix
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: /node_modules/,
+      };
+      config.cache = false;
+    }
+    return config;
+  },
+};
+```
+
+### Terminal Setup [[memory:2192836394993359758]]
+```bash
+# Terminal 1: WSL - Run Claude Code
+claude
+
+# Terminal 2: PowerShell 7 - Run dev server
+npm run dev:hot
+
+# Terminal 3: AI Chat Window
+```
+
+## 🏥 Medical Feature Implementation Patterns
+
+### 1. Exam Result Auto-Fill System
+
+```typescript
+// Pattern: Risk-based content generation
+interface ExamAutoFill {
+  riskLevel: '정상' | '경미한' | '중등도' | '심각한';
+  summary: string;
+  recommendation: string;
+  followUpPeriod: string;
+}
+
+const autoFillContent: Record<string, ExamAutoFill> = {
+  '정상': {
+    riskLevel: '정상',
+    summary: '현재 눈 상태는 정상입니다.',
+    recommendation: '정기적인 검진을 권장합니다.',
+    followUpPeriod: '1년'
+  },
+  // ... other levels
+};
+
+// Usage in component
+function handleRiskLevelChange(level: string) {
+  const content = autoFillContent[level];
+  setFormData(prev => ({
+    ...prev,
+    ...content
+  }));
+}
+```
+
+### 2. MyoCare Data Validation
+
+```typescript
+// Pattern: Medical data validation with Korean error messages
+interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+function validateMyopiaData(data: MyopiaExam): ValidationResult {
+  const errors: string[] = [];
+  
+  // Spherical equivalent validation
+  if (Math.abs(data.sphericalEquivalent) > 25) {
+    errors.push('구면대응치는 -25D에서 +25D 사이여야 합니다.');
+  }
+  
+  // Axial length validation
+  if (data.axialLength < 20 || data.axialLength > 35) {
+    errors.push('안축장은 20mm에서 35mm 사이여야 합니다.');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+```
+
+### 3. Print-Optimized Layouts
+
+```css
+/* Pattern: A4 print optimization */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  /* Korean font optimization for print */
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+  
+  /* Medical report specific */
+  .medical-report {
+    page-break-inside: avoid;
+  }
+  
+  .page-break {
+    page-break-after: always;
+  }
+}
+```
+
+## 🎨 Component Creation Patterns
+
+### Medical Form Component Template
+
+```tsx
+'use client';
+
+import { useState, useCallback } from 'react';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue 
+} from '@/components/ui/select';
+
+interface MedicalFormProps {
+  onSubmit: (data: FormData) => void;
+  initialData?: Partial<FormData>;
+}
+
+export function MedicalForm({ onSubmit, initialData }: MedicalFormProps) {
+  const [formData, setFormData] = useState<FormData>({
+    patientName: '',
+    birthDate: '',
+    chartNumber: '',
+    ...initialData
+  });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const validateForm = useCallback((): boolean => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.patientName.trim()) {
+      newErrors.patientName = '환자명을 입력해주세요.';
+    }
+    
+    // Korean date format validation
+    if (!formData.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      newErrors.birthDate = '생년월일 형식이 올바르지 않습니다. (YYYY-MM-DD)';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData]);
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit(formData);
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="patientName">
+          환자명 <span className="text-red-500">*</span>
+        </Label>
+        <Input
+          id="patientName"
+          value={formData.patientName}
+          onChange={(e) => setFormData(prev => ({
+            ...prev,
+            patientName: e.target.value
+          }))}
+          placeholder="홍길동"
+          aria-invalid={!!errors.patientName}
+          aria-describedby={errors.patientName ? 'patientName-error' : undefined}
+        />
+        {errors.patientName && (
+          <p id="patientName-error" className="text-sm text-red-500">
+            {errors.patientName}
+          </p>
+        )}
+      </div>
+      
+      {/* More form fields... */}
+      
+      <Button type="submit" className="w-full">
+        저장하기
+      </Button>
+    </form>
+  );
+}
+```
+
+## 📊 Data Management Patterns
+
+### LocalStorage with TypeScript
+
+```typescript
+// Pattern: Type-safe localStorage wrapper
+class TypedStorage<T> {
+  constructor(private key: string) {}
+  
+  get(): T | null {
+    try {
+      const item = localStorage.getItem(this.key);
+      return item ? JSON.parse(item) : null;
+    } catch (error) {
+      console.error(`LocalStorage 읽기 오류 (${this.key}):`, error);
+      return null;
+    }
+  }
+  
+  set(value: T): void {
+    try {
+      localStorage.setItem(this.key, JSON.stringify(value));
+    } catch (error) {
+      console.error(`LocalStorage 저장 오류 (${this.key}):`, error);
+      // Handle quota exceeded error
+      if (error instanceof DOMException && error.code === 22) {
+        alert('저장 공간이 부족합니다. 일부 데이터를 삭제해주세요.');
+      }
+    }
+  }
+  
+  remove(): void {
+    localStorage.removeItem(this.key);
+  }
+}
+
+// Usage
+const patientStorage = new TypedStorage<PatientData[]>('eyebottle_patients');
+const patients = patientStorage.get() || [];
+```
+
+### Future Supabase Migration Pattern
+
+```typescript
+// Pattern: Repository pattern for easy migration
+interface DataRepository<T> {
+  getAll(): Promise<T[]>;
+  getById(id: string): Promise<T | null>;
+  create(data: Omit<T, 'id'>): Promise<T>;
+  update(id: string, data: Partial<T>): Promise<T>;
+  delete(id: string): Promise<void>;
+}
+
+// Current: LocalStorage implementation
+class LocalStorageRepository<T extends { id: string }> 
+  implements DataRepository<T> {
+  constructor(private storage: TypedStorage<T[]>) {}
+  
+  async getAll(): Promise<T[]> {
+    return this.storage.get() || [];
+  }
+  
+  // ... other methods
+}
+
+// Future: Supabase implementation
+class SupabaseRepository<T extends { id: string }> 
+  implements DataRepository<T> {
+  constructor(
+    private table: string,
+    private supabase: SupabaseClient
+  ) {}
+  
+  async getAll(): Promise<T[]> {
+    const { data, error } = await this.supabase
+      .from(this.table)
+      .select('*');
+    if (error) throw error;
+    return data || [];
+  }
+  
+  // ... other methods
+}
+```
+
+## 🚀 Performance Optimization Techniques
+
+### 1. React Component Optimization
+
+```tsx
+// Pattern: Memoization for expensive calculations
+import { useMemo, memo } from 'react';
+
+const ExpensiveChart = memo(({ data }: { data: ChartData[] }) => {
+  const processedData = useMemo(() => {
+    // Expensive calculation
+    return data.map(item => ({
+      ...item,
+      calculated: calculateComplexValue(item)
+    }));
+  }, [data]);
+  
+  return <Chart data={processedData} />;
+});
+
+ExpensiveChart.displayName = 'ExpensiveChart';
+```
+
+### 2. Image Optimization
+
+```tsx
+// Pattern: Next.js Image with Korean alt text
+import Image from 'next/image';
+
+<Image
+  src="/lee-eyeclinic-logo.png"
+  alt="이안과 로고"
+  width={120}
+  height={40}
+  priority // for above-the-fold images
+  placeholder="blur"
+  blurDataURL="data:image/png;base64,..." // generate with plaiceholder
+/>
+```
+
+### 3. Bundle Size Optimization
+
+```typescript
+// Pattern: Dynamic imports for large libraries
+const PDFGenerator = dynamic(
+  () => import('@/components/pdf/generator').then(mod => mod.PDFGenerator),
+  { 
+    loading: () => <div>PDF 생성 준비 중...</div>,
+    ssr: false 
+  }
+);
+```
+
+## 🔐 Security Patterns
+
+### 1. Input Sanitization
+
+```typescript
+// Pattern: Medical data sanitization
+function sanitizePatientInput(input: string): string {
+  return input
+    .trim()
+    .replace(/[<>]/g, '') // Remove potential HTML
+    .slice(0, 100); // Limit length
+}
+
+function sanitizeChartNumber(input: string): string {
+  // Allow only alphanumeric and hyphens for Korean chart numbers
+  return input.replace(/[^a-zA-Z0-9가-힣-]/g, '');
+}
+```
+
+### 2. API Security
+
+```typescript
+// app/api/send-email/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  // Rate limiting check
+  const ip = req.headers.get('x-forwarded-for') || 'unknown';
+  const rateLimitKey = `email_${ip}`;
+  
+  // CORS validation
+  const origin = req.headers.get('origin');
+  if (origin && !origin.includes('eyebottle.kr')) {
+    return NextResponse.json(
+      { error: '허용되지 않은 출처입니다.' },
+      { status: 403 }
+    );
+  }
+  
+  // Input validation
+  const body = await req.json();
+  if (!body.email?.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    return NextResponse.json(
+      { error: '올바른 이메일 형식이 아닙니다.' },
+      { status: 400 }
+    );
+  }
+  
+  // Process email...
+}
+```
+
+## 🧪 Testing Patterns
+
+### Component Testing Strategy
+
+```typescript
+// Pattern: Medical component testing
+describe('ExamResultForm', () => {
+  it('should validate Korean date format', () => {
+    render(<ExamResultForm />);
+    const dateInput = screen.getByLabelText('검사일');
+    
+    fireEvent.change(dateInput, { target: { value: '2024/12/25' } });
+    fireEvent.blur(dateInput);
+    
+    expect(screen.getByText('날짜 형식이 올바르지 않습니다.')).toBeInTheDocument();
+  });
+  
+  it('should auto-fill based on risk level', () => {
+    render(<ExamResultForm />);
+    const riskSelect = screen.getByLabelText('위험도');
+    
+    fireEvent.change(riskSelect, { target: { value: '중등도' } });
+    
+    expect(screen.getByLabelText('종합소견')).toHaveValue(
+      expect.stringContaining('중등도 위험')
+    );
+  });
+});
+```
+
+### E2E Testing for Medical Workflows
+
+```typescript
+// Pattern: Full workflow testing
+test('당뇨망막병증 검진 전체 플로우', async ({ page }) => {
+  // 1. Navigate to exam page
+  await page.goto('/exam-results');
+  
+  // 2. Select exam type
+  await page.selectOption('[data-testid="exam-type"]', 'diabetic');
+  
+  // 3. Fill patient information
+  await page.fill('[data-testid="patient-name"]', '테스트환자');
+  await page.fill('[data-testid="birth-date"]', '1980-01-01');
+  
+  // 4. Select diabetic retinopathy stage
+  await page.selectOption('[data-testid="dr-stage-right"]', 'moderate');
+  await page.selectOption('[data-testid="dr-stage-left"]', 'mild');
+  
+  // 5. Verify auto-fill worked
+  const summary = await page.inputValue('[data-testid="summary"]');
+  expect(summary).toContain('중등도 비증식 당뇨망막병증');
+  
+  // 6. Test print preview
+  await page.click('[data-testid="print-button"]');
+  // Verify print dialog opens
+});
+```
+
+## 📝 Documentation Generation Pattern
+
+When creating documentation, follow this structure:
+
+```markdown
+# [Feature Name] - [Korean Name]
+
+## 개요 (Overview)
+[Brief description in Korean]
+
+## 사용 방법 (Usage)
+[Step-by-step instructions with screenshots]
+
+## 기술적 구현 (Technical Implementation)
+[Code snippets and architecture]
+
+## 주의사항 (Important Notes)
+[Warnings and edge cases]
+
+## 문제 해결 (Troubleshooting)
+[Common issues and solutions]
+```
+
+## 🎯 Response Format Guidelines
+
+When answering questions, structure responses as:
+
+1. **Understanding** - Restate the problem in Korean context
+2. **Analysis** - Break down technical requirements
+3. **Solution** - Provide code with explanations
+4. **Verification** - Include test cases or validation steps
+5. **Next Steps** - Suggest improvements or related tasks
+
+Example:
+```
+이해: 검진결과 인쇄 시 레이아웃이 깨지는 문제를 해결하고자 합니다.
+
+분석: 
+- A4 용지 크기 최적화 필요
+- 한글 폰트 렌더링 이슈
+- 페이지 나눔 처리
+
+해결책:
+[code example]
+
+검증:
+- Chrome, Edge에서 인쇄 미리보기 확인
+- 실제 프린터로 테스트
+
+다음 단계:
+- PDF 직접 생성 옵션 추가 고려
+- 인쇄 템플릿 커스터마이징 기능

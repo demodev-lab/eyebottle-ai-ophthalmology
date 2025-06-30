@@ -1,6 +1,6 @@
 // 날짜 관련 상수
 export const DATE_CONSTANTS = {
-  MIN_EXAM_INTERVAL_DAYS: 90,      // 최소 검사 간격
+  MIN_EXAM_INTERVAL_DAYS: 30,      // 최소 검사 간격 (진행률 계산을 위한 최소 일수)
   ACTIVE_PATIENT_DAYS: 180,        // 활성 환자 기준
   RECENT_PATIENT_DAYS: 30,         // 최근 환자 기준
   DAYS_IN_YEAR: 365.25,           // 연간 일수 (윤년 고려)
@@ -60,6 +60,8 @@ export const TREATMENT_COLORS_SOLID: Record<string, string> = {
 export const PROGRESSION_CONSTANTS = {
   MAX_VISITS_FOR_CALCULATION: 10,  // 최대 검사 횟수
   MIN_VISITS_FOR_PROGRESSION: 2,   // 진행률 계산을 위한 최소 검사 횟수
+  HIGH_RELIABILITY_DAYS: 90,       // 높은 신뢰도 기준 (일)
+  MEDIUM_RELIABILITY_DAYS: 60,     // 중간 신뢰도 기준 (일)
 } as const;
 
 // 차트 Y축 범위 상수

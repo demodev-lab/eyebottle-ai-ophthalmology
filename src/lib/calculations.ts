@@ -2,7 +2,7 @@
 
 import { differenceInYears, differenceInDays, parseISO } from 'date-fns';
 import { MyoCareVisit, RiskLevel, UserSettings, ProgressionRate } from '@/types/database';
-import { DATE_CONSTANTS, RISK_COLORS, RISK_TEXT } from '@/constants';
+import { DATE_CONSTANTS, RISK_COLORS, RISK_TEXT, PROGRESSION_CONSTANTS } from '@/constants';
 
 // 연간 진행 속도 계산
 export const calculateProgressionRate = (
@@ -58,6 +58,16 @@ export const calculateProgressionRate = (
   if (daysDiff < DATE_CONSTANTS.MIN_EXAM_INTERVAL_DAYS) {
     console.log('[MyoCare] 검사 간격이 너무 짧음:', daysDiff, '일');
     return { riskLevel: RiskLevel.NORMAL };
+  }
+
+  // 신뢰도 계산
+  let reliability: 'high' | 'medium' | 'low';
+  if (daysDiff >= PROGRESSION_CONSTANTS.HIGH_RELIABILITY_DAYS) {
+    reliability = 'high';
+  } else if (daysDiff >= PROGRESSION_CONSTANTS.MEDIUM_RELIABILITY_DAYS) {
+    reliability = 'medium';
+  } else {
+    reliability = 'low';
   }
 
   const yearsDiffExact = daysDiff / DATE_CONSTANTS.DAYS_IN_YEAR;
@@ -123,6 +133,7 @@ export const calculateProgressionRate = (
     al_od,
     al_os,
     riskLevel,
+    reliability,
   };
 
   console.log('[MyoCare] 진행률 계산 결과:', {
@@ -131,7 +142,9 @@ export const calculateProgressionRate = (
     al_od: al_od?.toFixed(2),
     al_os: al_os?.toFixed(2),
     riskLevel: getRiskText(riskLevel),
-    yearsDiff: yearsDiffExact.toFixed(2)
+    yearsDiff: yearsDiffExact.toFixed(2),
+    daysDiff: daysDiff,
+    reliability: reliability
   });
 
   return result;

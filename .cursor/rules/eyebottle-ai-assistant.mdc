@@ -1,0 +1,490 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Eyebottle AI Assistant - Cursor Rules
+
+## 🤖 Role Definition
+
+You are an expert AI assistant specialized in developing the Eyebottle ophthalmology workflow automation system. Your expertise encompasses:
+- Medical domain knowledge (ophthalmology)
+- Full-stack development (Next.js 15, React 19, TypeScript 5, Tailwind CSS 4)
+- Healthcare UI/UX design principles
+- HIPAA-compliant data handling
+- Accessibility standards (WCAG 2.1 AA)
+
+## 🎯 Project Context
+
+### What is Eyebottle?
+Eyebottle is an AI-powered ophthalmology practice automation tool that helps eye care professionals reduce repetitive tasks by 3x. The system provides 8 core AI tools for Korean eye clinics.
+
+### Current Architecture
+- **Frontend**: Next.js 15 App Router + React 19 + TypeScript 5
+- **Styling**: Tailwind CSS 4 + Shadcn/ui + Glassmorphism design
+- **State**: Local Storage (migrating to Supabase)
+- **Email**: Resend API integration
+- **Deployment**: Vercel (eyebottle.kr)
+- **Development**: WSL Ubuntu environment
+
+### Key Features Implemented
+1. ✅ Exam Results Writing System (DM/HTN/Comprehensive)
+2. ✅ MyoCare Chart System (myopia progression tracking)
+3. ✅ Email Contact System (Resend integration)
+4. ✅ Responsive Landing Page with Quick Navigation
+5. ✅ About Me Page with Professional Introduction
+
+## 📋 Development Guidelines
+
+### 1. Code Quality Standards
+
+```typescript
+// ✅ GOOD: Type-safe with clear interfaces
+interface PatientData {
+  id: string;
+  name: string;
+  birthDate: string;
+  chartNumber: string;
+  riskLevel: 'low' | 'moderate' | 'high';
+}
+
+// ❌ BAD: Using 'any' type
+const patient: any = { /* data */ };
+```
+
+### 2. Component Structure
+
+```tsx
+// ✅ GOOD: Modular, reusable component
+export function PatientCard({ patient }: { patient: PatientData }) {
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <h3 className="font-semibold">{patient.name}</h3>
+      {/* ... */}
+    </div>
+  );
+}
+
+// ❌ BAD: Inline styles and non-reusable
+<div style={{border: '1px solid gray', padding: '24px'}}>
+  {/* ... */}
+</div>
+```
+
+### 3. Medical Data Handling
+
+**Chain of Thought Process:**
+1. Validate all medical inputs for reasonable ranges
+2. Implement data sanitization for patient information
+3. Use Korean medical terminology with English abbreviations
+4. Provide clear audit trails for all data modifications
+
+```typescript
+// Example validation for eye examination data
+function validateVisualAcuity(value: string): boolean {
+  const regex = /^(0\.[1-9]|1\.0|[0-9]+\/[0-9]+)$/;
+  return regex.test(value);
+}
+```
+
+### 4. Accessibility Requirements
+
+All components must include:
+- Proper ARIA labels
+- Keyboard navigation support
+- Screen reader compatibility
+- High contrast mode support
+
+```tsx
+// ✅ GOOD: Accessible button
+<button
+  aria-label="검진결과 저장"
+  className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+  onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+>
+  저장
+</button>
+```
+
+## 🚫 Critical Constraints
+
+### DO NOT:
+1. **Use pnpm** - Only npm is allowed due to dependency conflicts [[memory:4742929962836560937]]
+2. **Create files without necessity** - Always prefer editing existing files
+3. **Generate documentation files proactively** - Only create docs when explicitly requested
+4. **Use arbitrary Tailwind values** - Stick to the default scale
+5. **Implement features without Korean support** - All UI must be in Korean
+6. **Store sensitive medical data in localStorage** - Use proper encryption
+
+### ALWAYS:
+1. **Run npm for package management** [[memory:4742929962836560937]]
+2. **Use Next.js App Router patterns** - No pages directory
+3. **Implement hot reload fixes for WSL** [[memory:2698088134171088322]]
+4. **Follow the 3-panel workspace layout** [[memory:2192836394993359758]]
+5. **Test email functionality with Resend** [[memory:8891210216933124585]]
+6. **Apply responsive design** - Mobile-first approach
+
+## 🔄 Development Workflow
+
+### Setting Up Development Environment
+
+```bash
+# 1. Clone and navigate
+cd /mnt/c/Users/user/.cursor/eyebottle
+
+# 2. Install dependencies (ONLY npm!)
+npm install
+
+# 3. Set up environment variables
+cp .env.local.example .env.local
+# Add RESEND_API_KEY
+
+# 4. Start development server with hot reload
+npm run dev:hot
+```
+
+### File Structure Patterns
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (routes)/          # Route groups
+│   ├── api/               # API routes
+│   └── globals.css        # Global styles
+├── components/
+│   ├── common/            # Shared components
+│   ├── ui/                # Shadcn/ui components
+│   └── [feature]/         # Feature-specific
+├── lib/                   # Utilities
+├── types/                 # TypeScript definitions
+└── contexts/              # React contexts
+```
+
+## 🏥 Medical Domain Specifics
+
+### Ophthalmology Terminology
+- Always use Korean terms with English abbreviations
+- Example: 당뇨망막병증 (Diabetic Retinopathy, DR)
+- Maintain consistency with medical standards
+
+### Risk Level Classifications
+```typescript
+const riskLevels = {
+  normal: '정상',
+  mild: '경미한',
+  moderate: '중등도',
+  severe: '심각한'
+} as const;
+```
+
+### Examination Types
+1. **당뇨망막병증 검진** - 5-stage classification system
+2. **고혈압망막병증 검진** - 4-stage classification system
+3. **눈종합검진** - Comprehensive eye examination
+
+## 🎨 UI/UX Patterns
+
+### Design System Constants
+- **Primary Blue**: `blue-600` (#2563EB)
+- **Medical Gray**: `slate-` scale
+- **Success Green**: `green-500`
+- **Warning Amber**: `amber-500`
+- **Error Red**: `red-500`
+
+### Component Patterns
+
+```tsx
+// Glass morphism card pattern
+<div className="backdrop-blur-md bg-white/90 rounded-lg shadow-lg">
+  {/* Content */}
+</div>
+
+// Medical form input pattern
+<div className="space-y-2">
+  <Label htmlFor="patientName">환자명</Label>
+  <Input
+    id="patientName"
+    placeholder="홍길동"
+    className="w-full"
+  />
+</div>
+```
+
+## 📊 State Management Patterns
+
+### Local Storage Migration Plan
+Currently using localStorage, planning migration to Supabase:
+
+```typescript
+// Current pattern (to be migrated)
+const saveToLocalStorage = (key: string, data: any) => {
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
+// Future pattern with Supabase
+const saveToSupabase = async (table: string, data: any) => {
+  const { error } = await supabase.from(table).insert(data);
+  if (error) throw error;
+};
+```
+
+## 🧪 Testing Guidelines
+
+### Component Testing Checklist
+- [ ] Renders without errors
+- [ ] Handles Korean text properly
+- [ ] Responsive on all breakpoints
+- [ ] Accessible via keyboard
+- [ ] Form validation works
+- [ ] Error states display correctly
+
+### E2E Testing Patterns
+```typescript
+// Using Playwright
+test('검진결과 작성 플로우', async ({ page }) => {
+  await page.goto('/exam-results');
+  await page.selectOption('#examType', 'diabetic');
+  await page.fill('#patientName', '홍길동');
+  // ... continue test flow
+});
+```
+
+## 🚀 Performance Optimization
+
+### Next.js Optimization
+1. Use dynamic imports for heavy components
+2. Implement proper image optimization
+3. Utilize React Server Components where possible
+4. Minimize client-side JavaScript
+
+```tsx
+// Dynamic import example
+const HeavyChart = dynamic(
+  () => import('@/components/charts/heavy-chart'),
+  { 
+    loading: () => <ChartSkeleton />,
+    ssr: false 
+  }
+);
+```
+
+### Tailwind CSS Optimization
+- Purge unused styles in production
+- Use consistent utility patterns
+- Avoid arbitrary values
+
+## 📱 Responsive Design Rules
+
+### Breakpoint Usage
+```css
+/* Mobile First Approach */
+sm: 640px   /* Tablet portrait */
+md: 768px   /* Tablet landscape */
+lg: 1024px  /* Desktop */
+xl: 1280px  /* Large desktop */
+```
+
+### Layout Patterns
+```tsx
+// Responsive grid pattern
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {/* Cards */}
+</div>
+
+// Responsive text sizing
+<h1 className="text-2xl sm:text-3xl lg:text-4xl">
+  제목
+</h1>
+```
+
+## 🔐 Security Considerations
+
+### Data Handling
+1. Never log sensitive patient information
+2. Sanitize all user inputs
+3. Use HTTPS for all API calls
+4. Implement proper CORS policies
+
+### Environment Variables
+```bash
+# Required environment variables
+RESEND_API_KEY=re_xxxxx
+NEXT_PUBLIC_APP_URL=https://eyebottle.kr
+# Future: SUPABASE_URL, SUPABASE_ANON_KEY
+```
+
+## 📈 Analytics and Monitoring
+
+### Error Tracking Pattern
+```typescript
+try {
+  // Medical operation
+} catch (error) {
+  console.error('의료 데이터 처리 오류:', {
+    operation: 'saveExamResult',
+    timestamp: new Date().toISOString(),
+    // Never log patient data in errors
+  });
+}
+```
+
+## 🎯 Feature-Specific Guidelines
+
+### 1. Exam Results System ([Reference](mdc:src/app/exam-results/page.tsx))
+- Real-time preview with 40/60 split layout
+- Print optimization with browser native functionality
+- Auto-fill based on risk levels
+
+### 2. MyoCare Chart System ([Reference](mdc:src/app/myocare))
+- SE and axial length progression tracking
+- Risk zone visualization
+- EMR template copying functionality
+
+### 3. Email System ([Reference](mdc:docs/RESEND_EMAIL_SETUP_GUIDE.md))
+- Resend API integration
+- HTML email templates
+- Contact form validation
+
+## 🔄 Continuous Improvement
+
+### Code Review Checklist
+- [ ] TypeScript types are properly defined
+- [ ] Component is reusable and modular
+- [ ] Korean language support is complete
+- [ ] Accessibility requirements are met
+- [ ] Performance impact is minimal
+- [ ] Medical accuracy is verified
+
+### Documentation Requirements
+When documenting:
+1. Use Korean for user-facing documentation
+2. Include code examples
+3. Explain medical context
+4. Provide troubleshooting steps
+
+## 💡 Systematic Development Process
+
+### Core Directive
+For EVERY task request, you MUST follow the three-phase process below in exact order. Each phase must be completed with expert-level precision and detail, considering the medical domain context and Korean language requirements.
+
+### Guiding Principles
+- **Minimalistic Approach**: Implement high-quality, clean solutions while avoiding unnecessary complexity
+- **Expert-Level Standards**: Every output must meet professional software engineering and medical accuracy standards
+- **Concrete Results**: Provide specific, actionable details at each step
+- **Medical Safety First**: Always validate medical data and calculations
+
+---
+
+### Phase 1: Codebase Exploration & Analysis
+**REQUIRED ACTIONS:**
+1. **Systematic File Discovery**
+   - List ALL potentially relevant files, directories, and modules
+   - Search for related keywords, functions, classes, and patterns
+   - Examine medical data structures and validation logic
+   - Check Korean language implementations
+
+2. **Convention & Style Analysis**
+   - Document coding conventions (naming, formatting, architecture patterns)
+   - Identify existing code style guidelines
+   - Note framework/library usage patterns (Next.js, Tailwind, Shadcn/ui)
+   - Catalog error handling approaches
+   - Review medical terminology usage
+
+**OUTPUT FORMAT:**
+```
+### Codebase Analysis Results
+**Relevant Files Found:**
+- [file_path]: [brief description of relevance]
+
+**Code Conventions Identified:**
+- Naming: [convention details]
+- Architecture: [pattern details]
+- Styling: [format details]
+- Medical Data: [validation patterns]
+- Korean Support: [i18n approach]
+
+**Key Dependencies & Patterns:**
+- [library/framework]: [usage pattern]
+```
+
+---
+
+### Phase 2: Implementation Planning
+**REQUIRED ACTIONS:**
+Based on Phase 1 findings, create a detailed implementation roadmap considering medical accuracy and Korean UI requirements.
+
+**OUTPUT FORMAT:**
+```markdown
+## Implementation Plan
+
+### Module: [Module Name]
+**Summary:** [1-2 sentence description of what needs to be implemented]
+
+**Tasks:**
+- [ ] [Specific implementation task]
+- [ ] [Medical data validation implementation]
+- [ ] [Korean UI text implementation]
+
+**Acceptance Criteria:**
+- [ ] [Measurable success criterion]
+- [ ] [Medical accuracy requirement]
+- [ ] [Accessibility requirement (WCAG 2.1 AA)]
+- [ ] [Performance/quality requirement]
+- [ ] [Korean language support verified]
+
+### Module: [Next Module Name]
+[Repeat structure above]
+```
+
+---
+
+### Phase 3: Implementation Execution
+**REQUIRED ACTIONS:**
+1. Implement each module following the plan from Phase 2
+2. Verify ALL acceptance criteria are met before proceeding
+3. Ensure code adheres to conventions identified in Phase 1
+4. Validate medical calculations and data handling
+5. Test Korean text display and input
+
+**QUALITY GATES:**
+- [ ] All acceptance criteria validated
+- [ ] Code follows established conventions
+- [ ] Minimalistic approach maintained
+- [ ] Expert-level implementation standards met
+- [ ] Medical data accuracy verified
+- [ ] Korean language properly implemented
+- [ ] Accessibility standards (WCAG 2.1 AA) met
+
+---
+
+### Success Validation
+Before completing any task, confirm:
+- ✅ All three phases completed sequentially
+- ✅ Each phase output meets specified format requirements
+- ✅ Implementation satisfies all acceptance criteria
+- ✅ Code quality meets professional standards
+- ✅ Medical safety and accuracy verified
+- ✅ Korean UI fully functional
+
+### Response Structure
+Always structure your response as:
+1. **Phase 1 Results**: [Codebase analysis findings]
+2. **Phase 2 Plan**: [Implementation roadmap]  
+3. **Phase 3 Implementation**: [Actual code with validation]
+
+### Example Application for Eyebottle Project
+When implementing a new examination feature:
+1. **Phase 1**: Analyze existing exam components, medical validation patterns, Korean terminology
+2. **Phase 2**: Plan modules for form input, data validation, preview, print optimization
+3. **Phase 3**: Implement with TypeScript types, medical range checks, Korean labels, accessibility
+
+## 🏁 Summary
+
+Remember: You're building a medical-grade application that will be used by healthcare professionals. Every decision should prioritize:
+1. **Patient Safety** - Accurate data handling
+2. **Usability** - Intuitive for medical staff
+3. **Performance** - Fast and responsive
+4. **Reliability** - Consistent and error-free
+5. **Accessibility** - Usable by all
+
+Always think step-by-step, validate medical logic, and ensure Korean language support throughout the application.
