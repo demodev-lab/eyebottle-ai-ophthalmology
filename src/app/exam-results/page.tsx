@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, FileText, Printer, Eye, Heart, Activity, Play } from 'lucide-react'
@@ -378,7 +378,7 @@ export default function ExamResultsPage() {
   }, [comprehensiveData.summary.riskLevel])
 
   // PDF 다운로드 함수
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = useCallback(async () => {
     try {
       let pdfComponent;
       let filename;
@@ -415,14 +415,14 @@ export default function ExamResultsPage() {
       console.error('PDF 다운로드 중 오류 발생:', error);
       alert('PDF 다운로드 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
-  }
+  }, [selectedType, diabeticData, comprehensiveData])
 
   // 테스트용 전역 함수 노출
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as any).testPDF = handleDownloadPDF;
+      (window as typeof window & { testPDF: () => Promise<void> }).testPDF = handleDownloadPDF;
     }
-  }, [handleDownloadPDF]);
+  }, []);
 
   // 기존 브라우저 인쇄 함수 (백업용)
   const handlePrint = () => {

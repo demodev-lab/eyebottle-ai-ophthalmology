@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,12 +47,19 @@ export default function PatientsPage() {
   const [showNewPatientModal, setShowNewPatientModal] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
 
-  useEffect(() => {
-    loadPatients();
-  }, []);
+  const filterPatients = useCallback(() => {
+    if (!searchTerm) {
+      setFilteredPatients(patients);
+      return;
+    }
 
-  useEffect(() => {
-    filterPatients();
+    const term = searchTerm.toLowerCase();
+    const filtered = patients.filter(
+      patient =>
+        patient.name.toLowerCase().includes(term) ||
+        (patient.chart_number && patient.chart_number.toLowerCase().includes(term))
+    );
+    setFilteredPatients(filtered);
   }, [searchTerm, patients]);
 
   const loadPatients = async () => {
@@ -73,20 +80,13 @@ export default function PatientsPage() {
     }
   };
 
-  const filterPatients = () => {
-    if (!searchTerm) {
-      setFilteredPatients(patients);
-      return;
-    }
+  useEffect(() => {
+    loadPatients();
+  }, []);
 
-    const term = searchTerm.toLowerCase();
-    const filtered = patients.filter(
-      patient =>
-        patient.name.toLowerCase().includes(term) ||
-        (patient.chart_number && patient.chart_number.toLowerCase().includes(term))
-    );
-    setFilteredPatients(filtered);
-  };
+  useEffect(() => {
+    filterPatients();
+  }, [searchTerm, patients, filterPatients]);
 
   const getPatientRiskInfo = (patient: Patient) => {
     const visits = getVisits(patient.id);

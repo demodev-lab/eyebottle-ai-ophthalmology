@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
 interface MenuItem {
   name: string;
   href: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   description: string;
   status?: 'active' | 'beta' | 'coming-soon';
 }

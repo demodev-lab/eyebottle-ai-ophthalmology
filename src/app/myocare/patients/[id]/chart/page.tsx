@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ import {
   getRiskText 
 } from '@/lib/calculations';
 import { ArrowLeft, Edit2, Trash2, Save, X, Printer, FileText, Plus } from 'lucide-react';
-import { TREATMENT_COLORS, TREATMENT_COLORS_SOLID, PRINT_CONSTANTS } from '@/constants';
+import { TREATMENT_COLORS_SOLID, PRINT_CONSTANTS } from '@/constants';
 import { TreatmentArea } from '@/types/chart-props';
 import {
   LineChart,
@@ -96,11 +96,7 @@ export default function PatientChartPage() {
   }>({});
   const [copyButtonText, setCopyButtonText] = useState('EMR 복사');
 
-  useEffect(() => {
-    loadPatientData();
-  }, [patientId]);
-
-  const loadPatientData = async () => {
+  const loadPatientData = useCallback(async () => {
     try {
       console.log('[MyoCare Chart] 환자 데이터 로딩 시작:', patientId);
       
@@ -132,7 +128,11 @@ export default function PatientChartPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [patientId]);
+
+  useEffect(() => {
+    loadPatientData();
+  }, [patientId, loadPatientData]);
 
   const handleEdit = (visit: MyoCareVisit) => {
     setEditingVisitId(visit.id);

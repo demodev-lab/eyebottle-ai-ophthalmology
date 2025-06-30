@@ -134,7 +134,29 @@ const styles = StyleSheet.create({
 });
 
 // 당뇨망막병증 PDF
-export const DiabeticReportPDF = ({ data }: { data: any }) => (
+interface DiabeticReportData {
+  name: string;
+  examDate: string;
+  birthDate: string;
+  summary: {
+    stage: string;
+    followUp: string;
+  };
+  vision: {
+    od: { naked: string; corrected: string };
+    os: { naked: string; corrected: string };
+  };
+  iop: {
+    od: string;
+    os: string;
+  };
+  fundus: {
+    od: { stage: string; additional: string };
+    os: { stage: string; additional: string };
+  };
+}
+
+export const DiabeticReportPDF = ({ data }: { data: DiabeticReportData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* 헤더 */}
@@ -172,7 +194,7 @@ export const DiabeticReportPDF = ({ data }: { data: any }) => (
           <Text>검사일: {data.examDate}</Text>
         </View>
         <View style={styles.patientItem}>
-          <Text>판독의: {data.doctorName}</Text>
+          <Text>판독의: 이안과의원</Text>
         </View>
       </View>
 
@@ -265,7 +287,30 @@ export const DiabeticReportPDF = ({ data }: { data: any }) => (
 );
 
 // 고혈압망막병증 PDF
-export const HypertensionReportPDF = ({ data }: { data: any }) => (
+interface HypertensionReportData {
+  name: string;
+  examDate: string;
+  birthDate: string;
+  summary: {
+    stage: string;
+    bloodPressureTarget: string;
+    followUp: string;
+  };
+  fundus: {
+    od: { stage: string; additional: string };
+    os: { stage: string; additional: string };
+  };
+  vision: {
+    od: { naked: string; corrected: string };
+    os: { naked: string; corrected: string };
+  };
+  iop: {
+    od: string;
+    os: string;
+  };
+}
+
+export const HypertensionReportPDF = ({ data }: { data: HypertensionReportData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* 헤더 */}
@@ -303,7 +348,7 @@ export const HypertensionReportPDF = ({ data }: { data: any }) => (
           <Text>검사일: {data.examDate}</Text>
         </View>
         <View style={styles.patientItem}>
-          <Text>판독의: {data.doctorName}</Text>
+          <Text>판독의: 이안과의원</Text>
         </View>
       </View>
 
@@ -396,7 +441,39 @@ export const HypertensionReportPDF = ({ data }: { data: any }) => (
 );
 
 // 종합검사 PDF
-export const ComprehensiveReportPDF = ({ data }: { data: any }) => (
+interface ComprehensiveReportData {
+  name: string;
+  examDate: string;
+  birthDate: string;
+  summary: {
+    riskLevel: string;
+    mainFindings: string;
+    followUp: string;
+    comprehensiveFinding: string;
+  };
+  vision: {
+    od: { naked: string; corrected: string };
+    os: { naked: string; corrected: string };
+  };
+  iop: {
+    od: string;
+    os: string;
+  };
+  basicExam: {
+    refraction: string;
+    externalEye: string;
+    lens: string;
+    fundus: string;
+  };
+  detailedExam: {
+    topography: string;
+    oct: string;
+    visualField: string;
+    sono: string;
+  };
+}
+
+export const ComprehensiveReportPDF = ({ data }: { data: ComprehensiveReportData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* 헤더 */}
@@ -434,7 +511,7 @@ export const ComprehensiveReportPDF = ({ data }: { data: any }) => (
           <Text>검사기관: 이안과의원</Text>
         </View>
         <View style={styles.patientItem}>
-          <Text>판독의: {data.doctorName}</Text>
+          <Text>판독의: 이안과의원</Text>
         </View>
       </View>
 

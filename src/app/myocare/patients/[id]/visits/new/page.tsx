@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,11 +51,7 @@ export default function NewVisitPage() {
     formData.os_cylinder ? parseFloat(formData.os_cylinder) : undefined
   );
 
-  useEffect(() => {
-    loadPatient();
-  }, [patientId]);
-
-  const loadPatient = async () => {
+  const loadPatient = useCallback(async () => {
     try {
       const patientData = getPatientById(patientId);
       if (!patientData) {
@@ -85,7 +81,11 @@ export default function NewVisitPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [patientId, router]);
+
+  useEffect(() => {
+    loadPatient();
+  }, [patientId, loadPatient]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
