@@ -34,26 +34,26 @@ export const RISK_TEXT = {
 
 // 치료방법별 색상 (차트 배경용)
 export const TREATMENT_COLORS: Record<string, string> = {
-  atropine_0_042: 'rgba(33, 150, 243, 0.45)',    // #2196f3 with 45% opacity
-  atropine_0_05: 'rgba(25, 118, 210, 0.45)',     // #1976d2 with 45% opacity
-  atropine_0_063: 'rgba(21, 101, 192, 0.45)',    // #1565c0 with 45% opacity
-  atropine_0_125: 'rgba(13, 71, 161, 0.45)',     // #0d47a1 with 45% opacity
-  dream_lens: 'rgba(233, 30, 99, 0.45)',         // #e91e63 with 45% opacity
-  myosight: 'rgba(194, 24, 91, 0.45)',           // #c2185b with 45% opacity
-  dims_glasses: 'rgba(76, 175, 80, 0.45)',       // #4caf50 with 45% opacity
-  combined: 'rgba(255, 152, 0, 0.45)',           // #ff9800 with 45% opacity
+  'atropine_0.042': 'rgba(33, 150, 243, 0.3)',    // #2196f3 with 30% opacity
+  'atropine_0.05': 'rgba(25, 118, 210, 0.3)',     // #1976d2 with 30% opacity
+  'atropine_0.063': 'rgba(21, 101, 192, 0.3)',    // #1565c0 with 30% opacity
+  'atropine_0.125': 'rgba(13, 71, 161, 0.3)',     // #0d47a1 with 30% opacity
+  'dream_lens': 'rgba(233, 30, 99, 0.3)',         // #e91e63 with 30% opacity
+  'myosight': 'rgba(194, 24, 91, 0.3)',           // #c2185b with 30% opacity
+  'dims_glasses': 'rgba(76, 175, 80, 0.3)',       // #4caf50 with 30% opacity
+  'combined': 'rgba(255, 152, 0, 0.3)',           // #ff9800 with 30% opacity
 };
 
 // 치료방법별 진한 색상 (범례용)
 export const TREATMENT_COLORS_SOLID: Record<string, string> = {
-  atropine_0_042: '#2196f3',
-  atropine_0_05: '#1976d2',
-  atropine_0_063: '#1565c0',
-  atropine_0_125: '#0d47a1',
-  dream_lens: '#e91e63',
-  myosight: '#c2185b',
-  dims_glasses: '#4caf50',
-  combined: '#ff9800',
+  'atropine_0.042': '#2196f3',
+  'atropine_0.05': '#1976d2',
+  'atropine_0.063': '#1565c0',
+  'atropine_0.125': '#0d47a1',
+  'dream_lens': '#e91e63',
+  'myosight': '#c2185b',
+  'dims_glasses': '#4caf50',
+  'combined': '#ff9800',
 };
 
 // 진행률 계산 관련 상수

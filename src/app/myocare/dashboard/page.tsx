@@ -20,8 +20,8 @@ import {
   TREATMENT_METHOD_LABELS,
   TreatmentMethod
 } from '@/types/database';
-import { Users, AlertTriangle, Activity, UserPlus, TrendingUp, Calendar } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Users, AlertTriangle, Activity, CheckCircle } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
@@ -59,8 +59,10 @@ export default function DashboardPage() {
       patients.forEach((patient) => {
         // 최근 방문 기록으로 위험도 계산
         const visits = getVisits(patient.id);
-        if (visits.length > 0) {
-          const progression = calculateProgressionRate(visits, settings);
+        if (visits.length >= 2) {
+          // 최근 2개 방문만 사용하여 진행률 계산 (오래된 순으로)
+          const recentVisits = visits.slice(0, 2).reverse();
+          const progression = calculateProgressionRate(recentVisits, settings);
           
           if (progression.riskLevel === RiskLevel.RED) {
             highRisk++;
@@ -68,7 +70,10 @@ export default function DashboardPage() {
             mediumRisk++;
           }
 
-          // 활성 환자 확인
+        }
+        
+        // 활성 환자 확인 (방문 기록이 있는 경우)
+        if (visits.length > 0) {
           if (isActivePatient(visits[0].visit_date)) {
             active++;
           }
@@ -110,151 +115,99 @@ export default function DashboardPage() {
     );
   }
 
+  const normalPatients = stats.totalPatients - stats.highRiskPatients - stats.mediumRiskPatients;
+
+  // 위험도 분포 데이터
+  const riskDistributionData = [
+    { name: '고위험', value: stats.highRiskPatients, color: '#ef4444' },
+    { name: '중위험', value: stats.mediumRiskPatients, color: '#eab308' },
+    { name: '정상', value: normalPatients, color: '#22c55e' },
+  ].filter(item => item.value > 0);
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <h1 className="text-4xl font-bold text-slate-800">대시보드</h1>
-          <p className="text-lg text-slate-600 mt-1">근시케어 현황을 한눈에 확인하세요</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-slate-500">마지막 업데이트</p>
-          <p className="text-lg font-medium text-slate-700">{new Date().toLocaleDateString('ko-KR')}</p>
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-800">MyoCare 대시보드</h1>
+        <p className="text-sm text-slate-500">{new Date().toLocaleDateString('ko-KR')} 기준</p>
       </div>
       
-      {/* 상단 통계 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base font-semibold text-slate-700">전체 환자</CardTitle>
-            <div className="p-3 bg-blue-600 rounded-xl shadow-sm">
-              <Users className="h-6 w-6 text-white" />
+      {/* 상단 통계 카드 - 5개를 한 줄에 */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <Card className="border-0 shadow-sm bg-blue-50 hover:shadow-md transition-shadow">
+          <CardHeader className="p-3 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-600">전체</CardTitle>
+              <Users className="h-4 w-4 text-blue-600" />
             </div>
           </CardHeader>
-          <CardContent className="pt-3">
-            <div className="text-4xl font-bold text-slate-900">{stats.totalPatients}</div>
-            <p className="text-base text-slate-600 mt-2">등록된 환자 수</p>
-            <div className="mt-4 pt-4 border-t border-blue-100">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">지난달 대비</span>
-                <span className="font-medium text-blue-600">+12%</span>
-              </div>
-            </div>
+          <CardContent className="p-3 pt-0">
+            <div className="text-2xl font-bold text-slate-900">{stats.totalPatients}</div>
+            <p className="text-xs text-slate-500">환자</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md bg-gradient-to-br from-red-50 to-pink-50 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base font-semibold text-slate-700">고위험 환자</CardTitle>
-            <div className="p-3 bg-red-500 rounded-xl shadow-sm animate-pulse">
-              <AlertTriangle className="h-6 w-6 text-white" />
+        <Card className="border-0 shadow-sm bg-red-50 hover:shadow-md transition-shadow">
+          <CardHeader className="p-3 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-600">고위험</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-red-600" />
             </div>
           </CardHeader>
-          <CardContent className="pt-3">
-            <div className="text-4xl font-bold text-red-600">{stats.highRiskPatients}</div>
-            <p className="text-base text-slate-600 mt-2">즉시 관리 필요</p>
-            <div className="mt-4 pt-4 border-t border-red-100">
-              <p className="text-sm text-red-700 font-medium">※ AL 진행속도 &gt; 0.6mm/yr</p>
-            </div>
+          <CardContent className="p-3 pt-0">
+            <div className="text-2xl font-bold text-red-600">{stats.highRiskPatients}</div>
+            <p className="text-xs text-slate-500">&gt;0.6mm/yr</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md bg-gradient-to-br from-yellow-50 to-amber-50 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base font-semibold text-slate-700">중위험 환자</CardTitle>
-            <div className="p-3 bg-yellow-500 rounded-xl shadow-sm">
-              <AlertTriangle className="h-6 w-6 text-white" />
+        <Card className="border-0 shadow-sm bg-yellow-50 hover:shadow-md transition-shadow">
+          <CardHeader className="p-3 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-600">중위험</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
             </div>
           </CardHeader>
-          <CardContent className="pt-3">
-            <div className="text-4xl font-bold text-yellow-600">{stats.mediumRiskPatients}</div>
-            <p className="text-base text-slate-600 mt-2">주의 관찰 필요</p>
-            <div className="mt-4 pt-4 border-t border-yellow-100">
-              <p className="text-sm text-yellow-700 font-medium">※ AL 진행속도 &gt; 0.3mm/yr</p>
+          <CardContent className="p-3 pt-0">
+            <div className="text-2xl font-bold text-yellow-600">{stats.mediumRiskPatients}</div>
+            <p className="text-xs text-slate-500">&gt;0.3mm/yr</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-sm bg-green-50 hover:shadow-md transition-shadow">
+          <CardHeader className="p-3 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-600">정상</CardTitle>
+              <CheckCircle className="h-4 w-4 text-green-600" />
             </div>
+          </CardHeader>
+          <CardContent className="p-3 pt-0">
+            <div className="text-2xl font-bold text-green-600">{normalPatients}</div>
+            <p className="text-xs text-slate-500">≤0.3mm/yr</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-sm bg-purple-50 hover:shadow-md transition-shadow">
+          <CardHeader className="p-3 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-600">활성</CardTitle>
+              <Activity className="h-4 w-4 text-purple-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="p-3 pt-0">
+            <div className="text-2xl font-bold text-purple-600">{stats.activePatients}</div>
+            <p className="text-xs text-slate-500">6개월내</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* 중단 정보 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg font-semibold text-slate-800">활성 환자</CardTitle>
-                <p className="text-sm text-slate-600 mt-1">최근 6개월 이내 방문</p>
-              </div>
-              <div className="p-3 bg-green-100 rounded-xl">
-                <Activity className="h-6 w-6 text-green-700" />
-              </div>
-            </div>
+      {/* 하단 차트 섹션 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* 치료방법 분포 */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="p-4">
+            <CardTitle className="text-lg font-semibold text-slate-800">치료방법 분포</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline space-x-3">
-              <span className="text-5xl font-bold text-slate-900">{stats.activePatients}</span>
-              <span className="text-xl text-slate-500">명</span>
-            </div>
-            <div className="mt-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-slate-600">전체 대비 비율</span>
-                <span className="text-sm font-medium text-slate-800">
-                  {stats.totalPatients > 0 ? 
-                    `${Math.round((stats.activePatients / stats.totalPatients) * 100)}%` : '0%'}
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-green-600 h-2 rounded-full transition-all duration-500"
-                  style={{ 
-                    width: stats.totalPatients > 0 ? 
-                      `${Math.round((stats.activePatients / stats.totalPatients) * 100)}%` : '0%' 
-                  }}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg font-semibold text-slate-800">신규 등록</CardTitle>
-                <p className="text-sm text-slate-600 mt-1">최근 30일 내</p>
-              </div>
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <UserPlus className="h-6 w-6 text-purple-700" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline space-x-3">
-              <span className="text-5xl font-bold text-slate-900">{stats.recentPatients}</span>
-              <span className="text-xl text-slate-500">명</span>
-            </div>
-            <div className="mt-4 flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              <span className="text-sm font-medium text-green-600">지난달 대비 +23%</span>
-            </div>
-            <div className="mt-3 flex items-center text-sm text-slate-600">
-              <Calendar className="h-4 w-4 mr-1" />
-              <span>일평균 {Math.round(stats.recentPatients / 30 * 10) / 10}명 등록</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 치료방법 분포 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-slate-800">치료방법 분포</CardTitle>
-            <p className="text-base text-slate-600">현재 진행 중인 치료방법별 환자 현황</p>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
+          <CardContent className="p-4 pt-0">
+            <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -276,10 +229,8 @@ export default function DashboardPage() {
                       }))}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={(entry) => `${entry.value}명`}
-                    outerRadius={80}
-                    fill="#8884d8"
+                    innerRadius={40}
+                    outerRadius={70}
                     dataKey="value"
                   >
                     {Object.entries(stats.treatmentDistribution)
@@ -298,11 +249,16 @@ export default function DashboardPage() {
                         return <Cell key={`cell-${index}`} fill={colors[key as keyof typeof colors] || '#6b7280'} />
                       })}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip formatter={(value) => `${value}명`} />
                   <Legend 
-                    verticalAlign="bottom" 
-                    height={36}
-                    formatter={(value) => <span className="text-sm">{value}</span>}
+                    verticalAlign="middle" 
+                    align="right"
+                    layout="vertical"
+                    iconSize={10}
+                    wrapperStyle={{
+                      fontSize: '12px',
+                      paddingLeft: '10px'
+                    }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -310,42 +266,56 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-slate-800">치료방법별 상세</CardTitle>
-            <p className="text-base text-slate-600">각 치료방법의 환자 수</p>
+        {/* 위험도 분포 */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="p-4">
+            <CardTitle className="text-lg font-semibold text-slate-800">위험도 분포</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {Object.entries(TREATMENT_METHOD_LABELS).map(([key, label]) => {
-                const count = stats.treatmentDistribution[key as TreatmentMethod] || 0;
-                const total = Object.values(stats.treatmentDistribution).reduce((sum, val) => sum + val, 0);
-                const percentage = total > 0 ? (count / total * 100).toFixed(1) : '0';
-                const colors = {
-                  'atropine_0.042': 'bg-blue-500',
-                  'atropine_0.05': 'bg-blue-600',
-                  'atropine_0.063': 'bg-indigo-500',
-                  'atropine_0.125': 'bg-indigo-600',
-                  'dream_lens': 'bg-purple-500',
-                  'myosight': 'bg-orange-500',
-                  'dims_glasses': 'bg-green-500',
-                  'combined': 'bg-teal-500',
-                };
-                const bgColor = colors[key as TreatmentMethod] || 'bg-gray-500';
-                
-                return (
-                  <div key={key} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 ${bgColor} rounded-full`} />
-                      <span className="text-base font-medium text-slate-700">{label}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <span className="text-lg font-bold text-slate-900">{count}명</span>
-                      <span className="text-sm text-slate-500">({percentage}%)</span>
-                    </div>
-                  </div>
-                );
-              })}
+          <CardContent className="p-4 pt-0">
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={riskDistributionData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={70}
+                    dataKey="value"
+                  >
+                    {riskDistributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value}명`} />
+                  <Legend 
+                    verticalAlign="middle" 
+                    align="right"
+                    layout="vertical"
+                    iconSize={10}
+                    wrapperStyle={{
+                      fontSize: '12px',
+                      paddingLeft: '10px'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-3 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-600">고위험 비율</span>
+                <span className="font-medium text-red-600">
+                  {stats.totalPatients > 0 ? 
+                    `${Math.round((stats.highRiskPatients / stats.totalPatients) * 100)}%` : '0%'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-600">중위험 비율</span>
+                <span className="font-medium text-yellow-600">
+                  {stats.totalPatients > 0 ? 
+                    `${Math.round((stats.mediumRiskPatients / stats.totalPatients) * 100)}%` : '0%'}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>

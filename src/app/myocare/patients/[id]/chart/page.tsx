@@ -35,7 +35,6 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-  ReferenceArea,
 } from 'recharts';
 
 
@@ -322,47 +321,69 @@ export default function PatientChartPage() {
     }
   };
 
+  // hex 색상을 rgba로 변환하는 헬퍼 함수
+  const hexToRgba = (hex: string, opacity: number): string => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+      `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : 
+      hex;
+  };
+
   // 치료 구간 계산
   const getTreatmentAreas = (): TreatmentArea[] => {
     const areas: TreatmentArea[] = [];
-    if (visits.length < 2 || !patient) return areas;
+    if (visits.length < 1 || !patient) return areas;
     
     console.log('[MyoCare Chart] 치료 구간 계산 시작:', {
       visitsCount: visits.length,
       patient: patient.name,
-      treatments: visits.map(v => ({ date: v.visit_date, method: v.treatment_method }))
+      patientTreatment: patient.treatment_method,
+      treatments: visits.map(v => ({ 
+        date: v.visit_date, 
+        method: v.treatment_method,
+        hasMethod: !!v.treatment_method 
+      }))
     });
 
     for (let i = 0; i < visits.length - 1; i++) {
       const currentVisit = visits[i];
       const nextVisit = visits[i + 1];
       
-      if (currentVisit.treatment_method) {
+      // 치료방법이 없으면 환자의 기본 치료방법 사용
+      const treatmentMethod = currentVisit.treatment_method || patient.treatment_method;
+      
+      if (treatmentMethod) {
         const startAge = calculateAge(patient.birth_date, currentVisit.visit_date);
         const endAge = calculateAge(patient.birth_date, nextVisit.visit_date);
+        
+        const settings = getUserSettings();
+        const treatmentColor = settings.treatmentColors[treatmentMethod as TreatmentMethod];
+        const fillColor = treatmentColor ? hexToRgba(treatmentColor, 0.3) : 'rgba(240, 240, 240, 0.3)';
         
         areas.push({
           x1: startAge,
           x2: endAge,
-          fill: TREATMENT_COLORS[currentVisit.treatment_method] || 'rgba(240, 240, 240, 0.3)',
+          fill: fillColor,
           opacity: 1,
           key: `area-${i}`,
-          treatment: currentVisit.treatment_method,
+          treatment: treatmentMethod,
         });
       }
     }
 
     // 마지막 치료 구간 (마지막 검사부터 현재까지) - 현재 치료 중
     const lastVisit = visits[visits.length - 1];
-    if (lastVisit.treatment_method) {
+    const lastTreatmentMethod = lastVisit.treatment_method || patient.treatment_method;
+    
+    if (lastTreatmentMethod) {
       const startAge = calculateAge(patient.birth_date, lastVisit.visit_date);
       const currentAge = calculateAge(patient.birth_date);
       
-      // TREATMENT_COLORS에서 해당 색상이 있는지 확인
-      const baseColor = TREATMENT_COLORS[lastVisit.treatment_method];
-      const fillColor = baseColor 
-        ? baseColor.replace('0.45)', '0.6)') // 현재 치료 중이므로 60% 투명도
-        : 'rgba(240, 240, 240, 0.6)'; // 기본 색상
+      const settings = getUserSettings();
+      const treatmentColor = settings.treatmentColors[lastTreatmentMethod as TreatmentMethod];
+      const fillColor = treatmentColor 
+        ? hexToRgba(treatmentColor, 0.5) // 현재 치료 중이므로 50% 투명도로 강조
+        : 'rgba(240, 240, 240, 0.5)'; // 기본 색상
       
       areas.push({
         x1: startAge,
@@ -370,7 +391,7 @@ export default function PatientChartPage() {
         fill: fillColor,
         opacity: 1,
         key: `area-last`,
-        treatment: lastVisit.treatment_method,
+        treatment: lastTreatmentMethod,
         isCurrent: true, // 현재 치료 중 표시
       });
     }
@@ -378,8 +399,8 @@ export default function PatientChartPage() {
     console.log('[MyoCare Chart] 치료 구간 계산 완료:', {
       areasCount: areas.length,
       areas: areas.map(a => ({
-        x1: a.x1,
-        x2: a.x2,
+        x1: a.x1.toFixed(1),
+        x2: a.x2.toFixed(1),
         treatment: a.treatment,
         isCurrent: a.isCurrent,
         fill: a.fill
@@ -480,9 +501,43 @@ export default function PatientChartPage() {
         os: osValue,
         odRisk,
         osRisk,
-        treatment: visit.treatment_method,
+        treatment: visit.treatment_method || patient!.treatment_method, // 방문 치료방법이 없으면 환자 기본값 사용
         new_prescription: visit.new_prescription,
       };
+    });
+  };
+
+  // CSS 오버레이 방식으로 치료 배경 렌더링
+  const renderTreatmentOverlay = (type: 'se' | 'axial') => {
+    const areas = getTreatmentAreas();
+    if (areas.length === 0) return null;
+    
+    const chartData = prepareChartData(type);
+    if (chartData.length === 0) return null;
+    
+    const minAge = Math.min(...chartData.map(d => d.age));
+    const maxAge = Math.max(...chartData.map(d => d.age));
+    const ageRange = maxAge - minAge;
+    
+    return areas.map((area, index) => {
+      const x1Percent = ((area.x1 - minAge) / ageRange) * 100;
+      const x2Percent = ((area.x2 - minAge) / ageRange) * 100;
+      const widthPercent = x2Percent - x1Percent;
+      
+      return (
+        <div
+          key={`overlay-${index}`}
+          className="absolute h-full"
+          style={{
+            left: `${x1Percent}%`,
+            width: `${widthPercent}%`,
+            backgroundColor: area.fill,
+            opacity: area.opacity,
+            pointerEvents: 'none',
+            zIndex: 1
+          }}
+        />
+      );
     });
   };
 
@@ -516,6 +571,18 @@ export default function PatientChartPage() {
   const latestVisit = visits.length > 0 ? visits[visits.length - 1] : null;
   const odSE = latestVisit ? calculateSE(latestVisit.od_sphere, latestVisit.od_cylinder) : undefined;
   const osSE = latestVisit ? calculateSE(latestVisit.os_sphere, latestVisit.os_cylinder) : undefined;
+
+  // 치료 구간 데이터 미리 계산 (디버깅용)
+  const treatmentAreas = getTreatmentAreas();
+  console.log('[MyoCare Chart] 렌더링 시점의 치료 구간:', treatmentAreas);
+  
+  // 차트 데이터 범위 확인 (디버깅용)
+  const seChartData = prepareChartData('se');
+  const ageRange = seChartData.length > 0 ? {
+    min: Math.min(...seChartData.map(d => d.age)),
+    max: Math.max(...seChartData.map(d => d.age))
+  } : null;
+  console.log('[MyoCare Chart] 차트 나이 범위:', ageRange);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -833,41 +900,31 @@ export default function PatientChartPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px]">
+            <div className="h-[350px] relative">
+              {/* 치료 배경 오버레이 */}
+              <div 
+                className="absolute" 
+                style={{
+                  top: 20,
+                  left: 20,
+                  right: 30,
+                  bottom: 60,
+                  pointerEvents: 'none'
+                }}
+              >
+                {renderTreatmentOverlay('se')}
+              </div>
+              
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={prepareChartData('se')}
                   margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
-                  {/* 치료 방법별 배경색 - CartesianGrid 앞에 렌더링 */}
-                  {getTreatmentAreas().map((area) => (
-                    <ReferenceArea
-                      key={area.key}
-                      x1={area.x1}
-                      x2={area.x2}
-                      y1={-20}
-                      y2={5}
-                      fill={area.fill}
-                      fillOpacity={1}
-                      stroke={area.isCurrent && area.treatment ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
-                      strokeWidth={area.isCurrent ? 2 : undefined}
-                      strokeDasharray={area.isCurrent ? "5 5" : undefined}
-                      ifOverflow="visible"
-                      style={{
-                        fill: area.fill,
-                        fillOpacity: 1,
-                        WebkitPrintColorAdjust: 'exact',
-                        printColorAdjust: 'exact'
-                      }}
-                    />
-                  ))}
-                  
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                   <XAxis 
                     dataKey="age" 
                     label={{ value: '나이 (세)', position: 'insideBottom', offset: -5 }}
                     tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => Number(value).toFixed(1)}
                   />
                   <YAxis 
                     domain={[-20, 5]}
@@ -1012,41 +1069,31 @@ export default function PatientChartPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px]">
+            <div className="h-[350px] relative">
+              {/* 치료 배경 오버레이 */}
+              <div 
+                className="absolute" 
+                style={{
+                  top: 20,
+                  left: 20,
+                  right: 30,
+                  bottom: 60,
+                  pointerEvents: 'none'
+                }}
+              >
+                {renderTreatmentOverlay('axial')}
+              </div>
+              
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={prepareChartData('axial')}
                   margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
-                  {/* 치료 방법별 배경색 - CartesianGrid 앞에 렌더링 */}
-                  {getTreatmentAreas().map((area) => (
-                    <ReferenceArea
-                      key={area.key}
-                      x1={area.x1}
-                      x2={area.x2}
-                      y1={20}
-                      y2={30}
-                      fill={area.fill}
-                      fillOpacity={1}
-                      stroke={area.isCurrent && area.treatment ? TREATMENT_COLORS_SOLID[area.treatment] : undefined}
-                      strokeWidth={area.isCurrent ? 2 : undefined}
-                      strokeDasharray={area.isCurrent ? "5 5" : undefined}
-                      ifOverflow="visible"
-                      style={{
-                        fill: area.fill,
-                        fillOpacity: 1,
-                        WebkitPrintColorAdjust: 'exact',
-                        printColorAdjust: 'exact'
-                      }}
-                    />
-                  ))}
-                  
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                   <XAxis 
                     dataKey="age" 
                     label={{ value: '나이 (세)', position: 'insideBottom', offset: -5 }}
                     tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => Number(value).toFixed(1)}
                   />
                   <YAxis 
                     domain={[20, 30]}

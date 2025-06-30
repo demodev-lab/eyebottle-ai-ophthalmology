@@ -98,31 +98,21 @@ export const calculateProgressionRate = (
     al_os = (lastVisit.os_axial_length - firstVisit.os_axial_length) / yearsDiffExact;
   }
 
-  // 위험도 계산 - AL을 주요 기준으로 사용
+  // 위험도 계산 - AL 진행도만 사용
   let riskLevel = RiskLevel.NORMAL;
   
-  // AL 기준 위험도 (우선 평가)
-  const maxALProgression = Math.max(
-    al_od || 0,
-    al_os || 0
-  );
-  
-  if (maxALProgression >= settings.thresholds.al.red) {
-    riskLevel = RiskLevel.RED;
-  } else if (maxALProgression >= settings.thresholds.al.yellow) {
-    riskLevel = RiskLevel.YELLOW;
-  }
-
-  // SE 기준 위험도 (AL 데이터가 없는 경우만 사용)
-  if (al_od === undefined && al_os === undefined) {
-    const maxSEProgression = Math.max(
-      Math.abs(se_od || 0),
-      Math.abs(se_os || 0)
-    );
+  // AL 데이터가 있는 경우만 평가
+  if (al_od !== undefined || al_os !== undefined) {
+    // undefined가 아닌 값들 중에서 최대값 선택
+    const alProgressions = [];
+    if (al_od !== undefined) alProgressions.push(al_od);
+    if (al_os !== undefined) alProgressions.push(al_os);
     
-    if (maxSEProgression >= settings.thresholds.se.red) {
+    const maxALProgression = Math.max(...alProgressions);
+    
+    if (maxALProgression >= settings.thresholds.al.red) {
       riskLevel = RiskLevel.RED;
-    } else if (maxSEProgression >= settings.thresholds.se.yellow) {
+    } else if (maxALProgression >= settings.thresholds.al.yellow) {
       riskLevel = RiskLevel.YELLOW;
     }
   }

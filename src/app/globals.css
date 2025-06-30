@@ -266,6 +266,25 @@ body {
     -webkit-print-color-adjust: exact !important;
   }
   
+  /* CSS 오버레이 배경색 인쇄 시 표시 */
+  .relative > .absolute {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  .relative > .absolute > div {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    background-color: inherit !important;
+    opacity: inherit !important;
+  }
+  
+  /* 차트 배경 오버레이 인쇄 최적화 */
+  .h-\[350px\].relative > .absolute > div[style*="background"] {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
   /* 제목 크기 축소 */
   h1 { font-size: 14pt !important; }
   h2 { font-size: 11pt !important; }

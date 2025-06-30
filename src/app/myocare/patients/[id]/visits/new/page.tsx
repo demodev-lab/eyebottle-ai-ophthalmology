@@ -65,10 +65,20 @@ export default function NewVisitPage() {
       }
       setPatient(patientData);
       
-      // 최근 방문의 치료방법을 기본값으로 설정
+      // 치료방법 기본값 설정: 최근 방문 > 환자 기본 치료방법
       const visits = getVisits(patientId);
+      let defaultTreatmentMethod = '';
+      
       if (visits.length > 0 && visits[0].treatment_method) {
-        setFormData(prev => ({ ...prev, treatment_method: visits[0].treatment_method as string }));
+        // 최근 방문의 치료방법 사용
+        defaultTreatmentMethod = visits[0].treatment_method;
+      } else if (patientData.treatment_method) {
+        // 환자의 기본 치료방법 사용
+        defaultTreatmentMethod = patientData.treatment_method;
+      }
+      
+      if (defaultTreatmentMethod) {
+        setFormData(prev => ({ ...prev, treatment_method: defaultTreatmentMethod }));
       }
     } catch (error) {
       console.error('환자 로드 실패:', error);
