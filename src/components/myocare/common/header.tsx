@@ -20,25 +20,25 @@ export function MyoCareHeader() {
 
   return (
     <header className="bg-white/95 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* 로고 */}
-          <div className="flex items-center space-x-8">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 sm:space-x-8">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {/* 홈 버튼 */}
               <Link 
                 href="/" 
                 className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 transition-colors"
               >
                 <Home className="h-5 w-5" />
-                <span className="text-base font-medium">홈</span>
+                <span className="hidden sm:inline text-base font-medium">홈</span>
               </Link>
               
               <ChevronRight className="h-4 w-4 text-slate-400" />
               
               {/* 로고 */}
-              <Link href="/myocare" className="flex items-center space-x-3">
-                <div className="w-12 h-12 relative overflow-hidden rounded-xl">
+              <Link href="/myocare" className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 relative overflow-hidden rounded-xl">
                   <Image
                     src="/eyebottle-logo.png"
                     alt="Eyebottle Logo"
@@ -48,10 +48,10 @@ export function MyoCareHeader() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-800 tracking-tight">근시케어 차트</span>
-                  <span className="text-sm text-slate-500">MyoCare Chart</span>
+                  <span className="text-lg sm:text-2xl font-bold text-slate-800 tracking-tight">근시케어 차트</span>
+                  <span className="text-xs sm:text-sm text-slate-500">MyoCare Chart</span>
                 </div>
-                <span className="text-xs font-semibold text-blue-700 bg-blue-100/80 px-3 py-1.5 rounded-full border border-blue-200 ml-3">Beta</span>
+                <span className="hidden sm:inline-block text-xs font-semibold text-blue-700 bg-blue-100/80 px-3 py-1.5 rounded-full border border-blue-200 ml-3">Beta</span>
               </Link>
             </div>
 
@@ -78,12 +78,14 @@ export function MyoCareHeader() {
           </div>
 
           {/* 우측 버튼 */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <QuickNavMenu />
-            <DemoVideoButton url="https://youtu.be/pgTEwTZTKlk?si=vHAW42IClD6Q2Nvx" />
+            <div className="hidden sm:block">
+              <DemoVideoButton url="https://youtu.be/pgTEwTZTKlk?si=vHAW42IClD6Q2Nvx" />
+            </div>
             
-            <Button variant="ghost" size="icon" className="text-slate-600 hover:bg-slate-100 h-11 w-11">
-              <User className="h-6 w-6" />
+            <Button variant="ghost" size="icon" className="text-slate-600 hover:bg-slate-100 h-9 w-9 sm:h-11 sm:w-11">
+              <User className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
           </div>
         </div>
