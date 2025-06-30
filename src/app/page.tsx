@@ -15,7 +15,6 @@ import {
   UserCircleIcon,
   HeartIcon,
   ClipboardDocumentListIcon,
-  Bars3Icon,
   XMarkIcon
 } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
@@ -34,7 +33,6 @@ interface DemoVideo {
 }
 
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   
   // 메일 팝업 상태 관리 추가
@@ -497,38 +495,13 @@ export default function Home() {
               {/* 주요 기능 네비게이션 메뉴 */}
               <QuickNavMenu />
             </nav>
-            {/* Mobile menu buttons */}
-            <div className="lg:hidden flex items-center space-x-3">
-              {/* 주요 기능 네비게이션 메뉴 */}
+            {/* Mobile menu - QuickNavMenu만 표시 */}
+            <div className="lg:hidden">
               <QuickNavMenu />
-              
-              {/* 기존 모바일 메뉴 버튼 */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-slate-600 hover:text-blue-600"
-                aria-label="메뉴 열기"
-              >
-                {isMenuOpen ? (
-                  <XMarkIcon className="h-7 w-7" />
-                ) : (
-                  <Bars3Icon className="h-7 w-7" />
-                )}
-              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="lg:hidden bg-white/95 backdrop-blur-lg absolute top-full left-0 w-full border-b border-slate-200/60 shadow-md">
-            <nav className="container mx-auto px-6 lg:px-8 py-4 flex flex-col space-y-4">
-              <a href="#features" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">주요 기능</a>
-              <button onClick={() => { setIsMenuOpen(false); setIsUpdateModalOpen(true); }} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100 w-full">업데이트</button>
-              <a href="#footer-nav" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">소개</a>
-              <a href="#footer-nav" onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 text-center rounded-lg hover:bg-slate-100">문의</a>
-            </nav>
-          </div>
-        )}
       </header>
 
       {/* 메인 히어로 섹션 */}
