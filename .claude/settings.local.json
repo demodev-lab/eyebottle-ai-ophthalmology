@@ -4,8 +4,28 @@
       "WebFetch(domain:www.med.equipment)",
       "Bash(wget:*)",
       "Bash(ls:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(code:*)",
+      "WebFetch(domain:marketplace.visualstudio.com)",
+      "Bash(npm install:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(find:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run dev:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(grep:*)",
+      "Bash(npx shadcn-ui:*)",
+      "Bash(git push:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npx tsc:*)",
+      "Bash(sed:*)",
+      "Bash(npm run lint:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
-  }
+  },
+  "defaultModel": "opus"
 }
