@@ -557,16 +557,18 @@ export default function Home() {
               </div>
               <div className="space-y-6">
                 <div className="border-b border-slate-100 pb-5">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">베타 테스트 참가자 모집 중</p>
-                  <p className="text-sm text-slate-500 font-medium">2023.05.01</p>
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">🎉 근시케어차트 기능 출시!</p>
+                  <p className="text-sm text-slate-600 mb-1">근시 진행 추적 및 위험도 관리 시스템</p>
+                  <p className="text-sm text-slate-500 font-medium">2025.06.28</p>
                 </div>
                 <div className="border-b border-slate-100 pb-5">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">아이보틀 v1.2 업데이트 안내</p>
-                  <p className="text-sm text-slate-500 font-medium">2023.04.15</p>
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">✨ 검진결과 작성 기능 추가</p>
+                  <p className="text-sm text-slate-600 mb-1">당뇨/고혈압/눈종합검진 실시간 작성</p>
+                  <p className="text-sm text-slate-500 font-medium">2025.06.16</p>
                 </div>
                 <div className="pb-2">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">학회 AI 윤리 가이드라인 발표</p>
-                  <p className="text-sm text-slate-500 font-medium">2023.04.01</p>
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">아이보틀 베타 서비스 시작</p>
+                  <p className="text-sm text-slate-500 font-medium">2025.06.09</p>
                 </div>
               </div>
             </div>

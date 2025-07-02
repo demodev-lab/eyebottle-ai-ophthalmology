@@ -1,7 +1,7 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+* text=auto eol=lf
 
-# Always use LF for these files
+# These files are text and should be normalized (convert CRLF to LF)
 *.js text eol=lf
 *.jsx text eol=lf
 *.ts text eol=lf
@@ -14,12 +14,15 @@
 *.scss text eol=lf
 *.html text eol=lf
 *.xml text eol=lf
-*.txt text eol=lf
-.gitignore text eol=lf
-.gitattributes text eol=lf
-.editorconfig text eol=lf
+*.sh text eol=lf
+*.env text eol=lf
+*.example text eol=lf
 
-# Binary files
+# These files should keep CRLF endings (Windows batch files)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files (should not be modified)
 *.png binary
 *.jpg binary
 *.jpeg binary
@@ -30,11 +33,3 @@
 *.woff2 binary
 *.ttf binary
 *.eot binary
-*.zip binary
-*.7z binary
-*.tar binary
-*.gz binary
-
-# Windows specific files should keep CRLF
-*.bat text eol=crlf
-*.cmd text eol=crlf

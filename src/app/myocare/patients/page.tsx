@@ -95,7 +95,9 @@ export default function PatientsPage() {
     }
 
     const settings = getUserSettings();
-    const progression = calculateProgressionRate(visits, settings);
+    // 최근 2개 방문만 사용하여 진행률 계산 (오래된 순으로)
+    const recentVisits = visits.slice(0, 2).reverse();
+    const progression = calculateProgressionRate(recentVisits, settings);
     return { riskLevel: progression.riskLevel, lastVisit: visits[0] };
   };
 
