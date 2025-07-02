@@ -266,6 +266,26 @@ eyebottle/
     -   [ ] 신규 기능 독립적 구현 및 기존 코드 유지보수 능력 강화
     -   [ ] 기술 블로그 또는 개발 로그를 통해 학습 과정 기록 및 회고
 
+## 🚀 배포 프로세스
+
+### 자동 배포 설정
+- **GitHub**: `Eyebottle/eyebottle-ai-ophthalmology` (포크 저장소)
+- **Vercel**: main 브랜치 푸시 시 자동 배포
+- **도메인**: https://eyebottle.kr
+
+### 배포 방법
+```bash
+# 1. 변경사항 커밋
+git add .
+git commit -m "feat: 새 기능 추가"
+
+# 2. main 브랜치에 푸시
+git push origin main
+
+# 3. 자동 배포 (2-3분 소요)
+# Vercel이 자동으로 감지하여 eyebottle.kr에 배포
+```
+
 ## 🤝 기여하기
 
 1. Fork 프로젝트
@@ -280,7 +300,7 @@ MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 ## 📚 개발 문서
 
-- **[Claude Code 사용 가이드](CLAUDE_CODE_GUIDE.md)** - AI 협업 시 주의사항 및 안전 수칙
+- **[Claude 사용 가이드](.claude/CLAUDE.md)** - AI 협업 시 주의사항 및 안전 수칙
 - **[개발 로그](DEVELOPMENT_LOG.md)** - 주요 변경사항 및 개발 이력
 - **[프로젝트 히스토리](PROJECT_HISTORY.md)** - 전체 프로젝트 이벤트 시간순 기록
 - **[PRD 문서](docs/prd/)** - 제품 요구사항 문서
