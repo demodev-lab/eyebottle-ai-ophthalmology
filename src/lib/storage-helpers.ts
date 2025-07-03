@@ -9,6 +9,9 @@
  */
 export function getFromStorage<T>(key: string, defaultValue: T): T {
   try {
+    // 서버 사이드에서는 기본값 반환
+    if (typeof window === 'undefined') return defaultValue;
+    
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : defaultValue;
   } catch (error) {
@@ -24,6 +27,9 @@ export function getFromStorage<T>(key: string, defaultValue: T): T {
  */
 export function setToStorage<T>(key: string, value: T): void {
   try {
+    // 서버 사이드에서는 실행하지 않음
+    if (typeof window === 'undefined') return;
+    
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error(`Error writing to localStorage (${key}):`, error);
@@ -36,6 +42,9 @@ export function setToStorage<T>(key: string, value: T): void {
  */
 export function removeFromStorage(key: string): void {
   try {
+    // 서버 사이드에서는 실행하지 않음
+    if (typeof window === 'undefined') return;
+    
     localStorage.removeItem(key);
   } catch (error) {
     console.error(`Error removing from localStorage (${key}):`, error);
@@ -49,6 +58,9 @@ export function removeFromStorage(key: string): void {
  */
 export function existsInStorage(key: string): boolean {
   try {
+    // 서버 사이드에서는 false 반환
+    if (typeof window === 'undefined') return false;
+    
     return localStorage.getItem(key) !== null;
   } catch (error) {
     console.error(`Error checking localStorage (${key}):`, error);

@@ -61,10 +61,10 @@ const menuItems: MenuItem[] = [
   },
   {
     name: '안과 만화',
-    href: '#',
+    href: '/cartoons',
     icon: FilmIcon,
-    description: '3컷 만화 업로드-PDF 다운로드',
-    status: 'coming-soon'
+    description: '눈 건강 정보를 재미있게!',
+    status: 'active'
   },
   {
     name: 'AI 챗봇',

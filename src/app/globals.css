@@ -351,3 +351,59 @@ body {
     display: none !important;
   }
 }
+
+/* 만화 상세 페이지 인쇄 스타일 */
+/* 평상시에는 인쇄용 요소 숨김 */
+.print-only {
+  display: none;
+}
+
+/* 인쇄 스타일 */
+@media print {
+  /* 페이지 설정 */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+  
+  /* 모든 요소를 숨김 */
+  * {
+    display: none !important;
+  }
+  
+  /* 인쇄용 콘텐츠까지의 경로만 표시 */
+  html,
+  body,
+  #__next,
+  #__next > *,
+  main,
+  .cartoon-detail-page,
+  .print-only,
+  .print-only * {
+    display: block !important;
+  }
+  
+  /* 레이아웃 초기화 */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  /* 인쇄용 콘텐츠 스타일 */
+  .print-only {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .print-only img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 850px !important;
+    object-fit: contain !important;
+    margin: 0 auto 30px !important;
+    page-break-inside: avoid !important;
+  }
+}

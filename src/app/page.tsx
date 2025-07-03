@@ -673,17 +673,22 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 items-stretch">
             {/* 안과 만화 */}
-            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-violet-100 to-purple-200 rounded-2xl shadow-inner-sm">
-                <FilmIcon className="h-8 w-8 text-violet-600" />
+            <Link href="/cartoons" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-violet-500 h-full">
+              <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-violet-100 to-purple-200 rounded-2xl shadow-inner-sm">
+                  <FilmIcon className="h-8 w-8 text-violet-600" />
+                </div>
+                <div className="flex items-center gap-x-3 mb-3">
+                  <h3 className="text-xl font-bold text-slate-800">안과 만화</h3>
+                  <span className="text-xs font-bold text-white bg-gradient-to-r from-violet-500 to-purple-500 px-2.5 py-1 rounded-full">NEW!</span>
+                </div>
+                <p className="text-slate-500 leading-relaxed">눈 건강 정보를 재미있게!</p>
+                <div className="mt-4 text-sm font-medium text-purple-600">
+                  <p>• 4컷/8컷 만화 보기</p>
+                  <p>• PDF 다운로드 & 인쇄</p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-3">안과 만화</h3>
-              <p className="text-slate-500 leading-relaxed">3컷 만화 업로드-PDF 다운로드</p>
-              <div className="mt-4 text-sm font-medium text-purple-600">
-                <p>• 4컷 만화 인쇄&다운로드</p>
-                <p>• NotebookLM 팟캐스트 연동</p>
-              </div>
-            </div>
+            </Link>
 
             {/* 챗봇 Eye Bottle */}
             <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
