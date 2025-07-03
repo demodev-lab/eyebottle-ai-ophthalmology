@@ -229,6 +229,12 @@ export default function PatientChartPage() {
 
     const settings = getUserSettings();
     const variables = settings.emrTemplateVariables || [];
+    
+    // 선택된 변수가 없을 때 처리
+    if (variables.length === 0) {
+      return '⚠️ EMR 템플릿 변수가 선택되지 않았습니다.\n설정에서 EMR 템플릿 변수를 선택해주세요.';
+    }
+    
     const latestVisit = visits[visits.length - 1];
     const recentVisits = visits.slice(-10);
     const progression = recentVisits.length >= 2 ? calculateProgressionRate(recentVisits, settings) : null;

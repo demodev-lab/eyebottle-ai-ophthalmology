@@ -35,8 +35,8 @@ export default function SettingsPage() {
 
       const userSettings = getUserSettings();
       
-      // emrTemplateVariables가 없으면 기본값으로 설정
-      if (!userSettings.emrTemplateVariables || userSettings.emrTemplateVariables.length === 0) {
+      // emrTemplateVariables가 undefined인 경우에만 기본값으로 설정 (빈 배열은 사용자가 의도적으로 비운 것)
+      if (userSettings.emrTemplateVariables === undefined) {
         userSettings.emrTemplateVariables = DEFAULT_SETTINGS.emrTemplateVariables || [];
       }
       
@@ -381,9 +381,11 @@ export default function SettingsPage() {
                 { var: '[안경처방]', desc: '당일 안경처방 여부' },
                 { var: '[사용자 경과 문구]', desc: '사용자 정의 문구' },
               ].map(({ var: variable, desc }) => {
-                // emrTemplateVariables가 없거나 비어있으면 모든 변수를 기본 선택된 것으로 처리
-                const variables = settings.emrTemplateVariables || DEFAULT_SETTINGS.emrTemplateVariables || [];
-                const isChecked = variables.length === 0 ? true : variables.includes(variable);
+                // emrTemplateVariables가 undefined면 기본값 사용, 빈 배열이면 그대로 사용
+                const variables = settings.emrTemplateVariables !== undefined 
+                  ? settings.emrTemplateVariables 
+                  : DEFAULT_SETTINGS.emrTemplateVariables || [];
+                const isChecked = variables.includes(variable);
                 return (
                   <div key={variable} className="flex items-center space-x-3 bg-white p-3 rounded-lg border border-amber-200">
                     <input
@@ -415,6 +417,19 @@ export default function SettingsPage() {
               })}
             </div>
             
+            {/* 변수가 선택되지 않았을 때 경고 메시지 */}
+            {settings.emrTemplateVariables && settings.emrTemplateVariables.length === 0 && (
+              <div className="mt-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                <p className="text-sm text-red-800 font-medium flex items-center">
+                  <span className="text-xl mr-2">⚠️</span>
+                  최소 하나 이상의 변수를 선택해주세요.
+                </p>
+                <p className="text-xs text-red-600 mt-1 ml-7">
+                  변수가 선택되지 않으면 EMR 복사 시 내용이 없습니다.
+                </p>
+              </div>
+            )}
+            
             {/* 사용자 경과 문구 입력 필드 */}
             {settings.emrTemplateVariables?.includes('[사용자 경과 문구]') && (
               <div className="mt-4 p-4 bg-white rounded-lg border border-amber-200">
@@ -438,7 +453,9 @@ export default function SettingsPage() {
               readOnly
               rows={12}
               className="font-mono text-base border-slate-200 bg-slate-50 p-4"
-              placeholder="체크박스를 선택하여 템플릿을 구성하세요..."
+              placeholder={settings.emrTemplateVariables && settings.emrTemplateVariables.length === 0 
+                ? "⚠️ 변수를 선택하지 않아 템플릿이 비어있습니다." 
+                : "체크박스를 선택하여 템플릿을 구성하세요..."}
             />
           </div>
         </CardContent>
