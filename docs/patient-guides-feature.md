@@ -81,7 +81,7 @@ interface PatientGuide {
 
 ### 1. 관리자 로그인
 1. `/patient-guides` 페이지에서 "관리자" 버튼 클릭
-2. 비밀번호 입력: `eyebottle2024!`
+2. 비밀번호 입력: `eyebottle2025`
 
 ### 2. 안내자료 추가
 1. 관리자 페이지에서 "새 자료 추가" 버튼 클릭
@@ -112,5 +112,5 @@ interface PatientGuide {
 
 ## 문제 해결
 - 파일 업로드 실패 시: 파일 크기와 형식 확인
-- 관리자 로그인 실패 시: 비밀번호 확인 (eyebottle2024!)
+- 관리자 로그인 실패 시: 비밀번호 확인 (eyebottle2025)
 - 데이터가 보이지 않을 때: 브라우저 LocalStorage 확인
