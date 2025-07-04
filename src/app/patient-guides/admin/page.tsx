@@ -33,6 +33,7 @@ import {
   DiseaseCategories,
   GuideFormData,
   DEFAULT_GUIDE_TAGS,
+  FileType,
 } from "@/types/patient-guide";
 
 export default function PatientGuidesAdminPage() {
@@ -154,7 +155,7 @@ export default function PatientGuidesAdminPage() {
               const data = await response.json();
               uploadedFileData.push({
                 id: 'file_' + Date.now() + '_' + uploadedFileData.length,
-                type: 'pdf' as const,
+                type: FileType.PDF,
                 name: file.name,
                 url: data.url,
                 size: data.size,
