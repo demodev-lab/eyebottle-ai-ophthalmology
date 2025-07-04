@@ -82,10 +82,10 @@ const menuItems: MenuItem[] = [
   },
   {
     name: '환자 안내자료',
-    href: '#',
+    href: '/patient-guides',
     icon: BookOpenIcon,
     description: '수술 전후 안내자료',
-    status: 'coming-soon'
+    status: 'active'
   },
   {
     name: '문진 도우미',

@@ -43,3 +43,7 @@ vscode.tar.gz
 
 # Local settings
 .claude/settings.local.json
+
+# Uploaded guide files (keep sample files only)
+/public/guides/*
+!/public/guides/sample_*.html
