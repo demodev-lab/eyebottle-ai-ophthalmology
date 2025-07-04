@@ -171,6 +171,7 @@ export default function PatientGuidesAdminPage() {
           primaryCategory: formData.primaryCategory as GuideCategory,
           files: formData.contentType !== ContentType.VIDEO ? uploadedFileData : [],
           createdBy: 'admin',
+          order: formData.order || 0,
         };
         createGuide(newGuide);
       }
