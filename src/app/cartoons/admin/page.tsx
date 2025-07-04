@@ -11,7 +11,6 @@ import {
   EyeOff,
   Download,
   Printer,
-  ArrowLeft,
   LogOut,
   FilmIcon
 } from "lucide-react";

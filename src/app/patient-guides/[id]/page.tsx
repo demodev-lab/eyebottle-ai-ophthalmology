@@ -8,7 +8,6 @@ import {
   EyeIcon, 
   ArrowDownTrayIcon, 
   DocumentIcon,
-  FilmIcon,
   PrinterIcon,
   ShareIcon,
 } from "@heroicons/react/24/outline";

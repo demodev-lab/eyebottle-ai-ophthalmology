@@ -8,7 +8,6 @@ import {
   sortGuides, 
   isAdminAuthenticated,
   createSampleGuides,
-  formatFileSize,
 } from "@/lib/patient-guide-storage";
 import { 
   PatientGuide, 

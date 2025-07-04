@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Download,
   Printer,
   Eye,
@@ -33,7 +32,6 @@ import {
 import {
   Cartoon,
   CartoonComment,
-  CartoonImage,
 } from "@/types/cartoon";
 import { pdf } from "@react-pdf/renderer";
 import { CartoonPDFDocument } from "@/components/cartoons/CartoonPDFExport";

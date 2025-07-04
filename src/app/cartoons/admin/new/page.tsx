@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Upload, X, GripVertical, Plus } from "lucide-react";
+import { ArrowLeft, Upload, X, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -163,7 +163,7 @@ export default function NewCartoonPage() {
       const thumbnail = generateThumbnail(images);
       
       // 만화 생성
-      const newCartoon = createCartoon({
+      createCartoon({
         title: formData.title.trim(),
         description: formData.description.trim(),
         tags: selectedTags,
