@@ -366,44 +366,54 @@ body {
     size: A4;
   }
   
-  /* 모든 요소를 숨김 */
-  * {
+  /* 화면 전용 요소들을 숨김 */
+  [class*="print:hidden"],
+  header,
+  footer,
+  nav,
+  .sidebar,
+  .comment-section,
+  .navigation-buttons,
+  .thumbnail-list,
+  .stats-section,
+  .related-cartoons,
+  .main-content > *:not(.print-only),
+  .cartoon-detail-page > *:not(.print-only) {
     display: none !important;
   }
   
-  /* 인쇄용 콘텐츠까지의 경로만 표시 */
+  /* 기본 레이아웃 설정 */
   html,
-  body,
-  #__next,
-  #__next > *,
-  main,
-  .cartoon-detail-page,
-  .print-only,
-  .print-only * {
-    display: block !important;
-  }
-  
-  /* 레이아웃 초기화 */
-  html, body {
+  body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
+    width: 100% !important;
+    height: auto !important;
   }
   
-  /* 인쇄용 콘텐츠 스타일 */
+  /* 인쇄용 콘텐츠 표시 */
   .print-only {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
   
+  /* 이미지 스타일 */
   .print-only img {
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     width: 100% !important;
+    max-width: 100% !important;
     height: auto !important;
     max-height: 850px !important;
     object-fit: contain !important;
     margin: 0 auto 30px !important;
     page-break-inside: avoid !important;
+    page-break-after: auto !important;
   }
 }

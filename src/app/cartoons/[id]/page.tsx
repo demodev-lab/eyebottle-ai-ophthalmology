@@ -134,11 +134,61 @@ export default function CartoonDetailPage() {
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     if (!cartoon) return;
     
     incrementCartoonCount(cartoonId, "printCount");
-    window.print();
+    
+    // 디버깅: 이미지 URL 확인
+    console.log("인쇄할 이미지들:", cartoon.images.map(img => img.url));
+    
+    // 모든 이미지 로드 대기
+    const printImages = document.querySelectorAll('.print-only img');
+    console.log("찾은 인쇄용 이미지 수:", printImages.length);
+    
+    if (printImages.length === 0) {
+      console.error("인쇄용 이미지를 찾을 수 없습니다!");
+      // 이미지가 없어도 인쇄 시도
+      window.print();
+      return;
+    }
+    
+    const imageLoadPromises = Array.from(printImages).map((img, index) => {
+      return new Promise((resolve) => {
+        const imgElement = img as HTMLImageElement;
+        console.log(`이미지 ${index + 1} 상태:`, {
+          src: imgElement.src,
+          complete: imgElement.complete,
+          naturalWidth: imgElement.naturalWidth,
+          naturalHeight: imgElement.naturalHeight
+        });
+        
+        if (imgElement.complete && imgElement.naturalWidth > 0) {
+          resolve(true);
+        } else {
+          imgElement.onload = () => {
+            console.log(`이미지 ${index + 1} 로드 완료`);
+            resolve(true);
+          };
+          imgElement.onerror = () => {
+            console.error(`이미지 ${index + 1} 로드 실패:`, imgElement.src);
+            resolve(false);
+          };
+        }
+      });
+    });
+    
+    try {
+      await Promise.all(imageLoadPromises);
+      console.log("모든 이미지 로드 완료, 인쇄 시작");
+      // 잠시 대기하여 브라우저가 렌더링을 완료하도록 함
+      setTimeout(() => {
+        window.print();
+      }, 100);
+    } catch (error) {
+      console.error("이미지 로드 중 오류:", error);
+      window.print(); // 오류가 있어도 인쇄 시도
+    }
   };
 
   const handleShare = async () => {
@@ -226,6 +276,14 @@ export default function CartoonDetailPage() {
             src={image.url}
             alt={`${cartoon.title} - ${index + 1}`}
             className="w-full h-auto object-contain"
+            loading="eager"
+            crossOrigin="anonymous"
+            onError={(e) => {
+              console.error(`이미지 로드 실패: ${image.url}`);
+              const target = e.target as HTMLImageElement;
+              // 대체 이미지 표시
+              target.src = '/eyebottle-logo.png';
+            }}
           />
         ))}
       </div>
