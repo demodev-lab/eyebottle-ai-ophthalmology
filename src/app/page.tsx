@@ -753,17 +753,19 @@ export default function Home() {
             </div>
 
             {/* 환자 안내자료 */}
-            <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl shadow-inner-sm">
-                <BookOpenIcon className="h-8 w-8 text-green-600" />
+            <Link href="/patient-guides" className="block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500 h-full">
+              <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl shadow-inner-sm">
+                  <BookOpenIcon className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">환자 안내자료</h3>
+                <p className="text-slate-500 leading-relaxed">수술 전후 안내자료</p>
+                <div className="mt-4 text-sm font-medium text-emerald-600">
+                  <p>• 안과 관련 안내자료</p>
+                  <p>• PDF 다운로드 제공</p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-3">환자 안내자료</h3>
-              <p className="text-slate-500 leading-relaxed">수술 전후 안내자료</p>
-              <div className="mt-4 text-sm font-medium text-emerald-600">
-                <p>• 안과 관련 안내자료</p>
-                <p>• PDF 다운로드 제공</p>
-              </div>
-            </div>
+            </Link>
 
             {/* 문진 도우미 */}
             <div className="h-full flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-slate-200/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">

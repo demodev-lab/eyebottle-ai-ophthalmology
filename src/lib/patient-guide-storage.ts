@@ -14,7 +14,7 @@ import {
 import { getFromStorage, setToStorage } from './storage-helpers';
 
 // 관리자 비밀번호 (하드코딩)
-const ADMIN_PASSWORD = 'eyebottle2024!';
+const ADMIN_PASSWORD = 'eyebottle2025';
 
 // ===== 안내자료 CRUD 작업 =====
 
