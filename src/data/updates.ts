@@ -15,6 +15,19 @@ export interface UpdateItem {
 // 최신 5개의 주요 업데이트만 표시
 export const updates: UpdateItem[] = [
   {
+    id: 'v1.4.0',
+    version: 'v1.4.0',
+    date: '2025년 7월 4일',
+    category: 'new',
+    title: '환자 안내자료 기능 출시',
+    description: '수술 전후 안내, 질환 정보, 검사 안내 등 다양한 자료를 체계적으로 관리하고 제공합니다.',
+    highlights: [
+      '6가지 카테고리별 자료 분류',
+      'PDF 다운로드 및 YouTube 동영상 지원',
+      '관리자 페이지로 간편한 자료 관리'
+    ]
+  },
+  {
     id: 'v1.3.5',
     version: 'v1.3.5',
     date: '2025년 1월 29일',

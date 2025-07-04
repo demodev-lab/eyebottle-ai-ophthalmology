@@ -557,18 +557,19 @@ export default function Home() {
               </div>
               <div className="space-y-6">
                 <div className="border-b border-slate-100 pb-5">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">🎉 근시케어차트 기능 출시!</p>
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">📖 환자 안내자료 기능 출시!</p>
+                  <p className="text-sm text-slate-600 mb-1">수술 전후 안내, 질환 정보 PDF 제공</p>
+                  <p className="text-sm text-slate-500 font-medium">2025.07.04</p>
+                </div>
+                <div className="border-b border-slate-100 pb-5">
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">🎉 근시케어차트 기능 완성</p>
                   <p className="text-sm text-slate-600 mb-1">근시 진행 추적 및 위험도 관리 시스템</p>
                   <p className="text-sm text-slate-500 font-medium">2025.06.28</p>
                 </div>
-                <div className="border-b border-slate-100 pb-5">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">✨ 검진결과 작성 기능 추가</p>
+                <div className="pb-2">
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">✨ 검진결과 작성 시스템</p>
                   <p className="text-sm text-slate-600 mb-1">당뇨/고혈압/눈종합검진 실시간 작성</p>
                   <p className="text-sm text-slate-500 font-medium">2025.06.16</p>
-                </div>
-                <div className="pb-2">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">아이보틀 베타 서비스 시작</p>
-                  <p className="text-sm text-slate-500 font-medium">2025.06.09</p>
                 </div>
               </div>
             </div>
@@ -758,7 +759,10 @@ export default function Home() {
                 <div className="flex items-center justify-center h-16 w-16 mb-6 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl shadow-inner-sm">
                   <BookOpenIcon className="h-8 w-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">환자 안내자료</h3>
+                <div className="flex items-center gap-x-3 mb-3">
+                  <h3 className="text-xl font-bold text-slate-800">환자 안내자료</h3>
+                  <span className="text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-green-500 px-2.5 py-1 rounded-full">NEW!</span>
+                </div>
                 <p className="text-slate-500 leading-relaxed">수술 전후 안내자료</p>
                 <div className="mt-4 text-sm font-medium text-emerald-600">
                   <p>• 안과 관련 안내자료</p>
