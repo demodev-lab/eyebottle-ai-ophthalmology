@@ -15,6 +15,19 @@ export interface UpdateItem {
 // 최신 5개의 주요 업데이트만 표시
 export const updates: UpdateItem[] = [
   {
+    id: 'v1.4.1',
+    version: 'v1.4.1',
+    date: '2025년 7월 4일',
+    category: 'new',
+    title: '안과만화 기능 출시',
+    description: '눈 건강 정보를 재미있게 전달하는 4컷/8컷 만화 기능을 추가했습니다.',
+    highlights: [
+      '4컷/8컷 안과 건강 정보 만화',
+      'PDF 다운로드 및 인쇄 기능',
+      '댓글 시스템과 태그 기반 분류'
+    ]
+  },
+  {
     id: 'v1.4.0',
     version: 'v1.4.0',
     date: '2025년 7월 4일',

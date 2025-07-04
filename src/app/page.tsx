@@ -557,8 +557,8 @@ export default function Home() {
               </div>
               <div className="space-y-6">
                 <div className="border-b border-slate-100 pb-5">
-                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">📖 환자 안내자료 기능 출시!</p>
-                  <p className="text-sm text-slate-600 mb-1">수술 전후 안내, 질환 정보 PDF 제공</p>
+                  <p className="text-base font-semibold text-slate-800 mb-2 leading-relaxed">🎨 안과만화 & 📖 환자 안내자료 출시!</p>
+                  <p className="text-sm text-slate-600 mb-1">4컷/8컷 만화와 수술 안내 PDF 제공</p>
                   <p className="text-sm text-slate-500 font-medium">2025.07.04</p>
                 </div>
                 <div className="border-b border-slate-100 pb-5">
