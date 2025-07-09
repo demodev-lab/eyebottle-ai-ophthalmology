@@ -40,7 +40,7 @@ export function MyoCareHeader() {
               <Link href="/myocare" className="flex items-center space-x-2 sm:space-x-3">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 relative overflow-hidden rounded-xl">
                   <Image
-                    src="/eyebottle-logo.png"
+                    src="/assets/logos/eyebottle-logo.png"
                     alt="Eyebottle Logo"
                     width={48}
                     height={48}

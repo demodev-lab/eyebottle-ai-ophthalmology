@@ -20,6 +20,13 @@ import {
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { QuickNavMenu } from "@/components/common/quick-nav-menu";
 import { updates, categoryStyles } from "@/data/updates";
+import { useClientOnly } from "@/hooks/useClientOnly";
+import dynamic from "next/dynamic";
+
+// 동적 임포트로 클라이언트 전용 컴포넌트 로드
+const LoginModal = dynamic(() => import("@/components/common/login-modal"), {
+  ssr: false,
+});
 
 // 데모 영상 데이터 타입
 interface DemoVideo {
@@ -46,6 +53,12 @@ export default function Home() {
 
   // 업데이트 모달 상태 관리
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  
+  // 로그인 모달 상태 관리
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  
+  // 클라이언트 전용 렌더링 체크
+  const isClient = useClientOnly();
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -53,6 +66,7 @@ export default function Home() {
       if (e.key === 'Escape') {
         setIsUpdateModalOpen(false);
         setIsVideoModalOpen(false);
+        setIsLoginModalOpen(false);
         setIsMailPopupOpen(false);
       }
     };
@@ -175,7 +189,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
       {/* 메일 팝업 모달 */}
       {isMailPopupOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-3 sm:p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl">
             {/* 모달 헤더 */}
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
@@ -282,68 +296,68 @@ export default function Home() {
 
       {/* 업데이트 모달 */}
       {isUpdateModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-start justify-center pt-8 sm:pt-16 lg:pt-20 p-2 sm:p-3 lg:p-4">
+          <div className="bg-white rounded-2xl w-full max-w-3xl h-[calc(100vh-64px)] sm:h-[calc(100vh-96px)] lg:max-h-[85vh] shadow-2xl flex flex-col">
             {/* 모달 헤더 */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-800 flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-yellow-200 rounded-xl flex items-center justify-center">
-                  <SparklesIcon className="w-6 h-6 text-amber-600" />
+            <div className="flex items-center justify-between p-3 sm:p-4 lg:p-6 border-b border-slate-200 flex-shrink-0">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 flex items-center space-x-2 sm:space-x-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-amber-100 to-yellow-200 rounded-xl flex items-center justify-center">
+                  <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-amber-600" />
                 </div>
                 <span>최신 업데이트</span>
               </h2>
               <button
                 onClick={() => setIsUpdateModalOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-1 sm:p-1.5 lg:p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                <XMarkIcon className="w-6 h-6 text-slate-600" />
+                <XMarkIcon className="w-5 h-5 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-slate-600" />
               </button>
             </div>
             
-            {/* 업데이트 리스트 */}
-            <div className="p-6 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 180px)' }}>
+            {/* 업데이트 리스트 - 스크롤 가능한 영역 */}
+            <div className="p-2 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6 overflow-y-auto flex-1 custom-scrollbar">
               {updates.map((update, index) => {
                 const categoryStyle = categoryStyles[update.category];
                 return (
                   <div 
                     key={update.id}
-                    className={`rounded-xl p-6 transition-all duration-300 ${
+                    className={`rounded-xl p-3 sm:p-4 lg:p-6 transition-all duration-300 ${
                       index === 0 
                         ? 'border-2 border-blue-200 bg-blue-50/30' 
                         : 'border border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     {/* 버전 헤더 */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{categoryStyle.icon}</span>
+                    <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
+                      <div className="flex items-center space-x-2 sm:space-x-2 lg:space-x-3">
+                        <span className="text-lg sm:text-xl lg:text-2xl">{categoryStyle.icon}</span>
                         <div>
-                          <h3 className="text-lg font-bold text-slate-800">
+                          <h3 className="text-sm sm:text-base lg:text-lg font-bold text-slate-800">
                             {update.version}
                             {index === 0 && (
-                              <span className="ml-2 text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 px-2 py-1 rounded-full">
+                              <span className="ml-1 sm:ml-1 lg:ml-2 text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 px-1.5 sm:px-1.5 lg:px-2 py-0.5 sm:py-0.5 lg:py-1 rounded-full">
                                 최신
                               </span>
                             )}
                           </h3>
-                          <p className="text-sm text-slate-500 mt-1">{update.date}</p>
+                          <p className="text-xs sm:text-xs lg:text-sm text-slate-500 mt-0.5 sm:mt-1">{update.date}</p>
                         </div>
                       </div>
-                      <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${categoryStyle.bgColor} ${categoryStyle.textColor} border ${categoryStyle.borderColor}`}>
+                      <span className={`text-xs font-medium px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-1.5 rounded-full ${categoryStyle.bgColor} ${categoryStyle.textColor} border ${categoryStyle.borderColor}`}>
                         {categoryStyle.label}
                       </span>
                     </div>
 
                     {/* 업데이트 내용 */}
-                    <div className="ml-11">
-                      <h4 className="font-semibold text-slate-800 mb-2">{update.title}</h4>
-                      <p className="text-sm text-slate-600 mb-3">{update.description}</p>
+                    <div className="ml-6 sm:ml-8 lg:ml-11">
+                      <h4 className="font-semibold text-slate-800 mb-1 sm:mb-2 text-xs sm:text-sm lg:text-base">{update.title}</h4>
+                      <p className="text-xs sm:text-xs lg:text-sm text-slate-600 mb-2 sm:mb-3">{update.description}</p>
                       
                       {/* 주요 변경사항 */}
                       {update.highlights && update.highlights.length > 0 && (
-                        <ul className="space-y-1">
+                        <ul className="space-y-0.5 sm:space-y-1">
                           {update.highlights.map((highlight, idx) => (
-                            <li key={idx} className="text-sm text-slate-600 flex items-start">
+                            <li key={idx} className="text-xs sm:text-xs lg:text-sm text-slate-600 flex items-start">
                               <span className="text-slate-400 mr-2">•</span>
                               <span>{highlight}</span>
                             </li>
@@ -356,9 +370,9 @@ export default function Home() {
               })}
             </div>
             
-            {/* 모달 푸터 */}
-            <div className="p-6 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
-              <p className="text-sm text-slate-600 text-center">
+            {/* 모달 푸터 - GitHub 배너 */}
+            <div className="p-2 sm:p-4 lg:p-6 border-t border-slate-200 bg-slate-50 rounded-b-2xl flex-shrink-0">
+              <p className="text-xs sm:text-xs lg:text-sm text-slate-600 text-center">
                 더 자세한 변경사항은 <a href="https://github.com/Eyebottle/eyebottle-ai-ophthalmology" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">GitHub</a>에서 확인하세요
               </p>
             </div>
@@ -368,8 +382,8 @@ export default function Home() {
 
       {/* 데모 영상 모달 */}
       {isVideoModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* 모달 헤더 */}
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h2 className="text-2xl font-bold text-slate-800 flex items-center space-x-3">
@@ -470,12 +484,12 @@ export default function Home() {
 
       {/* 헤더 네비게이션 */}
       <header className="bg-white/95 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-6 lg:px-8 py-5">
+        <div className="container mx-auto px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <Image
-                  src="/eyebottle-logo.png"
+                  src="/assets/logos/eyebottle-logo.png"
                   alt="아이보틀 로고"
                   width={44}
                   height={44}
@@ -492,6 +506,14 @@ export default function Home() {
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">소개</a>
               <a href="#footer-nav" className="text-base font-medium text-slate-600 hover:text-blue-600 transition-colors">문의</a>
               
+              {/* 로그인 버튼 */}
+              <button 
+                onClick={() => setIsLoginModalOpen(true)}
+                className="text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                로그인
+              </button>
+              
               {/* 주요 기능 네비게이션 메뉴 */}
               <QuickNavMenu />
             </nav>
@@ -506,15 +528,15 @@ export default function Home() {
 
       {/* 메인 히어로 섹션 */}
       <main className="container mx-auto px-6 lg:px-8 py-20 lg:py-28">
-        <div className="flex flex-col xl:flex-row items-start justify-between gap-8 xl:gap-12 mb-32">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-8 lg:gap-12 mb-32">
           {/* 좌측: 메인 콘텐츠 */}
-          <div className="flex-1 text-center xl:text-left xl:max-w-2xl mx-auto xl:mx-0">
+          <div className="flex-1 text-center lg:text-left mx-auto lg:mx-0">
             {/* 메인 로고 */}
-            <div className="flex justify-center xl:justify-start mb-10">
+            <div className="flex justify-center lg:justify-start mb-10">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur-xl"></div>
                 <Image
-                  src="/eyebottle-logo.png"
+                  src="/assets/logos/eyebottle-logo.png"
                   alt="아이보틀 로고"
                   width={120}
                   height={120}
@@ -532,7 +554,7 @@ export default function Home() {
               문서작업·데이터 시각화를 한 곳에서
             </p>
 
-            <div className="flex justify-center xl:justify-start">
+            <div className="flex justify-center lg:justify-start">
               <button 
                 onClick={() => setIsVideoModalOpen(true)}
                 className="group bg-gradient-to-r from-red-500 to-red-600 text-white px-12 py-5 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:from-red-600 hover:to-red-700 ring-1 ring-red-600/20"
@@ -548,8 +570,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 중앙: 공지사항 */}
-          <div className="w-full xl:w-[380px] flex-shrink-0">
+          {/* 우측: 공지사항 */}
+          <div className="w-full lg:w-[400px] flex-shrink-0">
             <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-xl border border-slate-200/50 hover:shadow-2xl transition-all duration-300">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl lg:text-2xl font-bold text-slate-800">공지사항</h3>
@@ -575,92 +597,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 우측: 로그인 */}
-          <div className="w-full xl:w-[340px] flex-shrink-0">
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 lg:p-10 shadow-xl border border-slate-200/50 hover:shadow-2xl transition-all duration-300">
-              <div className="text-center mb-8">
-                <h3 className="text-xl lg:text-2xl font-bold text-slate-800 mb-2">로그인</h3>
-                <p className="text-sm text-slate-500 font-medium">아이보틀 계정으로 시작하세요</p>
-              </div>
-              
-              <form className="space-y-6">
-                {/* 이메일 입력 */}
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">이메일</label>
-                  <input 
-                    type="email" 
-                    placeholder="doctor@hospital.com"
-                    className="w-full px-4 py-4 rounded-xl border border-slate-200 bg-white/80 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-slate-800 placeholder-slate-400 font-medium"
-                  />
-                </div>
-
-                {/* 비밀번호 입력 */}
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">비밀번호</label>
-                  <input 
-                    type="password" 
-                    placeholder="••••••••"
-                    className="w-full px-4 py-4 rounded-xl border border-slate-200 bg-white/80 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-slate-800 placeholder-slate-400 font-medium"
-                  />
-                </div>
-
-                {/* 로그인 옵션 */}
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500/20" />
-                    <span className="ml-2 text-sm text-slate-600 font-medium">로그인 상태 유지</span>
-                  </label>
-                  <button type="button" className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">
-                    비밀번호 찾기
-                  </button>
-                </div>
-
-                {/* 로그인 버튼 */}
-                <button 
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:from-blue-700 hover:to-indigo-700"
-                >
-                  로그인
-                </button>
-
-                {/* 구분선 */}
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white/90 text-slate-500 font-medium">또는</span>
-                  </div>
-                </div>
-
-                {/* 회원가입 링크 */}
-                <div className="text-center">
-                  <p className="text-sm text-slate-600 font-medium">
-                    계정이 없으신가요?{' '}
-                    <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
-                      회원가입
-                    </button>
-                  </p>
-                </div>
-
-                {/* 소셜 로그인 (추후 기능) */}
-                <div className="pt-4">
-                  <button 
-                    type="button"
-                    className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 py-3 rounded-xl font-medium border border-slate-200 transition-all duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    <span>Google로 계속하기</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
         </div>
 
         {/* 주요 기능 섹션 */}
@@ -851,6 +787,14 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* 로그인 모달 */}
+      {isClient && (
+        <LoginModal 
+          isOpen={isLoginModalOpen} 
+          onClose={() => setIsLoginModalOpen(false)} 
+        />
+      )}
 
     </div>
   );

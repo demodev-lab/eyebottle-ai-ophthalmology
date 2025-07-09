@@ -278,7 +278,7 @@ export const createSampleGuides = (): void => {
         id: 'file_1',
         type: 'pdf' as const,
         name: '백내장_수술전_안내.pdf',
-        url: '/guides/sample_cataract_guide.html',
+        url: '/guides/patient-guides/sample_cataract_guide.html',
         size: 2048576, // 2MB
       }],
       isPublished: true,
@@ -307,7 +307,7 @@ export const createSampleGuides = (): void => {
         id: 'file_2',
         type: 'pdf' as const,
         name: '라식라섹_수술후_관리.pdf',
-        url: '/guides/sample_cataract_guide.html',
+        url: '/guides/patient-guides/sample_cataract_guide.html',
         size: 1536000, // 1.5MB
       }],
       youtubeUrl: 'https://www.youtube.com/watch?v=example2',
@@ -325,7 +325,7 @@ export const createSampleGuides = (): void => {
         id: 'file_3',
         type: 'pdf' as const,
         name: '당뇨망막병증_안내.pdf',
-        url: '/guides/sample_glaucoma_guide.html',
+        url: '/guides/patient-guides/sample_glaucoma_guide.html',
         size: 3145728, // 3MB
       }],
       isPublished: true,
@@ -342,7 +342,7 @@ export const createSampleGuides = (): void => {
         id: 'file_4',
         type: 'pdf' as const,
         name: '시력검사_안내.pdf',
-        url: '/guides/sample_glaucoma_guide.html',
+        url: '/guides/patient-guides/sample_glaucoma_guide.html',
         size: 1024000, // 1MB
       }],
       isPublished: false, // 비공개 예시

@@ -271,7 +271,7 @@ export const DiabeticReportPDF = ({ data }: { data: DiabeticReportData }) => (
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
-          <Image src="/lee_eye_symbol.png" style={styles.clinicLogo} />
+          <Image src="/assets/logos/lee_eye_symbol.png" style={styles.clinicLogo} />
           <View style={styles.clinicText}>
             <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
             <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
@@ -425,7 +425,7 @@ export const HypertensionReportPDF = ({ data }: { data: HypertensionReportData }
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
-          <Image src="/lee_eye_symbol.png" style={styles.clinicLogo} />
+          <Image src="/assets/logos/lee_eye_symbol.png" style={styles.clinicLogo} />
           <View style={styles.clinicText}>
             <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
             <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>
@@ -588,7 +588,7 @@ export const ComprehensiveReportPDF = ({ data }: { data: ComprehensiveReportData
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
-          <Image src="/lee_eye_symbol.png" style={styles.clinicLogo} />
+          <Image src="/assets/logos/lee_eye_symbol.png" style={styles.clinicLogo} />
           <View style={styles.clinicText}>
             <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
             <Text>부산광역시 연제구 반송로 30, 석산빌딩 5~8층</Text>

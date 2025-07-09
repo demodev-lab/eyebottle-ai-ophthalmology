@@ -20,7 +20,7 @@ export default function CartoonsLayout({ children }: { children: ReactNode }) {
       {/* 헤더 */}
       <header className="bg-white/95 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
+          <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
             {/* 로고 */}
             <div className="flex items-center space-x-4 sm:space-x-8">
               <div className="flex items-center space-x-2 sm:space-x-4">

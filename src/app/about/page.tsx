@@ -149,7 +149,7 @@ export default function AboutPage() {
         {/* 배경 이미지 */}
         <div className="absolute inset-0">
           <Image
-            src="/clinic-me.jpg"
+            src="/assets/clinic/clinic-me.jpg"
             alt="진료실 배경"
             fill
             className="object-cover opacity-30"
@@ -270,7 +270,7 @@ export default function AboutPage() {
                     <div className="relative z-10 w-full h-[220px] flex items-center justify-center mb-6">
                       <div className="relative w-[200px] h-[200px] rounded-2xl bg-white/80 flex items-center justify-center backdrop-blur-sm shadow-inner">
                         <Image
-                          src="/centurion-gold-transparent.png"
+                          src="/assets/equipment/centurion-gold-transparent.png"
                           alt="알콘 센츄리온 골드"
                           width={180}
                           height={180}
@@ -303,7 +303,7 @@ export default function AboutPage() {
                     <div className="relative z-10 w-full h-[220px] flex items-center justify-center mb-6">
                       <div className="relative w-[200px] h-[200px] rounded-2xl bg-white/80 flex items-center justify-center backdrop-blur-sm shadow-inner">
                         <Image
-                          src="/artevo-zeiss.png"
+                          src="/assets/equipment/artevo-zeiss.png"
                           alt="Zeiss Artevo 현미경"
                           width={180}
                           height={180}
@@ -590,8 +590,8 @@ export default function AboutPage() {
 
       {/* 메일 작성 팝업 */}
       {isMailPopupOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-start justify-center pt-8 sm:pt-12 lg:pt-16 p-3 sm:p-4 lg:p-6">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-auto max-h-[calc(100vh-64px)] sm:max-h-[calc(100vh-96px)] lg:max-h-[85vh] overflow-y-auto custom-scrollbar shadow-2xl">
             {/* 팝업 헤더 */}
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-slate-700">문의 메일 작성</h3>

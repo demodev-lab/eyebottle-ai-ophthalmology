@@ -2526,7 +2526,7 @@ export default function ExamResultsPage() {
         <footer className="mt-auto pt-6 border-t-2 border-gray-200">
           <div className="flex justify-between items-end">
             <div className="flex items-center space-x-3">
-              <Image src="/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
+              <Image src="/assets/logos/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
               <div>
                 <div className="font-bold text-xl text-gray-800">이안과의원</div>
                 <div className="text-lg text-gray-600">부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
@@ -3044,7 +3044,7 @@ export default function ExamResultsPage() {
         <footer className="mt-auto pt-6 border-t-2 border-gray-200">
           <div className="flex justify-between items-end">
             <div className="flex items-center space-x-3">
-              <Image src="/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
+              <Image src="/assets/logos/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
               <div>
                 <div className="font-bold text-xl text-gray-800">이안과의원</div>
                 <div className="text-lg text-gray-600">부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
@@ -3613,7 +3613,7 @@ export default function ExamResultsPage() {
         <footer className="mt-auto pt-6 border-t-2 border-gray-200">
           <div className="flex justify-between items-end">
             <div className="flex items-center space-x-3">
-              <Image src="/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
+              <Image src="/assets/logos/lee_eye_symbol.png" alt="이안과의원" width={48} height={48} className="object-contain" />
               <div>
                 <div className="font-bold text-xl text-gray-800">이안과의원</div>
                 <div className="text-lg text-gray-600">부산광역시 연제구 반송로 30, 석산빌딩 5~8층</div>
@@ -3636,7 +3636,7 @@ export default function ExamResultsPage() {
     <div className="min-h-screen bg-gray-50 relative">
       {/* 고정 헤더 */}
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-gray-200/60 shadow-sm print-hide">
-        <div className="max-w-6xl mx-auto px-4 py-4">
+        <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <Link 
               href="/" 

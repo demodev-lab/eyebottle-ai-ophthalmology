@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/eyebottle-logo.png",
+        url: "/assets/logos/eyebottle-logo.png",
         width: 1200,
         height: 630,
         alt: "아이보틀 로고",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: "/eyebottle-logo.png",
+    icon: "/assets/logos/eyebottle-logo.png",
   },
 };
 
@@ -41,9 +41,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning={true}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         {children}
       </body>
