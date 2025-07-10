@@ -63,6 +63,7 @@ export default function CartoonsPage() {
   // 필터링 및 정렬
   useEffect(() => {
     applyFiltersAndSort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartoons, searchQuery, selectedTags, sortOption]);
 
   const loadCartoons = () => {

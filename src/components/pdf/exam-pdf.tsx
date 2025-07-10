@@ -271,6 +271,7 @@ export const DiabeticReportPDF = ({ data }: { data: DiabeticReportData }) => (
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src="/assets/logos/lee_eye_symbol.png" style={styles.clinicLogo} />
           <View style={styles.clinicText}>
             <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
@@ -425,6 +426,7 @@ export const HypertensionReportPDF = ({ data }: { data: HypertensionReportData }
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src="/assets/logos/lee_eye_symbol.png" style={styles.clinicLogo} />
           <View style={styles.clinicText}>
             <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>
@@ -588,6 +590,7 @@ export const ComprehensiveReportPDF = ({ data }: { data: ComprehensiveReportData
       {/* 푸터 */}
       <View style={styles.footer}>
         <View style={styles.clinicInfo}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src="/assets/logos/lee_eye_symbol.png" style={styles.clinicLogo} />
           <View style={styles.clinicText}>
             <Text style={{ fontWeight: 'bold' }}>이안과의원</Text>

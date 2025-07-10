@@ -43,6 +43,7 @@ export default function NewCartoonPage() {
     if (!checkAdminAuth()) {
       router.push("/cartoons");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

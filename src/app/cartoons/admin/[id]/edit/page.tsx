@@ -54,6 +54,7 @@ export default function EditCartoonPage() {
     
     // 만화 데이터 로드
     loadCartoon();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartoonId]);
 
   const loadCartoon = () => {

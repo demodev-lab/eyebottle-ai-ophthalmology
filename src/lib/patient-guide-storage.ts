@@ -10,6 +10,7 @@ import {
   GUIDE_STORAGE_KEYS,
   GuideCategory,
   ContentType,
+  FileType,
 } from '@/types/patient-guide';
 import { getFromStorage, setToStorage } from './storage-helpers';
 
@@ -276,7 +277,7 @@ export const createSampleGuides = (): void => {
       contentType: ContentType.PDF,
       files: [{
         id: 'file_1',
-        type: 'pdf' as const,
+        type: FileType.PDF,
         name: '백내장_수술전_안내.pdf',
         url: '/guides/patient-guides/sample_cataract_guide.html',
         size: 2048576, // 2MB
@@ -305,7 +306,7 @@ export const createSampleGuides = (): void => {
       contentType: ContentType.MIXED,
       files: [{
         id: 'file_2',
-        type: 'pdf' as const,
+        type: FileType.PDF,
         name: '라식라섹_수술후_관리.pdf',
         url: '/guides/patient-guides/sample_cataract_guide.html',
         size: 1536000, // 1.5MB
@@ -323,7 +324,7 @@ export const createSampleGuides = (): void => {
       contentType: ContentType.PDF,
       files: [{
         id: 'file_3',
-        type: 'pdf' as const,
+        type: FileType.PDF,
         name: '당뇨망막병증_안내.pdf',
         url: '/guides/patient-guides/sample_glaucoma_guide.html',
         size: 3145728, // 3MB
@@ -340,7 +341,7 @@ export const createSampleGuides = (): void => {
       contentType: ContentType.PDF,
       files: [{
         id: 'file_4',
-        type: 'pdf' as const,
+        type: FileType.PDF,
         name: '시력검사_안내.pdf',
         url: '/guides/patient-guides/sample_glaucoma_guide.html',
         size: 1024000, // 1MB
@@ -351,7 +352,7 @@ export const createSampleGuides = (): void => {
   ];
   
   sampleGuides.forEach(guide => {
-    createGuide(guide as any);
+    createGuide(guide);
   });
 };
 

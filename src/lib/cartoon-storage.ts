@@ -7,6 +7,7 @@ import {
   CartoonComment,
   CartoonFilter,
   CartoonSortOption,
+  CartoonTagCategory,
   CARTOON_STORAGE_KEYS,
   CartoonImage,
 } from '@/types/cartoon';
@@ -247,8 +248,8 @@ export const createSampleCartoons = (): void => {
       title: '백내장 수술 전후 주의사항',
       description: '백내장 수술 전후 환자가 알아야 할 중요한 정보를 담은 4컷 만화입니다.',
       tags: [
-        { id: 'tag_cataract', name: '백내장', category: 'specialty' as any },
-        { id: 'tag_blurred', name: '시력저하', category: 'condition' as any },
+        { id: 'tag_cataract', name: '백내장', category: CartoonTagCategory.SPECIALTY },
+        { id: 'tag_blurred', name: '시력저하', category: CartoonTagCategory.CONDITION },
       ],
       images: [],
       thumbnail: '/cartoons/sample1_thumb.jpg',
@@ -258,8 +259,8 @@ export const createSampleCartoons = (): void => {
       title: '어린이 근시 예방법',
       description: '스마트폰 사용이 늘어난 어린이들의 근시 예방을 위한 생활 습관을 소개합니다.',
       tags: [
-        { id: 'tag_pediatric', name: '소아안과', category: 'specialty' as any },
-        { id: 'tag_myopia', name: '근시', category: 'specialty' as any },
+        { id: 'tag_pediatric', name: '소아안과', category: CartoonTagCategory.SPECIALTY },
+        { id: 'tag_myopia', name: '근시', category: CartoonTagCategory.SPECIALTY },
       ],
       images: [],
       thumbnail: '/cartoons/sample2_thumb.jpg',
@@ -269,8 +270,8 @@ export const createSampleCartoons = (): void => {
       title: '안구건조증 관리법',
       description: '현대인의 고질병, 안구건조증을 효과적으로 관리하는 방법을 알려드립니다.',
       tags: [
-        { id: 'tag_dry', name: '건조증', category: 'condition' as any },
-        { id: 'tag_itching', name: '가려움', category: 'condition' as any },
+        { id: 'tag_dry', name: '건조증', category: CartoonTagCategory.CONDITION },
+        { id: 'tag_itching', name: '가려움', category: CartoonTagCategory.CONDITION },
       ],
       images: [],
       thumbnail: '/cartoons/sample3_thumb.jpg',

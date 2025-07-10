@@ -50,6 +50,7 @@ export const CartoonPDFDocument = ({ cartoon, layout = 'single' }: CartoonPDFDoc
           {layout === 'grid' ? (
             <View style={styles.gridContainer}>
               {cartoon.images.map((image) => (
+                // eslint-disable-next-line jsx-a11y/alt-text
                 <Image
                   key={image.id}
                   src={image.url}
@@ -60,6 +61,7 @@ export const CartoonPDFDocument = ({ cartoon, layout = 'single' }: CartoonPDFDoc
           ) : (
             cartoon.images.map((image) => (
               <View key={image.id} style={styles.singleImageWrapper}>
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image
                   src={image.url}
                   style={styles.singleImage}

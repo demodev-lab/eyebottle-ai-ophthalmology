@@ -36,10 +36,12 @@ export default function PatientGuidesPage() {
     
     // 안내자료 로드
     loadGuides();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     filterAndSortGuides();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guides, selectedCategory, selectedDisease, searchQuery, sortOption]);
 
   const loadGuides = () => {

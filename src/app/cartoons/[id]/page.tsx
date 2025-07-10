@@ -58,6 +58,7 @@ export default function CartoonDetailPage() {
   useEffect(() => {
     loadCartoonData();
     setIsAdminAuth(checkAdminAuth());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartoonId]);
 
   const loadCartoonData = async () => {

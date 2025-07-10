@@ -33,6 +33,7 @@ export default function PatientGuideDetailPage() {
 
   useEffect(() => {
     loadGuide();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadGuide = async () => {

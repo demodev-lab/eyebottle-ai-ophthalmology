@@ -415,13 +415,15 @@ export default function ExamResultsPage() {
       console.error('PDF 다운로드 중 오류 발생:', error);
       alert('PDF 다운로드 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
-  }, [selectedType, diabeticData, comprehensiveData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedType, diabeticData, comprehensiveData, hypertensionData])
 
   // 테스트용 전역 함수 노출
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       (window as typeof window & { testPDF: () => Promise<void> }).testPDF = handleDownloadPDF;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 기존 브라우저 인쇄 함수 (백업용)
