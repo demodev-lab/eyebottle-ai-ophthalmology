@@ -122,7 +122,11 @@ export default function PatientChartPage() {
         }))
       });
       
-      setVisits(visitsData.reverse()); // 오래된 것부터 최신순으로
+      // 방문 날짜 기준으로 오래된 것부터 최신순으로 정렬
+      const sortedVisits = visitsData.sort((a, b) => 
+        new Date(a.visit_date).getTime() - new Date(b.visit_date).getTime()
+      );
+      setVisits(sortedVisits);
     } catch (error) {
       console.error('[MyoCare Chart] 환자 데이터 로드 실패:', error);
     } finally {
@@ -192,7 +196,49 @@ export default function PatientChartPage() {
     }
   };
 
-  const handlePrint = () => {
+  // SVG 렌더링 완료 감지 함수
+  const waitForSVGRender = (): Promise<void> => {
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const maxAttempts = 30; // 최대 3초 대기 (100ms * 30)
+      
+      const checkSVG = () => {
+        attempts++;
+        
+        // Recharts SVG 요소들 확인
+        const svgElements = document.querySelectorAll('.recharts-wrapper svg');
+        const hasValidSVGs = svgElements.length >= 2; // SE 그래프 + AL 그래프
+        
+        if (hasValidSVGs) {
+          // 각 SVG에 실제 경로 요소가 있는지 확인
+          const allHavePaths = Array.from(svgElements).every(svg => {
+            const paths = svg.querySelectorAll('path, line, circle');
+            return paths.length > 0;
+          });
+          
+          if (allHavePaths) {
+            console.log('[MyoCare Chart] SVG 렌더링 완료 확인');
+            resolve();
+            return;
+          }
+        }
+        
+        if (attempts >= maxAttempts) {
+          console.warn('[MyoCare Chart] SVG 렌더링 대기 시간 초과, 강제 진행');
+          resolve();
+          return;
+        }
+        
+        setTimeout(checkSVG, 100);
+      };
+      
+      checkSVG();
+    });
+  };
+
+  const handlePrint = async () => {
+    console.log('[MyoCare Chart] 인쇄 준비 시작');
+    
     // 인쇄용 날짜 설정
     const printDate = new Date().toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -208,18 +254,26 @@ export default function PatientChartPage() {
       mainElement.classList.add('printing');
     }
     
-    // SVG 렌더링이 완료될 때까지 대기
-    setTimeout(() => {
+    try {
+      // SVG 렌더링 완료까지 대기
+      await waitForSVGRender();
+      
+      // 추가 안전 여유 시간
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       console.log('[MyoCare Chart] 인쇄 시작');
       window.print();
       
+    } catch (error) {
+      console.error('[MyoCare Chart] 인쇄 중 오류:', error);
+    } finally {
       // 인쇄 후 클래스 제거
       setTimeout(() => {
         if (mainElement) {
           mainElement.classList.remove('printing');
         }
       }, PRINT_CONSTANTS.DELAY_AFTER_PRINT);
-    }, PRINT_CONSTANTS.DELAY_BEFORE_PRINT);
+    }
   };
 
   // EMR 텍스트 생성 함수

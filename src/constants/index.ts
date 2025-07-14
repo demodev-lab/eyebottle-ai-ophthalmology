@@ -72,6 +72,6 @@ export const CHART_Y_RANGES = {
 
 // 인쇄 관련 상수
 export const PRINT_CONSTANTS = {
-  DELAY_BEFORE_PRINT: 500,    // 인쇄 전 대기 시간 (ms)
+  DELAY_BEFORE_PRINT: 1000,   // 인쇄 전 대기 시간 (ms) - SVG 렌더링 여유시간
   DELAY_AFTER_PRINT: 1000,    // 인쇄 후 대기 시간 (ms)
 } as const;

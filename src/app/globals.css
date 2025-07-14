@@ -191,6 +191,15 @@ body {
   /* SVG 요소 인쇄 최적화 */
   svg {
     overflow: visible !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* ResponsiveContainer 인쇄 최적화 */
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 180px !important;
+    position: static !important;
   }
 
   /* Recharts 라인과 도트 인쇄 시 표시 */
@@ -402,9 +411,18 @@ body {
     padding-bottom: 0.1rem !important;
   }
 
-  /* 아이콘 숨김 */
-  svg {
+  /* 아이콘만 숨김 (차트 SVG는 제외) */
+  .lucide,
+  .lucide-icon,
+  button svg,
+  .icon svg {
     display: none !important;
+  }
+
+  /* 차트 SVG는 표시 */
+  .recharts-wrapper svg,
+  .recharts-surface {
+    display: block !important;
   }
 
   /* Select 드롭다운 숨김 */
