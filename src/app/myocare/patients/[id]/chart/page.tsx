@@ -926,7 +926,7 @@ export default function PatientChartPage() {
       </div>
 
       {/* 그래프 섹션 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         {/* SE 그래프 */}
         <Card className="border-0 shadow-md">
           <CardHeader>
