@@ -47,3 +47,5 @@ vscode.tar.gz
 # Uploaded guide files (keep sample files only)
 /public/guides/*
 !/public/guides/sample_*.html
+# clerk configuration (can include secrets)
+/.clerk/
